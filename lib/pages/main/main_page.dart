@@ -21,8 +21,6 @@ class MainPage extends ConsumerWidget {
           slideWidth: MediaQuery.of(context).size.width * .6,
           menuScreenWidth: MediaQuery.of(context).size.width * .6,
           mainScreenScale: 0.2,
-          duration: const Duration(milliseconds: 200),
-          reverseDuration: const Duration(milliseconds: 200),
           showShadow: true,
           mainScreenTapClose: true,
           menuScreenTapClose: true,
@@ -34,7 +32,7 @@ class MainPage extends ConsumerWidget {
             panel: PlayPage(),
             body: child,
             options: SlidingUpPanelOptions(
-              initialMinHeight: 70.w,
+              initialMinHeight: 60.w,
               initialMaxHeight: MediaQuery.of(context).size.height,
             ),
             onPanelSlide: (double value) {
