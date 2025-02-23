@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.0
+  sdk: '>=3.1.3 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -37,14 +37,16 @@ dependencies:
   flutter_riverpod: ^2.6.1
   go_router: ^14.8.0
   flutter_screenutil: ^5.9.3
-  equatable: ^2.0.7
   palette_generator: ^0.3.3+6
   statusbarz: ^1.0.14
   riverpod_annotation: ^2.6.1
   flutter_zoom_drawer: ^3.2.0
-  audioplayers: ^6.2.0
-  bujuan_music_api: ^0.0.1
-  sliding_up_panel_custom: ^2.1.1+1
+  we_slide: ^2.4.0
+#  audioplayers: ^6.2.0
+  bujuan_music_api:
+    path: ../bujuan_music_api
+  path_provider: ^2.1.5
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

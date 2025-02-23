@@ -19,3 +19,15 @@ class SlidingPanelDetailData extends _$SlidingPanelDetailData {
     state = newValue;
   }
 }
+
+
+@riverpod
+class SlidingPanelShow extends _$SlidingPanelShow {
+  @override
+  bool build() => false;
+
+  void updatePanelDetail(bool newValue) {
+    state = newValue;
+  }
+}
+

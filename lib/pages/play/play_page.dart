@@ -1,208 +1,278 @@
-import 'package:bujuan_music/common/values/app_images.dart';
-import 'package:bujuan_music/widgets/curved_progress_bar.dart';
+import 'dart:ui';
+import 'package:bujuan_music/widgets/pa.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import '../../common/values/app_images.dart';
+import '../../widgets/curved_progress_bar.dart';
 import '../main/provider.dart';
 
-class PlayPage extends ConsumerStatefulWidget {
+class PlayPage extends StatelessWidget {
   const PlayPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _PlayPageState();
-}
-
-class _PlayPageState extends ConsumerState<PlayPage> with SingleTickerProviderStateMixin {
-  late AnimationController animationController;
-  late Animation<double> _sizeAnimation;
-  late Animation<Offset> _coverPositionAnimation;
-
-  @override
-  void initState() {
-    animationController = AnimationController(vsync: this);
-    _sizeAnimation = Tween<double>(begin: 45.w, end: 280.w).animate(animationController);
-    _coverPositionAnimation =
-        Tween<Offset>(begin: Offset(10.w, 7.5.w), end: Offset((375.w - 10.w - 280.w) / 2, 50.w))
-            .animate(animationController);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var watch = ref.watch(slidingPanelDetailDataProvider);
-    double top = MediaQuery.of(context).padding.top;
-    animationController.value = watch;
-    return Column(
+    // 缓存媒体查询结果
+    final mediaQuery = MediaQuery.of(context);
+    final double top = mediaQuery.padding.top;
+    final double bottom = mediaQuery.padding.bottom;
+
+    return Stack(
       children: [
-        InkWell(
-          child: SizedBox(
-            height: 330.w + top,
-            child: Stack(
-              children: [
-                AnimatedBuilder(
-                  animation: animationController,
-                  builder: (context, child) {
-                    return Positioned(
-                      left: _coverPositionAnimation.value.dx,
-                      top: _coverPositionAnimation.value.dy + top * animationController.value,
-                      child: Image.asset(
-                        AppImages.cover,
-                        width: _sizeAnimation.value,
-                        height: _sizeAnimation.value,
-                      ),
-                    );
-                  },
-                ),
-                Positioned(
-                  left: 5.w + 45.w + 20.w,
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    height: 60.w,
-                    child: Row(
-                      children: [
-                        Text('Lucky Strike',
-                            style: TextStyle(
-                                fontSize: 16.sp, fontWeight: FontWeight.w400, color: Colors.black)),
-                        IconButton(onPressed: () {}, icon: Icon(Icons.add))
-                      ],
-                    ),
-                  ),
-                ),
-                AnimatedBuilder(
-                  animation: animationController,
-                  builder: (context, child) {
-                    return Positioned(
-                      top:
-                          -50.w * (1 - animationController.value) + top * animationController.value,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        height: 50.w,
-                        width: 375.w,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.keyboard_arrow_down_outlined,
-                              size: 26.sp,
-                            ),
-                            Icon(
-                              Icons.more_horiz,
-                              size: 26.sp,
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
-          onTap: () {
-            if (!ref.watch(panelControllerProvider).isPanelOpen) {
-              ref.watch(panelControllerProvider).open();
-            }
-          },
+        // 使用const优化静态粒子效果组件
+        const Particles(
+          color: Colors.blueAccent,
+          quantity: 100,
+          ease: 80,
+          staticity: 30,
         ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 15.h)),
-        Expanded(
-            child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            children: [
-              Text(
-                'Lucky Strike',
-                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600, color: Colors.black),
-              ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 3.h)),
-              Text(
-                'Troy Sivan',
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.grey),
-              ),
-              Expanded(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CurvedProgressBar(
-                    progress: .4,
-                    progressColor: Colors.grey.withOpacity(.5),
-                    activeProgressColor: Colors.red,
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 4.h)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '01:24',
-                        style: TextStyle(
-                            fontSize: 14.sp, color: Colors.grey, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        '04:27',
-                        style: TextStyle(
-                            fontSize: 14.sp, color: Colors.grey, fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  )
-                ],
-              )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(
-                    AppImages.shuffle,
-                    width: 24.w,
-                    height: 24.w,
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 15.w)),
-                  Expanded(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Image.asset(
-                        AppImages.left,
-                        width: 24.w,
-                        height: 24.w,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Colors.red, borderRadius: BorderRadius.circular(22.w)),
-                        width: 44.w,
-                        height: 44.w,
-                        child: Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                          size: 28.sp,
-                        ),
-                      ),
-                      Image.asset(
-                        AppImages.right,
-                        width: 24.w,
-                        height: 24.w,
-                      ),
-                    ],
-                  )),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 15.w)),
-                  Image.asset(
-                    AppImages.cycle,
-                    width: 24.w,
-                    height: 24.w,
-                  )
-                ],
-              ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 30.h)),
-            ],
-          ),
-        ))
+        Column(
+          children: [
+            // 使用Selector优化局部刷新
+            _AnimatedCoverSection(top: top),
+            SizedBox(height: 15.h),
+            Expanded(
+              child: _MusicControlsSection(bottom: bottom),
+            ),
+          ],
+        )
       ],
     );
   }
 }
+
+class _AnimatedCoverSection extends ConsumerWidget {
+  final double top;
+
+  const _AnimatedCoverSection({required this.top});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final panelValue = ref.watch(slidingPanelDetailDataProvider);
+    final panelController = ref.read(panelControllerProvider);
+
+    return GestureDetector(
+      onTap: panelController.open,
+      child: SizedBox(
+        height: 350.w + top,
+        child: Stack(
+          children: [
+            if (panelValue < 0.1) const _SongInfoBar(),
+            _AnimatedAlbumCover(panelValue: panelValue, top: top),
+            _TopControlBar(panelValue: panelValue, top: top),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimatedAlbumCover extends StatelessWidget {
+  final double panelValue;
+  final double top;
+
+  const _AnimatedAlbumCover({required this.panelValue, required this.top});
+
+  @override
+  Widget build(BuildContext context) {
+    final imageSize = lerpDouble(45.w, 290.w, panelValue)!;
+    final leftOffset = 10.w + panelValue * (375.w - 10.w - 290.w) / 2;
+    final topOffset = 7.5.w + panelValue * (60.w - 7.5.w + top);
+
+    return Positioned(
+      left: leftOffset,
+      top: topOffset,
+      child: _AlbumCover(imageSize: imageSize),
+    );
+  }
+}
+
+class _AlbumCover extends StatelessWidget {
+  final double imageSize;
+
+  const _AlbumCover({required this.imageSize});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 50),
+      width: imageSize,
+      height: imageSize,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: CachedNetworkImageProvider(
+            "http://p1.music.126.net/gN6htv5E9WwyOoTASMuvDQ==/109951170483576228.jpg",
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+}
+
+class _TopControlBar extends StatelessWidget {
+  final double panelValue;
+  final double top;
+
+  const _TopControlBar({required this.panelValue, required this.top});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: -60.w * (1 - panelValue) + top * panelValue,
+      child:  SizedBox(
+        width: 375.w,
+        height: 60.w,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(Icons.keyboard_arrow_down_outlined, size: 26),
+              Icon(Icons.more_horiz, size: 26),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SongInfoBar extends StatelessWidget {
+  const _SongInfoBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return  Padding(
+      padding: EdgeInsets.symmetric(horizontal: 70.w),
+      child: SizedBox(
+        height: 60.w,
+        child: Row(
+          children: [
+            Text('Lucky Strike',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+            Spacer(),
+            Icon(Icons.play_arrow),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MusicControlsSection extends StatelessWidget {
+  final double bottom;
+
+  const _MusicControlsSection({required this.bottom});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 30.w),
+      child: Column(
+        children: [
+          const Text('Lucky Strike',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 3),
+          const Text('Troy Sivan',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey)),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const _ProgressBarWithTime(),
+                const SizedBox(height: 4),
+                _PlaybackControls(),
+                SizedBox(height: 25.h + bottom),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProgressBarWithTime extends StatelessWidget {
+  const _ProgressBarWithTime();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CurvedProgressBar(
+          progress: .4,
+          progressColor: Colors.grey.withOpacity(.5),
+          activeProgressColor: Colors.blueAccent.withOpacity(.5),
+        ),
+        const SizedBox(height: 4),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('01:24', style: _timeTextStyle),
+            Text('04:27', style: _timeTextStyle),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _PlaybackControls extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _ControlButton(image: AppImages.shuffle),
+        SizedBox(width: 15.w),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _ControlButton(image: AppImages.left),
+              _PlayPauseButton(),
+              _ControlButton(image: AppImages.right),
+            ],
+          ),
+        ),
+        SizedBox(width: 15.w),
+        _ControlButton(image: AppImages.cycle),
+      ],
+    );
+  }
+}
+
+class _ControlButton extends StatelessWidget {
+  final String image;
+
+  const _ControlButton({required this.image});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(image, width: 24.w, height: 24.w);
+  }
+}
+
+class _PlayPauseButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 46.w,
+      height: 46.w,
+      decoration: BoxDecoration(
+        color: Colors.blueAccent.withOpacity(.5),
+        borderRadius: BorderRadius.circular(22.w),
+      ),
+      child: const Icon(Icons.play_arrow, color: Colors.white, size: 28),
+    );
+  }
+}
+
+const _timeTextStyle = TextStyle(
+  fontSize: 14,
+  color: Colors.grey,
+  fontWeight: FontWeight.w600,
+);
