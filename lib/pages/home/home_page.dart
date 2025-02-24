@@ -12,46 +12,28 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: Padding(
-        padding: EdgeInsets.only(bottom: 50.w),
-        child: Consumer(
-          builder: (context, ref, child) {
-            final album = ref.watch(newAlbumProvider);
-            return album.when(
-              data: (homeData) => _buildContent(homeData),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const Center(child: Text('Oops, something unexpected happened')),
-            );
-          },
-        ),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.w),
+      child: Consumer(
+        builder: (context, ref, child) {
+          final album = ref.watch(newAlbumProvider);
+          return album.when(
+            data: (homeData) => _buildContent(homeData),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (_, __) => const Center(child: Text('Oops, something unexpected happened')),
+          );
+        },
       ),
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: Padding(
-        padding: EdgeInsets.only(left: 10.w),
-        child: Text('Music', style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.bold)),
-      ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Image.asset(AppImages.search, width: 24.w, height: 24.w),
-        ),
-        SizedBox(width: 10.w),
-      ],
-    );
-  }
 
   Widget _buildContent(HomeData homeData) {
     final albumList = homeData.topArtistEntity.artists;
     final songList = homeData.newSongEntity.data ?? [];
 
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: 20.w),
+      padding: EdgeInsets.only(bottom: 60.w),
       child: Column(
         children: [
           SizedBox(height: 15.w),

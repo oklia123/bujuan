@@ -314,12 +314,14 @@ class SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvide
                 child: AnimatedBuilder(
                   animation: _ac,
                   builder: (context, child) {
+                    double bottom = MediaQuery.of(context).padding.bottom;
+                    if(bottom == 0) bottom = 16.h;
                     return Container(
                       height: _ac.value * (widget.maxHeight - widget.minHeight) + widget.minHeight,
                       margin: EdgeInsets.only(
                           left: (1 - _ac.value) * 15.w,
                           right: (1 - _ac.value) * 15.w,
-                          bottom: (1 - _ac.value) * MediaQuery.of(context).padding.bottom),
+                          bottom: (1 - _ac.value) * bottom),
                       padding: widget.padding,
                       decoration: widget.renderPanelSheet
                           ? BoxDecoration(
@@ -797,22 +799,22 @@ class PanelController {
 
 /// if you want to prevent the panel from being dragged using the widget,
 /// wrap the widget with this
-// class IgnoreDraggableWidget extends SingleChildRenderObjectWidget {
-//   final Widget child;
-//
-//   const IgnoreDraggableWidget({super.key,
-//     required this.child,
-//   }) : super(
-//           child: child,
-//         );
-//
-//   @override
-//   IgnoreDraggableWidgetWidgetRenderBox createRenderObject(
-//     BuildContext context,
-//   ) {
-//     return IgnoreDraggableWidgetWidgetRenderBox();
-//   }
-// }
+class IgnoreDraggableWidget extends SingleChildRenderObjectWidget {
+  final Widget child;
+
+  const IgnoreDraggableWidget({super.key,
+    required this.child,
+  }) : super(
+          child: child,
+        );
+
+  @override
+  IgnoreDraggableWidgetWidgetRenderBox createRenderObject(
+    BuildContext context,
+  ) {
+    return IgnoreDraggableWidgetWidgetRenderBox();
+  }
+}
 
 class IgnoreDraggableWidgetWidgetRenderBox extends RenderPointerListener {
   @override

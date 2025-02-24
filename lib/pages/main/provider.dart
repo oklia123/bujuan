@@ -26,7 +26,7 @@ class SlidingPanelShow extends _$SlidingPanelShow {
   @override
   bool build() => false;
 
-  void updatePanelDetail(bool newValue) {
+  void updatePanelShow(bool newValue) {
     state = newValue;
   }
 }

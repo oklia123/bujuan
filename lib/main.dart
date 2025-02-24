@@ -28,7 +28,7 @@ class MyApp extends ConsumerWidget {
       designSize: Size(375, 812),
       builder: (_, __) => MaterialApp.router(
         title: 'Flutter Demo',
-        showPerformanceOverlay: true,
+        showPerformanceOverlay: false,
         theme:
             ThemeData.light().copyWith(scaffoldBackgroundColor: Colors.white, useMaterial3: false,appBarTheme: AppBarTheme(
               backgroundColor: Colors.white,elevation: 0,titleTextStyle: TextStyle(

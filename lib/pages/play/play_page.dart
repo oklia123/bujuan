@@ -1,5 +1,7 @@
 import 'dart:ui';
+import 'package:bujuan_music/pages/play/provider.dart';
 import 'package:bujuan_music/widgets/pa.dart';
+import 'package:bujuan_music/widgets/panel.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,12 +23,20 @@ class PlayPage extends StatelessWidget {
     return Stack(
       children: [
         // 使用const优化静态粒子效果组件
-        const Particles(
-          color: Colors.blueAccent,
-          quantity: 100,
-          ease: 80,
-          staticity: 30,
-        ),
+        Consumer(builder: (context, ref, child) {
+          var watch = ref.watch(getImageColorProvider(CachedNetworkImageProvider(
+              'http://p1.music.126.net/gN6htv5E9WwyOoTASMuvDQ==/109951170483576228.jpg')));
+          if (watch.hasValue) {
+            return Particles(
+              color: watch.value?.lightVibrantColor?.color ?? Colors.red,
+              quantity: 100,
+              ease: 80,
+              vx: -.2,
+              vy: -.4,
+            );
+          }
+          return SizedBox.shrink();
+        }),
         Column(
           children: [
             // 使用Selector优化局部刷新
@@ -51,14 +61,14 @@ class _AnimatedCoverSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final panelValue = ref.watch(slidingPanelDetailDataProvider);
     final panelController = ref.read(panelControllerProvider);
-
     return GestureDetector(
       onTap: panelController.open,
-      child: SizedBox(
+      child: Container(
+        color: Colors.transparent,
         height: 350.w + top,
         child: Stack(
           children: [
-            if (panelValue < 0.1) const _SongInfoBar(),
+            if (panelValue < 0.1) _SongInfoBar(),
             _AnimatedAlbumCover(panelValue: panelValue, top: top),
             _TopControlBar(panelValue: panelValue, top: top),
           ],
@@ -122,7 +132,7 @@ class _TopControlBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       top: -60.w * (1 - panelValue) + top * panelValue,
-      child:  SizedBox(
+      child: SizedBox(
         width: 375.w,
         height: 60.w,
         child: Padding(
@@ -145,14 +155,14 @@ class _SongInfoBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
-      padding: EdgeInsets.symmetric(horizontal: 70.w),
+    return Padding(
+      padding: EdgeInsets.only(left: 70.w, right: 50.w),
       child: SizedBox(
         height: 60.w,
         child: Row(
           children: [
             Text('Lucky Strike',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black)),
             Spacer(),
             Icon(Icons.play_arrow),
           ],
@@ -173,8 +183,7 @@ class _MusicControlsSection extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 30.w),
       child: Column(
         children: [
-          const Text('Lucky Strike',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+          const Text('Lucky Strike', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
           const SizedBox(height: 3),
           const Text('Troy Sivan',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey)),
@@ -182,10 +191,10 @@ class _MusicControlsSection extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const _ProgressBarWithTime(),
+                const Expanded(child: _ProgressBarWithTime()),
                 const SizedBox(height: 4),
                 _PlaybackControls(),
-                SizedBox(height: 25.h + bottom),
+                SizedBox(height: 40.h + bottom),
               ],
             ),
           ),
@@ -201,12 +210,14 @@ class _ProgressBarWithTime extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CurvedProgressBar(
+        IgnoreDraggableWidget(
+            child: CurvedProgressBar(
           progress: .4,
           progressColor: Colors.grey.withOpacity(.5),
           activeProgressColor: Colors.blueAccent.withOpacity(.5),
-        ),
+        )),
         const SizedBox(height: 4),
         const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -264,7 +275,7 @@ class _PlayPauseButton extends StatelessWidget {
       height: 46.w,
       decoration: BoxDecoration(
         color: Colors.blueAccent.withOpacity(.5),
-        borderRadius: BorderRadius.circular(22.w),
+        borderRadius: BorderRadius.circular(23.w),
       ),
       child: const Icon(Icons.play_arrow, color: Colors.white, size: 28),
     );

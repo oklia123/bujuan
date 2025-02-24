@@ -40,7 +40,7 @@ final slidingPanelDetailDataProvider =
 );
 
 typedef _$SlidingPanelDetailData = AutoDisposeNotifier<double>;
-String _$slidingPanelShowHash() => r'd7d5d74b1826f93b2f26bc67a7837da15107db9b';
+String _$slidingPanelShowHash() => r'3f4efcbc53fe7ea6cf4c60bdd31fbe215fb340c1';
 
 /// See also [SlidingPanelShow].
 @ProviderFor(SlidingPanelShow)

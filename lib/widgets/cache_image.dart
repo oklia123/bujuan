@@ -1,3 +1,4 @@
+import 'package:bujuan_music/widgets/loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -43,7 +44,9 @@ class CachedImage extends StatelessWidget {
       width: width,
       height: height,
       color: Colors.grey.shade200,
-      child: const Center(child: CircularProgressIndicator()),
+      child: LoadingIndicator(
+        size: Size((width??0)/3, (width??0)/3),
+      ),
     );
   }
 
@@ -52,7 +55,9 @@ class CachedImage extends StatelessWidget {
       width: width,
       height: height,
       color: Colors.grey.shade300,
-      child: const Icon(Icons.broken_image, color: Colors.grey),
+      child: LoadingIndicator(
+        size: Size((width??0)/3, (width??0)/3),
+      ),
     );
   }
 }

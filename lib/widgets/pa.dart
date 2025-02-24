@@ -183,7 +183,7 @@ class ParticlesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (final particle in particles) {
       final paint = Paint()
-        ..color = color.withOpacity(particle.alpha)
+        ..color = color.withOpacity(particle.alpha*.5)
         ..style = PaintingStyle.fill;
 
       canvas.save();

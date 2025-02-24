@@ -47,6 +47,8 @@ dependencies:
     path: ../bujuan_music_api
   path_provider: ^2.1.5
   cached_network_image: ^3.4.1
+  arc_sidebar: ^0.0.4
+  flutter_sliding_box: ^1.1.5
 
 dev_dependencies:
   flutter_test:
