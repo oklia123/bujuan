@@ -40,15 +40,12 @@ dependencies:
   palette_generator: ^0.3.3+6
   statusbarz: ^1.0.14
   riverpod_annotation: ^2.6.1
-  flutter_zoom_drawer: ^3.2.0
-  we_slide: ^2.4.0
 #  audioplayers: ^6.2.0
   bujuan_music_api:
     path: ../bujuan_music_api
   path_provider: ^2.1.5
   cached_network_image: ^3.4.1
-  arc_sidebar: ^0.0.4
-  flutter_sliding_box: ^1.1.5
+  hugeicons: ^0.0.7
 
 dev_dependencies:
   flutter_test:

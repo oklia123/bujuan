@@ -23,6 +23,23 @@ final panelControllerProvider = AutoDisposeProvider<PanelController>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PanelControllerRef = AutoDisposeProviderRef<PanelController>;
+String _$boxControllerHash() => r'b1439caca859a6d748cdff10e7349927e318cfe2';
+
+/// See also [boxController].
+@ProviderFor(boxController)
+final boxControllerProvider = AutoDisposeProvider<BoxController>.internal(
+  boxController,
+  name: r'boxControllerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$boxControllerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef BoxControllerRef = AutoDisposeProviderRef<BoxController>;
 String _$slidingPanelDetailDataHash() =>
     r'e4414bd1db17594e558c999f5d3408ff0fdd2049';
 
@@ -40,6 +57,22 @@ final slidingPanelDetailDataProvider =
 );
 
 typedef _$SlidingPanelDetailData = AutoDisposeNotifier<double>;
+String _$currentRouterPathHash() => r'8ee92527185c5b0c5b058ea734fdd841314b70ef';
+
+/// See also [CurrentRouterPath].
+@ProviderFor(CurrentRouterPath)
+final currentRouterPathProvider =
+    AutoDisposeNotifierProvider<CurrentRouterPath, String>.internal(
+  CurrentRouterPath.new,
+  name: r'currentRouterPathProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentRouterPathHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CurrentRouterPath = AutoDisposeNotifier<String>;
 String _$slidingPanelShowHash() => r'3f4efcbc53fe7ea6cf4c60bdd31fbe215fb340c1';
 
 /// See also [SlidingPanelShow].

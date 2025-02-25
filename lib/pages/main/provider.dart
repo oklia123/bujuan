@@ -2,12 +2,18 @@ import 'package:bujuan_music/widgets/panel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../widgets/slide.dart';
 
 part 'provider.g.dart';
 
 @riverpod
 PanelController panelController(Ref ref) {
   return PanelController();
+}
+
+@riverpod
+BoxController boxController(Ref ref) {
+  return BoxController();
 }
 
 @riverpod
@@ -20,6 +26,15 @@ class SlidingPanelDetailData extends _$SlidingPanelDetailData {
   }
 }
 
+@riverpod
+class CurrentRouterPath extends _$CurrentRouterPath {
+  @override
+  String build() => '/';
+
+  void updatePanelDetail(String newValue) {
+    state = newValue;
+  }
+}
 
 @riverpod
 class SlidingPanelShow extends _$SlidingPanelShow {
@@ -30,4 +45,3 @@ class SlidingPanelShow extends _$SlidingPanelShow {
     state = newValue;
   }
 }
-

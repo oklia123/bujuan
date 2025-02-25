@@ -1,6 +1,7 @@
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/pages/home/provider.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
+import 'package:bujuan_music/widgets/loading.dart';
 import 'package:bujuan_music_api/api/song/entity/new_song_entity.dart';
 import 'package:bujuan_music_api/api/top/entity/top_artist_entity.dart';
 import 'package:flutter/material.dart';
@@ -13,20 +14,19 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10.w),
+      padding: EdgeInsets.only(bottom: 20.w),
       child: Consumer(
         builder: (context, ref, child) {
           final album = ref.watch(newAlbumProvider);
           return album.when(
             data: (homeData) => _buildContent(homeData),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: LoadingIndicator()),
             error: (_, __) => const Center(child: Text('Oops, something unexpected happened')),
           );
         },
       ),
     );
   }
-
 
   Widget _buildContent(HomeData homeData) {
     final albumList = homeData.topArtistEntity.artists;
@@ -38,9 +38,9 @@ class HomePage extends StatelessWidget {
         children: [
           SizedBox(height: 15.w),
           Image.asset(AppImages.banner, width: 340.w, height: 148.w, fit: BoxFit.cover),
-          _buildTitle('Top Album',onTap: (){}),
+          _buildTitle('Top Album', onTap: () {}),
           _buildAlbumList(albumList),
-          _buildTitle('Song List',onTap: (){}),
+          _buildTitle('Song List', onTap: () {}),
           _buildSongList(songList),
         ],
       ),

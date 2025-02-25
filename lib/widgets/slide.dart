@@ -1,637 +1,936 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
-/// A backdrop widget that displaying contextual and actionable content. =]
-// ignore: must_be_immutable
-class WeSlide extends StatefulWidget {
-  /// This is the widget that will be below as a footer,
-  /// this can be used as a [BottomNavigationBar]
-  final Widget? footer;
-
-  /// This is the widget that will be on top as a AppBar,
-  /// this can be used as a [AppBar]
-  final Widget? appBar;
-
-  /// This is the widget that will be hided with [Panel].
-  /// You can fit any widget. This parameter is required
-  final Widget body;
-
-  /// This is the widget that will slide over the [Body].
-  /// You can fit any widget.
-  final Widget? panel;
-
-  /// This is the header that will be over the [Panel].
-  /// You can fit any widget.
-  final Widget? panelHeader;
-
-  /// This is the initial value that set the panel min height.
-  /// If the value is greater than 0, panel will be this size over [body]
-  /// By default is [150.0]. Set [0.0] if you want to hide [Panel]
-  final double panelMinSize;
-
-  /// This is the value that set the panel max height.
-  /// When slide up the panel this value define the max height
-  /// that panel will be over [Body]. By default is [400.0]
-  /// if you want that panel cover the whole [Body], set with
-  /// MediaQuery.of(context).size.height
-  final double panelMaxSize;
-
-  /// This is the value that set the panel width
-  /// by default is MediaQuery.of(context).size.width
-  final double? panelWidth;
-
-  /// Set this value to create a border radius over Panel.
-  /// When panelBorderRadiusBegin is diffrent from panelBorderRadiusEnd
-  /// and the panel is slide up, this create an animation border over panel
-  /// By default is 0.0
-  final double panelBorderRadiusBegin;
-
-  /// Set this value to create a border radius over Panel.
-  /// When panelBorderRadiusBegin is diffrent from panelBorderRadiusEnd
-  /// and the panel is slide up, this create an animation border over panel
-  /// By default is 0.0
-  final double panelBorderRadiusEnd;
-
-  /// Set this value to create a border radius over Body.
-  /// When bodyBorderRadiusBegin is diffrent from bodyBorderRadiusEnd
-  /// and the panel is slide up, this create an animation border over body
-  /// By default is 0.0
-  final double bodyBorderRadiusBegin;
-
-  /// Set this value to create a border radius over Body.
-  /// When bodyBorderRadiusBegin is diffrent from bodyBorderRadiusEnd
-  /// and the panel is slide up, this create an animation border over body.
-  /// By default is 0.0
-  final double bodyBorderRadiusEnd;
-
-  /// This is the value that set the body width.
-  /// By default is MediaQuery.of(context).size.width
-  final double? bodyWidth;
-
-  /// Set this value to create a parallax effect when the panel is slide up.
-  /// By default is 0.1
-  final double parallaxOffset;
-
-  /// This is the value that set the footer height.
-  /// by default is 60.0
-  final double footerHeight;
-
-  /// This is the value that set the appbar height.
-  /// by default is 80.0
-  final double appBarHeight;
-
-  /// This is the value that defines opacity
-  /// overlay effect bethen body and panel.
-  final double overlayOpacity;
-
-  /// This is the value that creates an image filter
-  /// that applies a Gaussian blur.
-  final double blurSigma;
-
-  /// This is the value that defines Transform scale begin effect
-  /// By default is 1.0
-  final double transformScaleBegin;
-
-  /// This is the value that defines Transform scale end effect
-  /// by default is 0.9
-  final double transformScaleEnd;
-
-  /// This is the value that defines overlay color effect.
-  /// By default is Colors.black
-  final Color overlayColor;
-
-  /// This is the value that defines blur color effect.
-  /// By default is Colors.black
-  final Color blurColor;
-
-  /// This is the value that defines background color.
-  /// By default is Colors.black end should be the same as [body]
-  final Color backgroundColor;
-
-  /// This is the value that defines if you want to hide the footer.
-  /// By default is true
-  final bool hideFooter;
-
-  /// This is the value that defines if you want to hide the [panelHeader].
-  /// By default is true
-  final bool hidePanelHeader;
-
-  /// This is the value that defines if you want to enable paralax effect.
-  /// By default is false
-  final bool parallax;
-
-  /// This is the value that defines if you want
-  /// to enable transform scale effect. By default is false
-  final bool transformScale;
-
-  /// This is the value that defines if you want
-  /// to enable overlay effect. By default is false
-  final bool overlay;
-
-  /// This is the value that defines if you want
-  /// to enable Gaussian blur effect. By default is false
-  final bool blur;
-
-  /// This is the value that defines if you want
-  /// to enable Gaussian blur effect. By default is false
-  final bool hideAppBar;
-
-  /// The [isDismissible] parameter specifies whether the panel
-  /// will be dismissed when user taps on the screen.
-  final bool isDismissible;
-
-  /// This is the value that need up sliding panel if you want
-  /// to enable Slide up through panel. By default is true
-  final bool isUpSlide;
-
-  /// This is the value that create a fade transition over panel header
-  final List<TweenSequenceItem<double>> fadeSequence;
-
-  /// This is the value that sets the duration of the animation.
-  /// By default is 300 milliseconds
-  final Duration animateDuration;
-
-  /// This object used to control animations, using methods like hide or show
-  /// to display panel or check if is visible with variable [isOpened]
-  WeSlideController? controller;
-
-  /// This object used to control additional animation  for footer
-  WeSlideController? footerController;
-
-  /// WeSlide Constructor
-  WeSlide({
-    Key? key,
-    this.footer,
-    this.appBar,
-    required this.body,
-    this.panel,
-    this.panelHeader,
-    this.panelMinSize = 150.0,
-    this.panelMaxSize = 400.0,
-    this.panelWidth,
-    this.panelBorderRadiusBegin = 0.0,
-    this.panelBorderRadiusEnd = 0.0,
-    this.bodyBorderRadiusBegin = 0.0,
-    this.bodyBorderRadiusEnd = 0.0,
-    this.bodyWidth,
-    this.transformScaleBegin = 1.0,
-    this.transformScaleEnd = 0.85,
-    this.parallaxOffset = 0.1,
-    this.overlayOpacity = 0.0,
-    this.blurSigma = 5.0,
-    this.overlayColor = Colors.black,
-    this.blurColor = Colors.black,
-    this.backgroundColor = Colors.black,
-    this.footerHeight = 60.0,
-    this.appBarHeight = 80.0,
-    this.hideFooter = true,
-    this.hidePanelHeader = true,
-    this.parallax = false,
-    this.transformScale = false,
-    this.overlay = false,
-    this.blur = false,
-    this.hideAppBar = true,
-    this.isDismissible = true,
-    this.isUpSlide = true,
-    List<TweenSequenceItem<double>>? fadeSequence,
-    this.animateDuration = const Duration(milliseconds: 300),
+class SlidingBox extends StatefulWidget {
+  SlidingBox({
+    super.key,
     this.controller,
-    this.footerController,
-  })  : /*assert(body != null, 'body could not be null'),*/
-        assert(panelMinSize >= 0.0, 'panelMinSize cannot be negative'),
-        assert(footerHeight >= 0.0, 'footerHeight cannot be negative'),
-        assert(appBarHeight >= 0.0, 'appBarHeight cannot be negative'),
-        assert(panel != null, 'panel could not be null'),
-        assert(panelMaxSize >= panelMinSize,
-        'panelMaxSize cannot be less than panelMinSize'),
-        fadeSequence = fadeSequence ??
-            [
-              TweenSequenceItem<double>(
-                  weight: 1.0, tween: Tween(begin: 1, end: 0)),
-              TweenSequenceItem<double>(
-                  weight: 8.0, tween: Tween(begin: 0, end: 0)),
-            ],
-        super(key: key) {
-    if (controller == null) {
-      // ignore: unnecessary_this
-      this.controller = WeSlideController();
-    }
-    if (footerController == null) {
-      // ignore: unnecessary_this
-      this.footerController = WeSlideController(initial: true);
-    }
-  }
+    this.width,
+    this.minHeight = 200,
+    this.maxHeight = 400,
+    this.color = Colors.white,
+    this.borderRadius = const BorderRadius.only(
+      topLeft: Radius.circular(30),
+      topRight: Radius.circular(30),
+    ),
+    this.style = BoxStyle.none,
+    this.body,
+    this.bodyBuilder,
+    this.physics = const BouncingScrollPhysics(),
+    this.draggable = true,
+    this.draggableIcon = Icons.remove_rounded,
+    this.draggableIconColor = const Color(0xff9a9a9a),
+    this.draggableIconVisible = true,
+    this.draggableIconBackColor = const Color(0x22777777),
+    this.collapsed = false,
+    this.animationCurve = Curves.fastOutSlowIn,
+    this.animationDuration = const Duration(milliseconds: 100),
+    this.backdrop,
+    this.onBoxSlide,
+    this.onBoxClose,
+    this.onBoxOpen,
+    this.onBoxHide,
+    this.onBoxShow,
+    this.onSearchBoxHide,
+    this.onSearchBoxShow,
+  }) : assert(
+          backdrop?.appBar?.leading == null || controller != null,
+          "controller must not be null",
+        );
+
+  /// It can be used to control the state of sliding box and search box.
+  final BoxController? controller;
+
+  /// The [width] of the sliding box.
+  final double? width;
+
+  /// The height of the sliding box when fully [collapsed].
+  final double? minHeight;
+
+  /// The height of the sliding box when fully opened.
+  final double? maxHeight;
+
+  /// The [color] to fill the background of the sliding box.
+  final Color? color;
+
+  /// The corners of the sliding box are rounded by this.
+  final BorderRadius? borderRadius;
+
+  /// The styles behind of the sliding box that includes shadow, sheet, none.
+  final BoxStyle? style;
+
+  /// A widget that slides from [minHeight] to [maxHeight] and is placed on the
+  /// backdrop.
+  final Widget? body;
+
+  /// Provides a ScrollController to attach to a scrollable widget in the box
+  /// and current box position. If [body] and [bodyBuilder] are both non-null,
+  /// [body] will be used.
+  final Widget Function(
+    ScrollController scrollController,
+    double boxPosition,
+  )? bodyBuilder;
+
+  /// Gets a ScrollPhysic, the [physics] determines how the scroll view
+  /// continues to animate after the user stops dragging the scroll view.
+  final ScrollPhysics? physics;
+
+  /// Allows toggling of draggability of the sliding box. if set this to false,
+  /// the sliding box cannot be dragged up or down.
+  final bool? draggable;
+
+  /// A Icon Widget that is placed in top of the box.
+  /// Gets a IconData.
+  final IconData? draggableIcon;
+
+  /// The color of the [draggableIcon].
+  /// the position of the icon is top of the box.
+  final Color? draggableIconColor;
+
+  /// If set to false, the [draggableIcon] hides. Use the controller to
+  /// open and close sliding box by taps.
+  final bool? draggableIconVisible;
+
+  /// The color to fill the background of the [draggableIcon] icon.
+  /// the position of the icon is top of the box.
+  final Color? draggableIconBackColor;
+
+  /// If set to true, the state of the box is [collapsed].
+  final bool? collapsed;
+
+  /// The [animationCurve] defines the easier behavior of the box animation.
+  final Curve? animationCurve;
+
+  /// The [animationDuration] defines the time for the box animation to
+  /// complete.
+  final Duration? animationDuration;
+
+  /// A Widget that is placed under the box, the value should be filled with
+  /// the [Backdrop] object.
+  final Backdrop? backdrop;
+
+  /// This callback is called when the sliding box slides around with position
+  /// of the box. the position is a double value between 0.0 and 1.0,
+  /// where 0.0 is fully collapsed and 1.0 is fully opened.
+  final ValueChanged<double>? onBoxSlide;
+
+  /// This callback is called when the sliding box is fully closed.
+  final VoidCallback? onBoxClose;
+
+  /// This callback is called when the sliding box is fully opened.
+  final VoidCallback? onBoxOpen;
+
+  /// This callback is called when the sliding box is invisible.
+  final VoidCallback? onBoxHide;
+
+  /// This callback is called when the sliding box is visible.
+  final VoidCallback? onBoxShow;
+
+  /// This callback is called when the search box is invisible.
+  final VoidCallback? onSearchBoxHide;
+
+  /// This callback is called when the search box is visible.
+  final VoidCallback? onSearchBoxShow;
 
   @override
-  _WeSlideState createState() => _WeSlideState();
+  State<SlidingBox> createState() => _SlidingBoxState();
 }
 
-class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
-  // Main Animation Controller
-  late AnimationController _ac;
+class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
 
-  // Panel Border Radius Effect[Tween]
-  late Animation<double> _panelBorderRadius;
-  // Body Border Radius Effect [Tween]
-  late Animation<double> _bodyBorderRadius;
-  // Scale Animation Effect [Tween]
-  late Animation<double> _scaleAnimation;
-  // PanelHeader animation Effect [Tween]
   late Animation<double> _fadeAnimation;
-  // Footer Animation Controller
-  late AnimationController _acFooter;
+  late Animation<double> _fadeAnimationReverse;
 
-  // Get current controller
-  WeSlideController get _effectiveController => widget.controller!;
-  WeSlideController get _effectiveFooterController => widget.footerController!;
-
-  // Check if panel is visible
-  bool get _isPanelVisible =>
-      _ac.status == AnimationStatus.completed ||
-          _ac.status == AnimationStatus.forward;
-  bool get _isFooterVisible =>
-      _acFooter.status == AnimationStatus.completed ||
-          _acFooter.status == AnimationStatus.forward;
+  late ScrollController _scrollController;
+  late double _boxWidth;
+  late double _backdropWidth;
+  bool _isBoxVisible = true;
+  bool _isBoxOpen = true;
+  bool _isBoxAnimating = false;
 
   @override
   void initState() {
-    // Subscribe to animated when value change
-    _effectiveController.addListener(_animatedPanel);
-    _effectiveFooterController.addListener(_animatedFooter);
-    // Animation controller;
-    _ac = AnimationController(
-        vsync: this,
-        duration: widget.animateDuration,
-        value: _effectiveController.isOpened ? 1 : 0);
-    _acFooter = AnimationController(
-        vsync: this,
-        duration: widget.animateDuration,
-        value: _effectiveFooterController.isOpened ? 1 : 0); // show by default
-    // panel Border radius animation
-
-    _panelBorderRadius = Tween<double>(
-        begin: widget.panelBorderRadiusBegin,
-        end: widget.panelBorderRadiusEnd)
-        .animate(_ac);
-    // body border radius animation
-
-    _bodyBorderRadius = Tween<double>(
-        begin: widget.bodyBorderRadiusBegin,
-        end: widget.bodyBorderRadiusEnd)
-        .animate(_ac);
-    // Transform scale animation
-
-    _scaleAnimation = Tween<double>(
-        begin: widget.transformScaleBegin, end: widget.transformScaleEnd)
-        .animate(_ac);
-    // Fade Animation sequence
-    _fadeAnimation = TweenSequence(widget.fadeSequence).animate(_ac);
-
-    // Super Init State
     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: widget.animationDuration,
+      reverseDuration: widget.animationDuration,
+      value: widget.collapsed == true ? 0.0 : 1.0,
+    )..addListener(() {
+        if (widget.onBoxSlide != null) {
+          widget.onBoxSlide!.call(_animationController.value);
+        }
+        if (widget.onBoxClose != null && _isBoxOpen && _animationController.value == 0.0) {
+          widget.onBoxClose!.call();
+        }
+        if (widget.onBoxOpen != null && !_isBoxOpen && _animationController.value == 1.0) {
+          widget.onBoxOpen!.call();
+        }
+      });
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: widget.animationCurve!,
+        reverseCurve: widget.animationCurve,
+      ),
+    );
+    _fadeAnimationReverse = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: widget.animationCurve!,
+        reverseCurve: widget.animationCurve,
+      ),
+    );
+    _scrollController = ScrollController();
+    _isBoxOpen = !widget.collapsed!;
   }
 
-  /// Required for resubscribing when hot reload occurs [ValueNotifier]
   @override
-  void didUpdateWidget(WeSlide oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.controller?.removeListener(_animatedPanel);
-    widget.controller?.addListener(_animatedPanel);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _boxWidth = widget.width ?? MediaQuery.of(context).size.width;
+    _backdropWidth = widget.backdrop?.width ?? MediaQuery.of(context).size.width;
   }
 
-  /// Animate the panel [ValueNotifier]
-  void _animatedPanel() {
-    if (_effectiveController.value != _isPanelVisible) {
-      _ac.fling(velocity: _isPanelVisible ? -2.0 : 2.0);
-    }
-  }
-
-  /// Animate the footer [ValueNotifier]
-  void _animatedFooter() {
-    if (_effectiveFooterController.value != _isFooterVisible) {
-      _acFooter.fling(velocity: _isFooterVisible ? -2.0 : 2.0);
-    }
-  }
-
-  /// Dispose
   @override
   void dispose() {
-    ///Animation Controller
-    _ac.dispose();
-    _acFooter.dispose();
-
-    /// ValueNotifier
-    _effectiveController.dispose();
+    _animationController.dispose();
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  /// Gesture Vertical Update [GestureDetector]
-  void _handleVerticalUpdate(DragUpdateDetails updateDetails) {
-    var delta = updateDetails.primaryDelta!;
-    var fractionDragged = delta / widget.panelMaxSize;
-    if (widget.isUpSlide == false && _effectiveController.value == false) {
-      return;
-    }
-    _ac.value -= 1.5 * fractionDragged;
-  }
-
-  /// Gesture Vertical End [GestureDetector]
-  void _handleVerticalEnd(DragEndDetails endDetails) {
-    var velocity = endDetails.primaryVelocity!;
-
-    if (velocity > 0.0) {
-      _ac.reverse().then((x) {
-        _effectiveController.value = false;
-      });
-    } else if (velocity < 0.0) {
-      if (widget.isUpSlide) {
-        _ac.forward().then((x) {
-          _effectiveController.value = true;
-        });
-      }
-    } else if (_ac.value >= 0.5 && endDetails.primaryVelocity == 0.0) {
-      _ac.forward().then((x) {
-        _effectiveController.value = true;
-      });
-    } else {
-      _ac.reverse().then((x) {
-        _effectiveController.value = false;
-      });
-    }
-  }
-
-  // Get Body Animation [Paralax]
-  Animation<Offset> _getAnimationOffSet(
-      {required double minSize, required double maxSize}) {
-    final _closedPercentage =
-        (widget.panelMaxSize - minSize) / widget.panelMaxSize;
-
-    final _openPercentage =
-        (widget.panelMaxSize - maxSize) / widget.panelMaxSize;
-
-    return Tween<Offset>(
-        begin: Offset(0.0, _closedPercentage),
-        end: Offset(0.0, _openPercentage))
-        .animate(_ac);
-  }
-
-  //Get Panel size
-  double _getPanelSize() {
-    var _size = 0.0;
-    /* If footer is visible*/
-    if (!widget.hideFooter && widget.footer != null) {
-      _size += widget.footerHeight;
-    }
-    /* If appbar is visible*/
-    if (!widget.hideAppBar && widget.appBar != null) {
-      _size += widget.appBarHeight;
-    }
-
-    return _size;
-  }
-
-  /* Get panel maxsize location*/
-  double _getPanelLocation() {
-    var _location = widget.panelMaxSize;
-    if (widget.appBar != null && !widget.hideAppBar) {
-      _location += -widget.appBarHeight;
-    }
-    return _location;
-  }
-
-  double _getFooterOffset() {
-    final offset = widget.hideFooter
-        ? (_ac.value * -widget.footerHeight +
-        (1 - _acFooter.value) * -widget.footerHeight)
-        : .0;
-    if (offset < -widget.footerHeight) {
-      return -widget.footerHeight;
-    } else if (offset > widget.footerHeight) {
-      return widget.footerHeight;
-    } else {
-      return offset;
-    }
-  }
-
-  /* Get Body location*/
-  double _getBodyLocation() {
-    var _location = 0.0;
-
-    /* if appbar */
-    if (widget.appBar != null) {
-      _location += widget.appBarHeight;
-    }
-
-    /* if paralax*/
-    if (widget.parallax) {
-      _location += _ac.value *
-          (widget.panelMaxSize - widget.panelMinSize) *
-          -widget.parallaxOffset;
-    }
-    return _location;
-  }
-
-  double _getBodyHeight() {
-    var _size = widget.panelMinSize;
-    /* If appbar is visible*/
-    if (widget.appBar != null) _size += widget.appBarHeight;
-
-    /* if no panelMinSize value*/
-    if (widget.panelMinSize == 0.0 && widget.footer != null) {
-      _size += widget.footerHeight;
-    }
-
-    return _size;
   }
 
   @override
   Widget build(BuildContext context) {
-    //Get MediaQuery Sizes
-    final _height = MediaQuery.of(context).size.height;
-    final _width = MediaQuery.of(context).size.width;
+    if (widget.controller != null) widget.controller!._addState(this);
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        if (widget.backdrop != null) _backdrop(),
+        if (_isBoxVisible == true) _body(),
+      ],
+    );
+  }
 
-    return Container(
-      height: _height,
-      color: widget.backgroundColor, // Same as body,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          /** Body widget **/
-          AnimatedBuilder(
-            animation: Listenable.merge([_ac, _acFooter]),
-            builder: (context, child) {
-              return Positioned(
-                top: _getBodyLocation(),
-                child: Transform.scale(
-                  scale: widget.transformScale ? _scaleAnimation.value : 1.0,
-                  alignment: Alignment.bottomCenter,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(_bodyBorderRadius.value),
-                      topRight: Radius.circular(_bodyBorderRadius.value),
-                    ),
-                    child: SizedBox(
-                      height: _height - _getBodyHeight() - _getFooterOffset(),
-                      width: widget.bodyWidth ?? _width,
-                      child: child,
-                    ),
-                  ),
+  /// Returns a Widget that placed in [Backdrop.body].
+  Widget _backdrop() {
+    return _gestureHandler(
+      dragUpdate: widget.draggable!,
+      dragEnd: widget.draggable!,
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (_, child) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              width: _backdropWidth,
+              height: MediaQuery.of(context).size.height,
+              child: Container(
+                decoration: BoxDecoration(
+                  color:
+                      widget.backdrop?.backgroundGradient == null ? widget.backdrop?.color : null,
+                  gradient: widget.backdrop?.backgroundGradient,
                 ),
-              );
-            },
-            child: widget.body,
-          ),
-          /** Enable Blur Effect **/
-          if (widget.blur)
-            AnimatedBuilder(
-              animation: _ac,
-              builder: (context, _) {
-                /** Fix problem with body scroll */
-                if (_ac.value <= 0) return const SizedBox.shrink();
-                return BackdropFilter(
-                  filter: ImageFilter.blur(
-                      sigmaX: widget.blurSigma * _ac.value,
-                      sigmaY: widget.blurSigma * _ac.value),
-                  child: Container(
-                    color: widget.blurColor.withOpacity(0.1),
-                  ),
-                );
-              },
-            ),
-          /** Enable Overlay Effect **/
-          if (widget.overlay)
-            AnimatedBuilder(
-              animation: _ac,
-              builder: (context, _) {
-                return Container(
-                  color: _ac.value == 0.0
-                      ? null
-                      : widget.overlayColor
-                      .withOpacity(widget.overlayOpacity * _ac.value),
-                );
-              },
-            ),
-          /** Dismiss Panel **/
-          ValueListenableBuilder(
-            valueListenable: _effectiveController,
-            builder: (_, __, ___) {
-              if (_effectiveController.isOpened && widget.isDismissible) {
-                return GestureDetector(
-                  onTap: _effectiveController.hide,
-                  child: Container(
-                    color: Colors.transparent,
-                  ),
-                );
-              }
-              return const SizedBox();
-            },
-          ),
-          /** Panel widget **/
-          AnimatedBuilder(
-            animation: Listenable.merge([_ac, _acFooter]),
-            builder: (_, child) {
-              return SlideTransition(
-                position: _getAnimationOffSet(
-                    maxSize: _getPanelLocation(),
-                    minSize: widget.panelMinSize + _getFooterOffset()),
-                child: GestureDetector(
-                  onVerticalDragUpdate: _handleVerticalUpdate,
-                  onVerticalDragEnd: _handleVerticalEnd,
-                  child: AnimatedContainer(
-                    height: widget.panelMaxSize,
-                    width: widget.panelWidth ?? _width,
-                    duration: const Duration(milliseconds: 200),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(_panelBorderRadius.value),
-                        topRight: Radius.circular(_panelBorderRadius.value),
+                child: Stack(
+                  children: [
+                    Container(
+                      transform: widget.backdrop!.moving == true
+                          ? Matrix4.translationValues(
+                              0.0,
+                              -((_animationController.value *
+                                      ((widget.maxHeight! -
+                                              MediaQuery.of(context).viewInsets.bottom) -
+                                          widget.minHeight!)) *
+                                  0.2),
+                              0.0,
+                            )
+                          : null,
+                      margin: EdgeInsets.only(
+                        bottom: _isBoxVisible
+                            ? widget.minHeight! > 0
+                                ? widget.minHeight! - 25
+                                : 0
+                            : 0,
                       ),
-                      child: child,
+                      child: widget.backdrop!.fading == true
+                          ? AnimatedOpacity(
+                              duration: Duration(milliseconds: 250),
+                              opacity: 1.0 - _animationController.value,
+                              child: widget.backdrop!.body,
+                            )
+                          : widget.backdrop!.body,
                     ),
-                  ),
+                    if (widget.backdrop?.overlay == true)
+                      GestureDetector(
+                        onTap: _onGestureTap,
+                        child: AnimatedBuilder(
+                          animation: _animationController,
+                          builder: (_, child) {
+                            if (_animationController.value > 0.0) {
+                              return AnimatedOpacity(
+                                duration: Duration(milliseconds: 250),
+                                opacity: _animationController.value,
+                                child: Container(
+                                  color: Colors.black.withAlpha(
+                                    (widget.backdrop!.overlayOpacity! * 255).toInt(),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                      ),
+                    if (widget.backdrop?.appBar != null)
+                      SafeArea(
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 5, left: 15),
+                          child: Row(
+                            children: [
+                              if (_isBoxVisible && widget.backdrop?.appBar?.leading != null)
+                                GestureDetector(
+                                  onTap: _onGestureTap,
+                                  child: ValueListenableBuilder<MenuIconValue>(
+                                    valueListenable: widget.controller!,
+                                    builder: (_, value, __) {
+                                      return AnimatedSwitcher(
+                                        duration: const Duration(
+                                          milliseconds: 250,
+                                        ),
+                                        child: Icon(
+                                          key: ValueKey<bool>(value.isOpenMenuIcon!),
+                                          size: widget.backdrop?.appBar?.leading?.size,
+                                          color: widget.backdrop?.appBar?.leading?.color,
+                                          !value.isOpenMenuIcon!
+                                              ? widget.backdrop?.appBar?.leading?.icon
+                                              : HugeIcons.strokeRoundedCancelSquare,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              SizedBox(width: 12),
+                              if (widget.backdrop?.appBar?.title != null)
+                                GestureDetector(
+                                  onTap: _onGestureTap,
+                                  child: widget.backdrop!.appBar!.title!,
+                                ),
+                              Spacer(),
+                              if (widget.backdrop?.appBar?.actions != null)
+                                ...widget.backdrop!.appBar!.actions ?? [],
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              );
-            },
-            child: Stack(
-              children: <Widget>[
-                /** Panel widget **/
-                SizedBox(
-                  height: _height - _getPanelSize(),
-                  child: widget.panel!,
-                ),
-                /** Panel Header widget **/
-                widget.panelHeader != null && widget.hidePanelHeader
-                    ? FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: ValueListenableBuilder(
-                    valueListenable: _effectiveController,
-                    builder: (_, __, ___) {
-                      return IgnorePointer(
-                        ignoring: _effectiveController.value &&
-                            widget.hidePanelHeader,
-                        child: widget.panelHeader,
-                      );
-                    },
-                  ),
-                )
-                    : const SizedBox.shrink(),
-                /** panelHeader widget is null ?**/
-                widget.panelHeader != null && !widget.hidePanelHeader
-                    ? widget.panelHeader!
-                    : const SizedBox.shrink(),
-              ],
+              ),
             ),
-          ),
-          // Footer Widget
-          widget.footer != null
-              ? AnimatedBuilder(
-            animation: Listenable.merge([_ac, _acFooter]),
-            builder: (context, child) {
-              return Positioned(
-                height: widget.footerHeight,
-                bottom: _getFooterOffset(),
-                width: MediaQuery.of(context).size.width,
-                child: widget.footer!,
-              );
-            },
-          )
-              : const SizedBox.shrink(),
-          // AppBar
-          widget.appBar != null
-              ? AnimatedBuilder(
-            animation: _ac,
-            builder: (context, child) {
-              return Positioned(
-                height: widget.appBarHeight,
-                top: widget.hideAppBar
-                    ? _ac.value * -widget.appBarHeight
-                    : 0.0,
-                left: 0,
-                right: 0,
-                child: widget.appBar!,
-              );
-            },
-          )
-              : const SizedBox.shrink(),
-        ],
+          );
+        },
       ),
     );
   }
+
+  /// Returns a Widget that placed in [SlidingBox.body].
+  Widget _body() {
+    return _gestureHandler(
+      dragUpdate: widget.draggable!,
+      dragEnd: widget.draggable!,
+      child: SafeArea(
+        child: AnimatedBuilder(
+          animation: _animationController,
+          builder: (_, child) {
+            return Stack(
+              children: <Widget>[
+                if (widget.style == BoxStyle.sheet)
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: _boxWidth,
+                      height: _animationController.value *
+                              ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
+                                  widget.minHeight!) +
+                          widget.minHeight! +
+                          10,
+                      child: Center(
+                        child: Container(
+                          width: _boxWidth - 50,
+                          decoration: BoxDecoration(
+                            color: widget.color?.withAlpha(
+                              widget.minHeight! > 0
+                                  ? 100
+                                  : (_animationController.value * 100).toInt(),
+                            ),
+                            borderRadius: widget.borderRadius,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: _boxWidth,
+                    height: _animationController.value *
+                            ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
+                                widget.minHeight!) +
+                        widget.minHeight!,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: widget.borderRadius!.topLeft,
+                        topRight: widget.borderRadius!.topRight,
+                        bottomLeft: Radius.circular(
+                          (1.0 - _animationController.value) * widget.borderRadius!.bottomLeft.y,
+                        ),
+                        bottomRight: Radius.circular(
+                          (1.0 - _animationController.value) * widget.borderRadius!.bottomLeft.y,
+                        ),
+                      ),
+                      boxShadow: (widget.style == BoxStyle.shadow)
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(
+                                  widget.minHeight! > 0
+                                      ? 80
+                                      : (_animationController.value * 80).toInt(),
+                                ),
+                                spreadRadius: 7,
+                                blurRadius: 7,
+                                offset: const Offset(0, 3),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Container(
+                      color: widget.color,
+                      child: Stack(
+                        children: [
+                          if (widget.draggableIconVisible! && widget.draggable!)
+                            GestureDetector(
+                              onTap: _onGestureTap,
+                              child: Container(
+                                width: _boxWidth,
+                                height: 30,
+                                color: widget.draggableIconBackColor,
+                                child: Transform(
+                                  transform: Matrix4.translationValues(0, -15, 0),
+                                  child: Icon(
+                                    widget.draggableIcon,
+                                    color: widget.draggableIconColor,
+                                    size: 62,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          Container(
+                            padding: widget.draggableIconVisible! && widget.draggable!
+                                ? const EdgeInsets.only(top: 30)
+                                : null,
+                            child: widget.body,
+                            // child: SingleChildScrollView(
+                            //   controller: _scrollController,
+                            //   physics: (_isBoxOpen && _animationController.value > 0.0)
+                            //       ? widget.physics!
+                            //       : const NeverScrollableScrollPhysics(),
+                            //   child: widget.body != null
+                            //       ? widget.body!
+                            //       : widget.bodyBuilder != null
+                            //           ? widget.bodyBuilder!(
+                            //               _scrollController,
+                            //               _boxPosition,
+                            //             )
+                            //           : const SizedBox.shrink(),
+                            // ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Returns a gesture detector when user dragging on the box or backdrop.
+  Widget _gestureHandler({
+    required Widget child,
+    bool dragUpdate = false,
+    bool dragEnd = false,
+    bool onTap = false,
+  }) {
+    return GestureDetector(
+      onVerticalDragUpdate:
+          dragUpdate ? (DragUpdateDetails details) => _onGestureUpdate(details.delta.dy) : null,
+      onVerticalDragEnd:
+          dragEnd ? (DragEndDetails details) => _onGestureEnd(details.velocity) : null,
+      onTap: () => onTap ? _onGestureTap() : null,
+      child: child,
+    );
+  }
+
+  /// handles when user dragging the sliding box.
+  void _onGestureUpdate(double dy) {
+    if (_isBoxAnimating == true) return;
+    _animationController.value -=
+        dy / ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) - widget.minHeight!);
+    if (widget.controller == null) return;
+    if (_animationController.value == 1.0) {
+      widget.controller!.openBox();
+    } else if (_animationController.value == 0.0) {
+      widget.controller!.closeBox();
+    }
+  }
+
+  /// handles when user stops sliding.
+  void _onGestureEnd(Velocity v) {
+    if (_isBoxAnimating == true) return;
+    _isBoxAnimating = true;
+    if (v.pixelsPerSecond.dy > 0 &&
+        v.pixelsPerSecond.dy > (widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom)) {
+      _animationController
+          .animateTo(
+            0.0,
+            duration: widget.animationDuration,
+            curve: widget.animationCurve!,
+          )
+          .then((_) => _isBoxAnimating = false)
+          .then((_) {
+        if (widget.controller != null) widget.controller!.closeBox();
+      });
+    } else if (v.pixelsPerSecond.dy < 0 &&
+        v.pixelsPerSecond.dy < -(widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom)) {
+      _animationController
+          .animateTo(
+            1.0,
+            duration: widget.animationDuration,
+            curve: widget.animationCurve!,
+          )
+          .then((_) => _isBoxAnimating = false)
+          .then((_) {
+        if (widget.controller != null) widget.controller!.openBox();
+      });
+    } else {
+      if (_animationController.value < 0.7) {
+        _animationController
+            .animateTo(
+              0.0,
+              duration: widget.animationDuration,
+              curve: widget.animationCurve!,
+            )
+            .then((_) => _isBoxAnimating = false)
+            .then((_) {
+          if (widget.controller != null) widget.controller!.closeBox();
+        });
+      } else {
+        _animationController
+            .animateTo(
+              1.0,
+              duration: widget.animationDuration,
+              curve: widget.animationCurve!,
+            )
+            .then((_) => _isBoxAnimating = false)
+            .then((_) {
+          if (widget.controller != null) widget.controller!.openBox();
+        });
+      }
+    }
+  }
+
+  /// handles when user tap on sliding box.
+  void _onGestureTap() {
+    if (_isBoxAnimating == true) return;
+    widget.controller != null && widget.controller!.isBoxOpen
+        ? widget.controller?.closeBox()
+        : widget.controller?.openBox();
+  }
+
+  ///---------------------------------
+  ///BoxController related functions
+  ///---------------------------------
+
+  /// Closes the sliding box with animation (i.e. to the SlidingBox.maxHeight).
+  Future<void> _closeBox() async {
+    if (!_isBoxVisible) return;
+    return _animationController.fling(velocity: -1.0).then((_) {
+      setState(() {
+        _isBoxOpen = false;
+      });
+      // if (_isSearchBoxVisible && widget.controller != null) widget.controller!.hideSearchBox();
+    });
+  }
+
+  /// Opens the sliding box with animation (i.e. to the [SlidingBox.maxHeight]).
+  Future<void> _openBox() async {
+    if (!_isBoxVisible) return;
+    return _animationController.fling(velocity: 1.0).then((_) {
+      setState(() {
+        _isBoxOpen = true;
+      });
+    });
+  }
+
+  /// Hides [SlidingBox.body] (i.e. is invisible).
+  Future<void> _hideBox() {
+    return _animationController.fling(velocity: -1.0).then((_) {
+      setState(() {
+        _isBoxVisible = false;
+      });
+      if (widget.onBoxHide != null) {
+        widget.onBoxHide!.call();
+      }
+    });
+  }
+
+  /// Shows [SlidingBox.body] (i.e. is visible).
+  Future<void> _showBox() {
+    setState(() {
+      _isBoxVisible = true;
+    });
+    if (widget.onBoxShow != null) {
+      widget.onBoxShow!.call();
+    }
+    return _animationController.fling(velocity: 1.0);
+  }
+
+  /// Sets current box position.
+  Future<void> _setPosition(double value) {
+    assert(0.0 <= value && value <= 1.0);
+    return _animateBoxToPosition(value).then((_) {
+      _boxPosition = value;
+    });
+  }
+
+  /// Animate the box position to value - value must between 0.0 and 1.0.
+  Future<void> _animateBoxToPosition(double value) {
+    assert(0.0 <= value && value <= 1.0);
+    return _animationController.animateTo(
+      value,
+      duration: widget.animationDuration,
+      curve: widget.animationCurve!,
+    );
+  }
+
+  /// Sets current box position.
+  set _boxPosition(double value) {
+    assert(0.0 <= value && value <= 1.0);
+    _animationController.value = value;
+  }
+
+  /// Gets current box position.
+  double get _boxPosition => _animationController.value;
+
+  /// Gets current box [SlidingBox.minHeight].
+  double get _minHeight => widget.minHeight!;
+
+  /// Gets current box [SlidingBox.maxHeight].
+  double get _maxHeight => widget.maxHeight!;
+
+  /// Gets current box [SlidingBox.width].
+  double get _boxBodyWidth => _boxWidth;
+
+  /// Gets current box [Backdrop.width].
+  double get _backdropBodyWidth => _backdropWidth;
 }
 
-/// This class used to control animations, using methods like hide or show
-class WeSlideController extends ValueNotifier<bool> {
-  /// WeSlideController Construction
-  // ignore: avoid_positional_boolean_parameters
-  WeSlideController({bool initial = false}) : super(initial);
+class MenuIconValue {
+  const MenuIconValue({this.isOpenMenuIcon = false});
 
-  /// show WeSlide Panel
-  void show() => value = true;
+  final bool? isOpenMenuIcon;
 
-  /// hide WeSlide Panel
-  void hide() => value = false;
+  /// Create a value with close icon menu state.
+  factory MenuIconValue.closeMenu() {
+    return const MenuIconValue(isOpenMenuIcon: false);
+  }
 
-  /// Returns if the WeSlide Panel is opened or not
-  bool get isOpened => value;
+  /// Create a value with open icon menu state.
+  factory MenuIconValue.openMenu() {
+    return const MenuIconValue(isOpenMenuIcon: true);
+  }
+}
+
+class BoxController extends ValueNotifier<MenuIconValue> {
+  BoxController() : super(const MenuIconValue());
+
+  _SlidingBoxState? _boxState;
+
+  void _addState(_SlidingBoxState boxState) {
+    _boxState = boxState;
+  }
+
+  /// Determine if the [SlidingBox.controller] is attached to an instance of the
+  /// [SlidingBox] (this property must be true before any other [BoxController]
+  /// functions can be used).
+  bool get isAttached => _boxState != null;
+
+  /// Closes the sliding box with animation.
+  /// (i.e. to the [SlidingBox.minHeight]).
+  Future<void> closeBox() async {
+    try {
+      assert(isAttached, "BoxController must be attached to a SlidingBox");
+      value = MenuIconValue.openMenu();
+      return _boxState!._closeBox().then((_) => notifyListeners());
+    } catch (e) {
+      return;
+    }
+  }
+
+  /// Opens the sliding box with animation.
+  /// (i.e. to the [SlidingBox.maxHeight]).
+  Future<void> openBox() async {
+    try {
+      assert(isAttached, "BoxController must be attached to a SlidingBox");
+      value = MenuIconValue.closeMenu();
+      return _boxState!._openBox().then((_) => notifyListeners());
+    } catch (e) {
+      return;
+    }
+  }
+
+  /// Hides the sliding box (i.e. is invisible).
+  Future<void> hideBox() async {
+    try {
+      assert(isAttached, "BoxController must be attached to a SlidingBox");
+      return _boxState!._hideBox();
+    } catch (e) {
+      return;
+    }
+  }
+
+  /// Shows the sliding box (i.e. is visible).
+  Future<void> showBox() async {
+    try {
+      assert(isAttached, "BoxController must be attached to a SlidingBox");
+      return _boxState!._showBox();
+    } catch (e) {
+      return;
+    }
+  }
+
+  /// Shows the search box (i.e. is visible).
+  Future<void> showSearchBox() async {
+    try {
+      assert(isAttached, "BoxController must be attached to a SlidingBox");
+      // return _boxState!._showSearchBox();
+    } catch (e) {
+      return;
+    }
+  }
+
+  Future<void> setPosition(double value) async {
+    try {
+      assert(isAttached, "BoxController must be attached to a SlidingBox");
+      assert(0.0 <= value && value <= 1.0);
+      return _boxState!._setPosition(value);
+    } catch (e) {
+      return;
+    }
+  }
+
+  /// Returns current box position (a value between 0.0 and 1.0).
+  double get getPosition {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return _boxState!._boxPosition;
+  }
+
+  /// Returns whether or not the box is open.
+  bool get isBoxOpen {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return _boxState!._isBoxOpen;
+  }
+
+  /// Returns whether or not the box is close or collapsed.
+  bool get isBoxClosed {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return !_boxState!._isBoxOpen;
+  }
+
+  /// Returns whether or not the box is visible.
+  bool get isBoxVisible {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return _boxState!._isBoxVisible;
+  }
+
+  /// Returns current box [SlidingBox.minHeight].
+  double get minHeight {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return _boxState!._minHeight;
+  }
+
+  /// Returns current box [SlidingBox.maxHeight].
+  double get maxHeight {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return _boxState!._maxHeight;
+  }
+
+  /// Returns current box [SlidingBox.width].
+  double get boxWidth {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return _boxState!._boxBodyWidth;
+  }
+
+  /// Returns current backdrop box [Backdrop.width].
+  double get backdropWidth {
+    assert(isAttached, "BoxController must be attached to a SlidingBox");
+    return _boxState!._backdropBodyWidth;
+  }
+}
+
+enum BoxStyle {
+  none,
+  shadow,
+  sheet,
+}
+
+class Backdrop {
+  const Backdrop({
+    this.width,
+    this.fading = false,
+    this.moving = true,
+    this.overlay = false,
+    this.overlayOpacity = 0.5,
+    this.color,
+    this.backgroundGradient,
+    this.appBar,
+    this.body,
+  }) : assert(
+          overlayOpacity != null && 0.0 <= overlayOpacity && overlayOpacity <= 1.0,
+          "overlayOpacity double value must between 0.0 and 1.0",
+        );
+
+  /// The width of the backdrop [body].
+  final double? width;
+
+  /// If set to true, the backdrop [body] moving up when the sliding box opened.
+  final bool? moving;
+
+  /// If set to true, the backdrop [body] fades out when the sliding box opened.
+  final bool? fading;
+
+  /// If set to true, a dark layer displayed overtop the backdrop when
+  /// sliding box opened.
+  final bool? overlay;
+
+  /// The value of the dark layer overtop the backdrop. a double value between
+  /// 0.0 and 1.0.
+  final double? overlayOpacity;
+
+  /// The [color] to fill the background of the backdrop [body].
+  final Color? color;
+
+  /// The gradient color to fill the background of the backdrop. if [color] and
+  /// [backgroundGradient] are both non-null, [color] will be used.
+  final Gradient? backgroundGradient;
+
+  /// An app bar to display at the top of the [SlidingBox.backdrop].
+  final BackdropAppBar? appBar;
+
+  /// A Widget that is placed in the [SlidingBox.backdrop] and behind
+  /// the sliding box.
+  final Widget? body;
+}
+
+class BackdropAppBar {
+  const BackdropAppBar({
+    this.title,
+    this.leading,
+    this.actions,
+  });
+
+  /// A Widget that is placed on the topLeft of the [SlidingBox.backdrop].
+  final Widget? title;
+
+  /// A [Icon] Widget that is placed in left of the BackdropAppBar [title].
+  final HugeIcon? leading;
+
+  /// An search box to display at the top of the [SlidingBox.backdrop].
+  /// if non-null, an search Icon displayed on topRight of the backdrop.
+
+  /// A list of Widgets that is placed on the topRight of the
+  /// [SlidingBox.backdrop].
+  final List<Widget>? actions;
+}
+
+Future<T?> showSlidingBox<T>({
+  required BuildContext context,
+  required SlidingBox box,
+  bool barrierDismissible = true,
+  Color? barrierColor = Colors.black54,
+  String? barrierLabel,
+  bool useSafeArea = true,
+  bool useRootNavigator = false,
+  RouteSettings? routeSettings,
+  Offset? anchorPoint,
+  TraversalEdgeBehavior? traversalEdgeBehavior,
+}) {
+  assert(debugCheckHasMaterialLocalizations(context));
+  final CapturedThemes themes = InheritedTheme.capture(
+    from: context,
+    to: Navigator.of(
+      context,
+      rootNavigator: useRootNavigator,
+    ).context,
+  );
+  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(DialogRoute<T>(
+    context: context,
+    builder: (context) => _slidingBoxModal(context, box),
+    barrierColor: barrierColor,
+    barrierDismissible: barrierDismissible,
+    barrierLabel: barrierLabel,
+    useSafeArea: useSafeArea,
+    settings: routeSettings,
+    themes: themes,
+    anchorPoint: anchorPoint,
+    traversalEdgeBehavior: traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
+  ));
+}
+
+Widget _slidingBoxModal(BuildContext context, SlidingBox box) {
+  BoxController controller = box.controller ?? BoxController();
+  Future.delayed(Duration.zero, () => controller.isAttached ? controller.openBox() : null);
+  return Material(
+    type: MaterialType.transparency,
+    child: SlidingBox(
+      key: box.key,
+      controller: controller,
+      width: box.width,
+      minHeight: 0,
+      maxHeight: box.maxHeight,
+      color: box.color,
+      borderRadius: box.borderRadius,
+      style: box.style,
+      body: box.body,
+      bodyBuilder: box.bodyBuilder,
+      physics: box.physics,
+      draggable: box.draggable,
+      draggableIcon: box.draggableIcon,
+      draggableIconColor: box.draggableIconColor,
+      draggableIconVisible: box.draggableIconVisible,
+      draggableIconBackColor: box.draggableIconBackColor,
+      collapsed: true,
+      animationCurve: box.animationCurve,
+      animationDuration: box.animationDuration,
+      onBoxClose: () {
+        controller.dispose();
+        Navigator.of(context).pop();
+        box.onBoxClose?.call();
+      },
+      onBoxHide: box.onBoxHide,
+      onBoxSlide: box.onBoxSlide,
+      onBoxShow: box.onBoxShow,
+      onBoxOpen: box.onBoxOpen,
+    ),
+  );
 }

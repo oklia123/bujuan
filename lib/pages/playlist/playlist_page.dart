@@ -7,12 +7,10 @@ class PlaylistPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: Center(
-        child: TextButton(onPressed: (){
-          context.pop();
-        }, child: Text('data')),
-      ),
+    return Center(
+      child: TextButton(onPressed: (){
+        context.pop();
+      }, child: Text('data')),
     );
   }
 }

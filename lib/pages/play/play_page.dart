@@ -15,6 +15,7 @@ class PlayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return Container();
     // 缓存媒体查询结果
     final mediaQuery = MediaQuery.of(context);
     final double top = mediaQuery.padding.top;
@@ -23,20 +24,20 @@ class PlayPage extends StatelessWidget {
     return Stack(
       children: [
         // 使用const优化静态粒子效果组件
-        Consumer(builder: (context, ref, child) {
-          var watch = ref.watch(getImageColorProvider(CachedNetworkImageProvider(
-              'http://p1.music.126.net/gN6htv5E9WwyOoTASMuvDQ==/109951170483576228.jpg')));
-          if (watch.hasValue) {
-            return Particles(
-              color: watch.value?.lightVibrantColor?.color ?? Colors.red,
-              quantity: 100,
-              ease: 80,
-              vx: -.2,
-              vy: -.4,
-            );
-          }
-          return SizedBox.shrink();
-        }),
+        // Consumer(builder: (context, ref, child) {
+        //   var watch = ref.watch(getImageColorProvider(CachedNetworkImageProvider(
+        //       'http://p1.music.126.net/gN6htv5E9WwyOoTASMuvDQ==/109951170483576228.jpg')));
+        //   if (watch.hasValue) {
+        //     return Particles(
+        //       color: watch.value?.lightVibrantColor?.color ?? Colors.red,
+        //       quantity: 100,
+        //       ease: 80,
+        //       vx: -.2,
+        //       vy: -.4,
+        //     );
+        //   }
+        //   return SizedBox.shrink();
+        // }),
         Column(
           children: [
             // 使用Selector优化局部刷新
