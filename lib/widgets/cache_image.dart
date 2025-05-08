@@ -27,7 +27,7 @@ class CachedImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: CachedNetworkImage(
-        imageUrl: '$imageUrl?param=${(width??0)*2}y${(height??0)*2}',
+        imageUrl: '$imageUrl?param=500y500',
         width: width,
         height: height,
         fit: fit,

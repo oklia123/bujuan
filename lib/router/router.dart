@@ -31,7 +31,14 @@ GoRouter router(Ref ref) {
       ...AppPages.rootRouter
     ],
   );
-  ref.onDispose(router.dispose); // always clean up after yourselves (:
+  router.routerDelegate.addListener(() {
+    final currentPath = router.state.path ?? '';
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('object-----------------$currentPath');
+      ref.read(currentRouterPathProvider.notifier).updatePanelDetail(currentPath);
+    });
+  });
+  ref.onDispose(router.dispose);
   return router;
 }
 
@@ -44,12 +51,11 @@ class BujuanObserver extends NavigatorObserver {
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
       _showOrHideFooter(route.settings.name ?? '');
 
-
-
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     _showOrHideFooter(previousRoute?.settings.name ?? '');
   }
+
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     _showOrHideFooter(newRoute?.settings.name ?? '');

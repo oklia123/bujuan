@@ -10,10 +10,10 @@ class AppPages {
   static final shellRouter = [
     GoRoute(path: AppRouter.home, builder: (c, s) => const HomePage(), routes: []),
     GoRoute(path: AppRouter.playlist, builder: (c, s) => PlaylistPage()),
-    GoRoute(path: AppRouter.splash, builder: (c, s) => const SplashPage()),
   ];
 
   static final rootRouter = [
     GoRoute(path: AppRouter.login, builder: (c, s) => const LoginPage()),
+    GoRoute(path: AppRouter.splash, builder: (c, s) => const SplashPage()),
   ];
 }

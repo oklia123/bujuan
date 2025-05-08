@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class SlidingBox extends StatefulWidget {
@@ -10,8 +12,8 @@ class SlidingBox extends StatefulWidget {
     this.maxHeight = 400,
     this.color = Colors.white,
     this.borderRadius = const BorderRadius.only(
-      topLeft: Radius.circular(30),
-      topRight: Radius.circular(30),
+      topLeft: Radius.circular(25),
+      topRight: Radius.circular(25),
     ),
     this.style = BoxStyle.none,
     this.body,
@@ -139,9 +141,6 @@ class SlidingBox extends StatefulWidget {
 class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _fadeAnimationReverse;
-
   late ScrollController _scrollController;
   late double _boxWidth;
   late double _backdropWidth;
@@ -168,26 +167,6 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
           widget.onBoxOpen!.call();
         }
       });
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: widget.animationCurve!,
-        reverseCurve: widget.animationCurve,
-      ),
-    );
-    _fadeAnimationReverse = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: widget.animationCurve!,
-        reverseCurve: widget.animationCurve,
-      ),
-    );
     _scrollController = ScrollController();
     _isBoxOpen = !widget.collapsed!;
   }
@@ -289,39 +268,42 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
                         ),
                       ),
                     if (widget.backdrop?.appBar != null)
-                      SafeArea(
+                      GestureDetector(
+                        // onTap: _onGestureTap,
+                        onTap: () {
+                          GetIt.I<ZoomDrawerController>().toggle?.call();
+                        },
+                        onVerticalDragUpdate: (e) {},
                         child: Container(
-                          margin: const EdgeInsets.only(top: 5, left: 15),
+                          padding:
+                              EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 10),
+                          color: Colors.white,
                           child: Row(
                             children: [
                               if (_isBoxVisible && widget.backdrop?.appBar?.leading != null)
-                                GestureDetector(
-                                  onTap: _onGestureTap,
-                                  child: ValueListenableBuilder<MenuIconValue>(
-                                    valueListenable: widget.controller!,
-                                    builder: (_, value, __) {
-                                      return AnimatedSwitcher(
-                                        duration: const Duration(
-                                          milliseconds: 250,
-                                        ),
-                                        child: Icon(
-                                          key: ValueKey<bool>(value.isOpenMenuIcon!),
-                                          size: widget.backdrop?.appBar?.leading?.size,
-                                          color: widget.backdrop?.appBar?.leading?.color,
-                                          !value.isOpenMenuIcon!
-                                              ? widget.backdrop?.appBar?.leading?.icon
-                                              : HugeIcons.strokeRoundedCancelSquare,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
+                                widget.backdrop?.appBar?.leading ?? const SizedBox.shrink(),
+                              // ValueListenableBuilder<MenuIconValue>(
+                              //   valueListenable: widget.controller!,
+                              //   builder: (_, value, __) {
+                              //     return AnimatedSwitcher(
+                              //       duration: const Duration(
+                              //         milliseconds: 250,
+                              //       ),
+                              //       child: Icon(
+                              //         key: ValueKey<bool>(value.isOpenMenuIcon!),
+                              //         size: widget.backdrop?.appBar?.leading?.size,
+                              //         color: widget.backdrop?.appBar?.leading?.color,
+                              //           widget.backdrop?.appBar?.leading?.icon
+                              //         // !value.isOpenMenuIcon!
+                              //         //     ? widget.backdrop?.appBar?.leading?.icon
+                              //         //     : HugeIcons.strokeRoundedBorderFull,
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
                               SizedBox(width: 12),
                               if (widget.backdrop?.appBar?.title != null)
-                                GestureDetector(
-                                  onTap: _onGestureTap,
-                                  child: widget.backdrop!.appBar!.title!,
-                                ),
+                                widget.backdrop!.appBar!.title!,
                               Spacer(),
                               if (widget.backdrop?.appBar?.actions != null)
                                 ...widget.backdrop!.appBar!.actions ?? [],
@@ -344,122 +326,114 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
     return _gestureHandler(
       dragUpdate: widget.draggable!,
       dragEnd: widget.draggable!,
-      child: SafeArea(
-        child: AnimatedBuilder(
-          animation: _animationController,
-          builder: (_, child) {
-            return Stack(
-              children: <Widget>[
-                if (widget.style == BoxStyle.sheet)
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SizedBox(
-                      width: _boxWidth,
-                      height: _animationController.value *
-                              ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
-                                  widget.minHeight!) +
-                          widget.minHeight! +
-                          10,
-                      child: Center(
-                        child: Container(
-                          width: _boxWidth - 50,
-                          decoration: BoxDecoration(
-                            color: widget.color?.withAlpha(
-                              widget.minHeight! > 0
-                                  ? 100
-                                  : (_animationController.value * 100).toInt(),
-                            ),
-                            borderRadius: widget.borderRadius,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (_, child) {
+          return Stack(
+            children: <Widget>[
+              if (widget.style == BoxStyle.sheet)
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: Container(
+                  child: SizedBox(
                     width: _boxWidth,
                     height: _animationController.value *
                             ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
                                 widget.minHeight!) +
-                        widget.minHeight!,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: widget.borderRadius!.topLeft,
-                        topRight: widget.borderRadius!.topRight,
-                        bottomLeft: Radius.circular(
-                          (1.0 - _animationController.value) * widget.borderRadius!.bottomLeft.y,
+                        widget.minHeight! +
+                        10,
+                    child: Center(
+                      child: Container(
+                        width: _boxWidth - 20,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF3F2F2),
+                          borderRadius: widget.borderRadius,
                         ),
-                        bottomRight: Radius.circular(
-                          (1.0 - _animationController.value) * widget.borderRadius!.bottomLeft.y,
-                        ),
-                      ),
-                      boxShadow: (widget.style == BoxStyle.shadow)
-                          ? [
-                              BoxShadow(
-                                color: Colors.black.withAlpha(
-                                  widget.minHeight! > 0
-                                      ? 80
-                                      : (_animationController.value * 80).toInt(),
-                                ),
-                                spreadRadius: 7,
-                                blurRadius: 7,
-                                offset: const Offset(0, 3),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Container(
-                      color: widget.color,
-                      child: Stack(
-                        children: [
-                          if (widget.draggableIconVisible! && widget.draggable!)
-                            GestureDetector(
-                              onTap: _onGestureTap,
-                              child: Container(
-                                width: _boxWidth,
-                                height: 30,
-                                color: widget.draggableIconBackColor,
-                                child: Transform(
-                                  transform: Matrix4.translationValues(0, -15, 0),
-                                  child: Icon(
-                                    widget.draggableIcon,
-                                    color: widget.draggableIconColor,
-                                    size: 62,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          Container(
-                            padding: widget.draggableIconVisible! && widget.draggable!
-                                ? const EdgeInsets.only(top: 30)
-                                : null,
-                            child: widget.body,
-                            // child: SingleChildScrollView(
-                            //   controller: _scrollController,
-                            //   physics: (_isBoxOpen && _animationController.value > 0.0)
-                            //       ? widget.physics!
-                            //       : const NeverScrollableScrollPhysics(),
-                            //   child: widget.body != null
-                            //       ? widget.body!
-                            //       : widget.bodyBuilder != null
-                            //           ? widget.bodyBuilder!(
-                            //               _scrollController,
-                            //               _boxPosition,
-                            //             )
-                            //           : const SizedBox.shrink(),
-                            // ),
-                          ),
-                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            );
-          },
-        ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: _boxWidth,
+                  height: _animationController.value *
+                          ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
+                              widget.minHeight!) +
+                      widget.minHeight!,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: widget.borderRadius!.topLeft,
+                      topRight: widget.borderRadius!.topRight,
+                      bottomLeft: Radius.circular(
+                        (1.0 - _animationController.value) * widget.borderRadius!.bottomLeft.y,
+                      ),
+                      bottomRight: Radius.circular(
+                        (1.0 - _animationController.value) * widget.borderRadius!.bottomLeft.y,
+                      ),
+                    ),
+                    boxShadow: (widget.style == BoxStyle.shadow)
+                        ? [
+                            BoxShadow(
+                              color: Colors.grey.withAlpha(
+                                widget.minHeight! > 0
+                                    ? 80
+                                    : (_animationController.value * 80).toInt(),
+                              ),
+                              spreadRadius: 7,
+                              blurRadius: 7,
+                              offset: const Offset(0, 3),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Container(
+                    color: widget.color,
+                    child: Stack(
+                      children: [
+                        if (widget.draggableIconVisible! && widget.draggable!)
+                          GestureDetector(
+                            onTap: _onGestureTap,
+                            child: Container(
+                              width: _boxWidth,
+                              height: 30,
+                              color: widget.draggableIconBackColor,
+                              child: Transform(
+                                transform: Matrix4.translationValues(0, -15, 0),
+                                child: Icon(
+                                  widget.draggableIcon,
+                                  color: widget.draggableIconColor,
+                                  size: 62,
+                                ),
+                              ),
+                            ),
+                          ),
+                        Container(
+                          padding: widget.draggableIconVisible! && widget.draggable!
+                              ? const EdgeInsets.only(top: 30)
+                              : null,
+                          // child: widget.body,
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            physics: const NeverScrollableScrollPhysics(),
+                            child: widget.body != null
+                                ? widget.body!
+                                : widget.bodyBuilder != null
+                                    ? widget.bodyBuilder!(
+                                        _scrollController,
+                                        _boxPosition,
+                                      )
+                                    : const SizedBox.shrink(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -853,7 +827,7 @@ class BackdropAppBar {
   final Widget? title;
 
   /// A [Icon] Widget that is placed in left of the BackdropAppBar [title].
-  final HugeIcon? leading;
+  final Widget? leading;
 
   /// An search box to display at the top of the [SlidingBox.backdrop].
   /// if non-null, an search Icon displayed on topRight of the backdrop.
@@ -861,76 +835,4 @@ class BackdropAppBar {
   /// A list of Widgets that is placed on the topRight of the
   /// [SlidingBox.backdrop].
   final List<Widget>? actions;
-}
-
-Future<T?> showSlidingBox<T>({
-  required BuildContext context,
-  required SlidingBox box,
-  bool barrierDismissible = true,
-  Color? barrierColor = Colors.black54,
-  String? barrierLabel,
-  bool useSafeArea = true,
-  bool useRootNavigator = false,
-  RouteSettings? routeSettings,
-  Offset? anchorPoint,
-  TraversalEdgeBehavior? traversalEdgeBehavior,
-}) {
-  assert(debugCheckHasMaterialLocalizations(context));
-  final CapturedThemes themes = InheritedTheme.capture(
-    from: context,
-    to: Navigator.of(
-      context,
-      rootNavigator: useRootNavigator,
-    ).context,
-  );
-  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(DialogRoute<T>(
-    context: context,
-    builder: (context) => _slidingBoxModal(context, box),
-    barrierColor: barrierColor,
-    barrierDismissible: barrierDismissible,
-    barrierLabel: barrierLabel,
-    useSafeArea: useSafeArea,
-    settings: routeSettings,
-    themes: themes,
-    anchorPoint: anchorPoint,
-    traversalEdgeBehavior: traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
-  ));
-}
-
-Widget _slidingBoxModal(BuildContext context, SlidingBox box) {
-  BoxController controller = box.controller ?? BoxController();
-  Future.delayed(Duration.zero, () => controller.isAttached ? controller.openBox() : null);
-  return Material(
-    type: MaterialType.transparency,
-    child: SlidingBox(
-      key: box.key,
-      controller: controller,
-      width: box.width,
-      minHeight: 0,
-      maxHeight: box.maxHeight,
-      color: box.color,
-      borderRadius: box.borderRadius,
-      style: box.style,
-      body: box.body,
-      bodyBuilder: box.bodyBuilder,
-      physics: box.physics,
-      draggable: box.draggable,
-      draggableIcon: box.draggableIcon,
-      draggableIconColor: box.draggableIconColor,
-      draggableIconVisible: box.draggableIconVisible,
-      draggableIconBackColor: box.draggableIconBackColor,
-      collapsed: true,
-      animationCurve: box.animationCurve,
-      animationDuration: box.animationDuration,
-      onBoxClose: () {
-        controller.dispose();
-        Navigator.of(context).pop();
-        box.onBoxClose?.call();
-      },
-      onBoxHide: box.onBoxHide,
-      onBoxSlide: box.onBoxSlide,
-      onBoxShow: box.onBoxShow,
-      onBoxOpen: box.onBoxOpen,
-    ),
-  );
 }

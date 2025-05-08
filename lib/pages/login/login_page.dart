@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   inta()async{
     // await BujuanMusicManager().sendSmsCode(phone: '13223087330');
     // await BujuanMusicManager().verifySmsCode(phone: '13223087330', captcha: '8357');
-    await BujuanMusicManager().loginCellPhone(phone: '13223087330',captcha: '8357');
+    // await BujuanMusicManager().loginCellPhone(phone: '13223087330',captcha: '1961');
   }
   @override
   Widget build(BuildContext context) {

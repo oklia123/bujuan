@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum PanelState { open, closed }
@@ -136,7 +138,7 @@ class SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     return Stack(
-      alignment: Alignment.bottomCenter,
+      // alignment: Alignment.bottomCenter,
       children: <Widget>[
         widget.body != null
             ? AnimatedBuilder(
@@ -153,76 +155,55 @@ class SlidingUpPanelState extends State<SlidingUpPanel> with SingleTickerProvide
                   child: widget.body,
                 ),
               )
-            : Container(),
-
-        //the backdrop to overlay on the body
-        !widget.backdropEnabled
-            ? Container()
-            : GestureDetector(
-                onVerticalDragEnd: widget.backdropTapClosesPanel
-                    ? (DragEndDetails dets) {
-                        // only trigger a close if the drag is towards panel close position
-                        if (dets.velocity.pixelsPerSecond.dy > 0) {
-                          _close();
-                        }
-                      }
-                    : null,
-                onTap: widget.backdropTapClosesPanel ? () => _close() : null,
-                child: AnimatedBuilder(
-                    animation: _ac,
-                    builder: (context, _) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        color: _ac.value == 0.0
-                            ? null
-                            : widget.backdropColor.withOpacity(widget.backdropOpacity * _ac.value),
-                      );
-                    }),
-              ),
+            : const SizedBox.shrink(),
 
         //the actual sliding part
         !_isPanelVisible
             ? Container()
-            : _gestureHandler(
-                child: AnimatedBuilder(
-                  animation: _ac,
-                  builder: (context, child) {
-                    double bottom = MediaQuery.of(context).padding.bottom;
-                    if (bottom == 0) bottom = 16.h;
-                    return Container(
-                      height: _ac.value * (widget.maxHeight - widget.minHeight) + widget.minHeight,
-                      margin: EdgeInsets.only(
-                          left: (1 - _ac.value) * 15.w,
-                          right: (1 - _ac.value) * 15.w,
-                          bottom: (1 - _ac.value) * bottom),
-                      padding: widget.padding,
-                      decoration: widget.renderPanelSheet
-                          ? BoxDecoration(
-                              border: widget.border,
-                              borderRadius: BorderRadius.circular((1 - _ac.value) * 16.w),
-                              boxShadow: widget.boxShadow,
-                              color: widget.color,
-                            )
-                          : null,
-                      child: child,
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      Positioned(
-                          top: 0.0,
-                          width: MediaQuery.of(context).size.width -
-                              (widget.margin != null ? widget.margin!.horizontal : 0) -
-                              (widget.padding != null ? widget.padding!.horizontal : 0),
-                          child: SizedBox(
-                            height: widget.maxHeight,
-                            child: widget.panelBuilder!(),
-                          ))
-                    ],
-                  ),
-                ),
-              ),
+            : Consumer(builder: (context,ref,c){
+              return Positioned(
+                  bottom: -100 * (1-ref.watch(boxPanelDetailDataProvider)),
+                  child: _gestureHandler(
+                    child: AnimatedBuilder(
+                      animation: _ac,
+                      builder: (context, child) {
+                        double bottom = MediaQuery.of(context).padding.bottom;
+                        if (bottom == 0) bottom = 16.h;
+                        return Container(
+                          height: _ac.value * (widget.maxHeight - widget.minHeight) + widget.minHeight,
+                          width: MediaQuery.of(context).size.width - (1 - _ac.value) * 30.w,
+                          margin: EdgeInsets.only(
+                              left: (1 - _ac.value) * 15.w,
+                              right: (1 - _ac.value) * 15.w,
+                              bottom: (1 - _ac.value) * bottom),
+                          padding: widget.padding,
+                          decoration: widget.renderPanelSheet
+                              ? BoxDecoration(
+                            border: widget.border,
+                            borderRadius: BorderRadius.circular((1 - _ac.value) * 16.w),
+                            boxShadow: widget.boxShadow,
+                            color: widget.color,
+                          )
+                              : null,
+                          child: child,
+                        );
+                      },
+                      child: Stack(
+                        children: [
+                          Positioned(
+                              top: 0.0,
+                              width: MediaQuery.of(context).size.width -
+                                  (widget.margin != null ? widget.margin!.horizontal : 0) -
+                                  (widget.padding != null ? widget.padding!.horizontal : 0),
+                              child: SizedBox(
+                                height: widget.maxHeight,
+                                child: widget.panelBuilder!(),
+                              ))
+                        ],
+                      ),
+                    ),
+                  ));
+        }),
       ],
     );
   }
@@ -594,4 +575,3 @@ class IgnoreDraggableWidgetWidgetRenderBox extends RenderPointerListener {
   @override
   HitTestBehavior get behavior => HitTestBehavior.opaque;
 }
-
