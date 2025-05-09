@@ -1,41 +1,76 @@
 import 'dart:ui';
+import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
 import '../../common/values/app_images.dart';
+import '../../utils/color_utils.dart';
 import '../../widgets/curved_progress_bar.dart';
 import '../../widgets/slide.dart';
 import '../main/provider.dart';
 
 class PlayPage extends StatelessWidget {
-  final BoxController boxController;
+  const PlayPage({super.key});
 
-  const PlayPage({super.key, required this.boxController});
+
 
   @override
   Widget build(BuildContext context) {
     // 缓存媒体查询结果
     final mediaQuery = MediaQuery.of(context);
     return SizedBox(
-      height: mediaQuery.size.height - mediaQuery.padding.top - 10.w,
+      height: mediaQuery.size.height - mediaQuery.padding.top - 5.w,
       child: Stack(
+        alignment: Alignment.topCenter,
         children: [
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0), // 控制模糊程度
-              child: Container(
-                decoration: BoxDecoration(
-                    gradient:
-                        LinearGradient(colors: [Colors.transparent, Colors.green.withAlpha(40)])),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final color = ref.watch(mediaColorProvider).maybeWhen(
+                        data: (c) => c.dominantColor?.color ?? Colors.green,
+                        orElse: () => Colors.transparent,
+                      );
+                  return TweenAnimationBuilder<Color?>(
+                    tween: ColorTween(
+                      begin: Colors.transparent,
+                      end: ColorUtils.lightenColor(color,.3).withAlpha(60),
+                    ),
+                    duration: Duration(milliseconds: 800),
+                    builder: (context, animatedColor, _) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [Colors.transparent, animatedColor ?? Colors.transparent],
+                              begin: Alignment.topLeft,
+                              end: Alignment.topRight),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ),
-          GestureDetector(
-            onTap: boxController.openBox,
-            child: _SongInfoBar(),
-          )
+          InkWell(
+            onTap: GetIt.I<BoxController>().openBox,
+            child: Column(
+              children: [_SongInfoBar(), SizedBox(height: 80.w), _ProgressBarWithTime()],
+            ),
+          ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 6.w),
+          //   decoration: BoxDecoration(
+          //     color: Theme.of(context).iconTheme.color!.withAlpha(130),
+          //     borderRadius: BorderRadius.circular(3.w)
+          //   ),
+          //   width: 28.w,
+          //   height: 5.w,
+          // ),
         ],
       ),
     );
@@ -47,33 +82,46 @@ class _SongInfoBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
-      return ref.watch(mediaItemProvider).when(
-          data: (mediaItem) => Padding(
-                padding: EdgeInsets.only(left: 20, right: 30.w),
-                child: SizedBox(
-                  height: 60.w,
-                  child: Row(
-                    children: [
-                      CachedImage(
-                        imageUrl: mediaItem?.artUri.toString() ?? '',
-                        width: 40.w,
-                        height: 40.w,
-                        borderRadius: 20.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(mediaItem?.title ?? 'Bujuan',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black)),
-                      Spacer(),
-                      Icon(Icons.play_arrow),
-                    ],
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        Consumer(builder: (context, ref, child) {
+          var watch = ref.watch(mediaItemProvider);
+          return Padding(
+            padding: EdgeInsets.only(left: 20, right: 30.w),
+            child: SizedBox(
+              height: 60.w,
+              child: Row(
+                children: [
+                  CachedImage(
+                    imageUrl: watch.value?.artUri.toString() ?? '',
+                    width: 40.w,
+                    height: 40.w,
+                    borderRadius: 20.w,
                   ),
-                ),
+                  SizedBox(width: 10.w),
+                  Text(watch.value?.title ?? 'Bujuan',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                ],
               ),
-          error: (_, __) => SizedBox(),
-          loading: () => SizedBox());
-    });
+            ),
+          );
+        }),
+        Padding(
+            padding: EdgeInsets.only(right: 10.w),
+            child: Consumer(
+                builder: (context, ref, child) => IconButton(
+                    onPressed: () {
+                      BujuanMusicHandler().playOrPause();
+                    },
+                    icon: Icon(
+                      (ref.watch(playbackStateProvider).value?.playing ?? false)
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
+                      size: 28.w,
+                    )))),
+      ],
+    );
   }
 }
 
@@ -114,24 +162,36 @@ class _ProgressBarWithTime extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IgnoreDraggableWidget(
-            child: CurvedProgressBar(
-          progress: .4,
-          progressColor: Colors.grey.withOpacity(.5),
-          activeProgressColor: Colors.blueAccent.withOpacity(.5),
-        )),
-        const SizedBox(height: 4),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('01:24', style: _timeTextStyle),
-            Text('04:27', style: _timeTextStyle),
-          ],
-        ),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IgnoreDraggableWidget(
+              child: Consumer(
+                  builder: (context, ref, child) => Column(
+                        children: [
+                          CurvedProgressBar(
+                            progress: 0,
+                            progressColor: Colors.grey.withOpacity(.5),
+                            activeProgressColor: Colors.black.withOpacity(.6),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  '${ref.watch(playbackStateProvider).value?.updatePosition.inSeconds}',
+                                  style: _timeTextStyle),
+                              Text(
+                                  '${ref.watch(mediaItemProvider).value?.duration?.inSeconds ?? 0}',
+                                  style: _timeTextStyle),
+                            ],
+                          ),
+                        ],
+                      ))),
+        ],
+      ),
     );
   }
 }

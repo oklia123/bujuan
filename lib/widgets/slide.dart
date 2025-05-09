@@ -1,7 +1,11 @@
+import 'package:bujuan_music/utils/color_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hugeicons/hugeicons.dart';
+
+import '../pages/main/provider.dart';
 
 class SlidingBox extends StatefulWidget {
   SlidingBox({
@@ -275,9 +279,9 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
                         },
                         onVerticalDragUpdate: (e) {},
                         child: Container(
-                          padding:
-                              EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 10),
-                          color: Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).padding.top, left: 12, right: 6),
                           child: Row(
                             children: [
                               if (_isBoxVisible && widget.backdrop?.appBar?.leading != null)
@@ -331,27 +335,47 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
         builder: (_, child) {
           return Stack(
             children: <Widget>[
-              if (widget.style == BoxStyle.sheet)
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: SizedBox(
-                    width: _boxWidth,
-                    height: _animationController.value *
-                            ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
-                                widget.minHeight!) +
-                        widget.minHeight! +
-                        10,
-                    child: Center(
-                      child: Container(
-                        width: _boxWidth - 20,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF3F2F2),
-                          borderRadius: widget.borderRadius,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              // if (widget.style == BoxStyle.sheet)
+              //   Align(
+              //     alignment: Alignment.bottomCenter,
+              //     child: SizedBox(
+              //       width: _boxWidth,
+              //       height: _animationController.value *
+              //               ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
+              //                   widget.minHeight!) +
+              //           widget.minHeight! +
+              //           10,
+              //       child: Center(
+              //         child: Consumer(
+              //           builder: (context, ref, child) {
+              //             final color = ref.watch(mediaColorProvider).maybeWhen(
+              //                   data: (c) => c.dominantColor?.color ?? Colors.green,
+              //                   orElse: () => Theme.of(context).scaffoldBackgroundColor,
+              //                 );
+              //             return TweenAnimationBuilder<Color?>(
+              //               tween: ColorTween(
+              //                 begin: Theme.of(context).scaffoldBackgroundColor,
+              //                 end: ColorUtils.lightenColor(color,.8).withAlpha(200),
+              //               ),
+              //               duration: Duration(milliseconds: 800),
+              //               builder: (context, animatedColor, _) {
+              //                 return Container(
+              //                   width: _boxWidth - 15,
+              //                   decoration: BoxDecoration(
+              //                     borderRadius: widget.borderRadius,
+              //                     gradient: LinearGradient(colors: [
+              //                       Theme.of(context).scaffoldBackgroundColor,
+              //                       animatedColor ?? Colors.transparent
+              //                     ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+              //                   ),
+              //                 );
+              //               },
+              //             );
+              //           },
+              //         ),
+              //       ),
+              //     ),
+              //   ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -375,14 +399,14 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
                     boxShadow: (widget.style == BoxStyle.shadow)
                         ? [
                             BoxShadow(
-                              color: Colors.grey.withAlpha(
+                              color: Colors.black.withAlpha(
                                 widget.minHeight! > 0
-                                    ? 80
-                                    : (_animationController.value * 80).toInt(),
+                                    ? 60
+                                    : (_animationController.value * 60).toInt(),
                               ),
                               spreadRadius: 7,
                               blurRadius: 7,
-                              offset: const Offset(0, 3),
+                              offset: const Offset(0, 8),
                             ),
                           ]
                         : null,
@@ -454,6 +478,8 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
       child: child,
     );
   }
+
+
 
   /// handles when user dragging the sliding box.
   void _onGestureUpdate(double dy) {

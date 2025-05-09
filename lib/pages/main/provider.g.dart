@@ -6,42 +6,6 @@ part of 'provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$boxControllerHash() => r'b1439caca859a6d748cdff10e7349927e318cfe2';
-
-/// See also [boxController].
-@ProviderFor(boxController)
-final boxControllerProvider = AutoDisposeProvider<BoxController>.internal(
-  boxController,
-  name: r'boxControllerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$boxControllerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef BoxControllerRef = AutoDisposeProviderRef<BoxController>;
-String _$zoomDrawerControllerHash() =>
-    r'7ff2c517ffcd6334abe0439b2f488b65048b4eb1';
-
-/// See also [zoomDrawerController].
-@ProviderFor(zoomDrawerController)
-final zoomDrawerControllerProvider =
-    AutoDisposeProvider<ZoomDrawerController>.internal(
-  zoomDrawerController,
-  name: r'zoomDrawerControllerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$zoomDrawerControllerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ZoomDrawerControllerRef = AutoDisposeProviderRef<ZoomDrawerController>;
 String _$mediaItemHash() => r'30408799ae381fd95c17187749573c341a79b898';
 
 /// See also [mediaItem].
@@ -58,7 +22,25 @@ final mediaItemProvider = AutoDisposeStreamProvider<MediaItem?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MediaItemRef = AutoDisposeStreamProviderRef<MediaItem?>;
-String _$userInfoHash() => r'3dcf2433423b5dcfffd4d197fc7767bab2e2d8e0';
+String _$playbackStateHash() => r'30032030f30a04107d5cdaee69a1d8cb4c4384ef';
+
+/// See also [playbackState].
+@ProviderFor(playbackState)
+final playbackStateProvider =
+    AutoDisposeStreamProvider<PlaybackState?>.internal(
+  playbackState,
+  name: r'playbackStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$playbackStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef PlaybackStateRef = AutoDisposeStreamProviderRef<PlaybackState?>;
+String _$userInfoHash() => r'685d7e3dbd996c2d9b02c72b3be45af2bc290f76';
 
 /// See also [userInfo].
 @ProviderFor(userInfo)
@@ -74,6 +56,38 @@ final userInfoProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserInfoRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
+String _$mediaColorHash() => r'81d7199deb2631076973550c2ba506907a6c97db';
+
+/// See also [mediaColor].
+@ProviderFor(mediaColor)
+final mediaColorProvider = AutoDisposeFutureProvider<PaletteGenerator>.internal(
+  mediaColor,
+  name: r'mediaColorProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$mediaColorHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MediaColorRef = AutoDisposeFutureProviderRef<PaletteGenerator>;
+String _$themeModeNotifierHash() => r'b8d15ea60c399a87f3d4892d461309e8c44e0d7e';
+
+/// See also [ThemeModeNotifier].
+@ProviderFor(ThemeModeNotifier)
+final themeModeNotifierProvider =
+    AutoDisposeNotifierProvider<ThemeModeNotifier, ThemeMode>.internal(
+  ThemeModeNotifier.new,
+  name: r'themeModeNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$themeModeNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ThemeModeNotifier = AutoDisposeNotifier<ThemeMode>;
 String _$boxPanelDetailDataHash() =>
     r'156ad7326d0b0b9aea2a9eaa45e202639e0a32f6';
 

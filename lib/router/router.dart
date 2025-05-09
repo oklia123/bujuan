@@ -34,7 +34,6 @@ GoRouter router(Ref ref) {
   router.routerDelegate.addListener(() {
     final currentPath = router.state.path ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print('object-----------------$currentPath');
       ref.read(currentRouterPathProvider.notifier).updatePanelDetail(currentPath);
     });
   });

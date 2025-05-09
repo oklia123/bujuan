@@ -1,23 +1,29 @@
+import 'dart:ui';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music_api/api/user/entity/user_info_entity.dart';
 import 'package:bujuan_music_api/common/music_api.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../widgets/slide.dart';
 
 part 'provider.g.dart';
 
 @riverpod
-BoxController boxController(Ref ref) {
-  return BoxController();
-}
+class ThemeModeNotifier extends _$ThemeModeNotifier {
+  @override
+  ThemeMode build() => ThemeMode.light;
 
-@riverpod
-ZoomDrawerController zoomDrawerController(Ref ref) {
-  return ZoomDrawerController();
+  void setTheme(ThemeMode mode) {
+    state = mode;
+  }
+
+  void toggleTheme() {
+    state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+  }
 }
 
 @riverpod
@@ -48,7 +54,18 @@ Stream<MediaItem?> mediaItem(Ref ref) {
 }
 
 @riverpod
+Stream<PlaybackState?> playbackState(Ref ref) {
+  return BujuanMusicHandler().playbackState.stream;
+}
+
+@riverpod
 Future<UserInfoEntity?> userInfo(Ref ref) async {
-  var userInfo = await BujuanMusicManager().userInfo();
-  return userInfo;
+  return await BujuanMusicManager().userInfo();
+}
+
+@riverpod
+Future<PaletteGenerator> mediaColor(Ref ref) async {
+  var url = ref.watch(mediaItemProvider).value?.artUri.toString() ?? '';
+  CachedNetworkImageProvider imageProvider = CachedNetworkImageProvider('$url?param=300y300');
+  return await PaletteGenerator.fromImageProvider(imageProvider, size: Size(300, 300));
 }

@@ -1,3 +1,4 @@
+import 'package:bujuan_music/pages/main/menu_page.dart';
 import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/pages/play/play_page.dart';
 import 'package:bujuan_music/router/app_router.dart';
@@ -21,44 +22,16 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var of = MediaQuery.of(context);
     double minHeightBox = 45.w + of.padding.bottom;
-    double maxHeightBox = of.size.height - of.padding.top - 10.w;
+    double maxHeightBox = of.size.height - of.padding.top - 5.w;
     return Scaffold(
       body: ZoomDrawer(
           controller: GetIt.I<ZoomDrawerController>(),
           reverseDuration: Duration(milliseconds: 1000),
-          menuScreen: SafeArea(child: Container(
-            child: Consumer(builder: (context, ref, child) {
-              var currentPath = ref.watch(currentRouterPathProvider);
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(
-                      'Home',
-                      style: TextStyle(
-                          color: currentPath == AppRouter.home ? Colors.red : Colors.black),
-                    ),
-                    onTap: () {
-                      context.push(AppRouter.home);
-                      GetIt.I<ZoomDrawerController>().toggle?.call();
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'User',
-                      style: TextStyle(
-                          color: currentPath == AppRouter.playlist ? Colors.red : Colors.black),
-                    ),
-                    onTap: () {
-                      context.push(AppRouter.playlist);
-                      GetIt.I<ZoomDrawerController>().toggle?.call();
-                    },
-                  )
-                ],
-              );
-            }),
-          )),
+          menuScreen: MenuPage(),
           menuScreenWidth: MediaQuery.of(context).size.width,
-          mainScreenScale: .25,
+          mainScreenScale: .18,
+          angle: -8,
+          slideWidth: 200.w,
           dragOffset: 200.w,
           shadowLayer1Color: Colors.grey.withAlpha(20),
           shadowLayer2Color: Colors.grey.withAlpha(30),
@@ -66,29 +39,28 @@ class MainPage extends StatelessWidget {
           mainScreenTapClose: true,
           menuScreenTapClose: true,
           mainScreen: Consumer(builder: (context, ref, c) {
-            var boxController = ref.watch(boxControllerProvider);
             return SlidingBox(
-              controller: boxController,
+              controller: GetIt.I<BoxController>(),
               collapsed: true,
               minHeight: minHeightBox,
               maxHeight: maxHeightBox,
-              color: Colors.white,
-              style: BoxStyle.sheet,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              style: BoxStyle.none,
               draggableIconVisible: false,
               draggableIconBackColor: Colors.white,
               onBoxSlide: (value) =>
                   ref.read(boxPanelDetailDataProvider.notifier).updatePanelDetail(value),
               backdrop: Backdrop(
-                color: Colors.white,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 body: Padding(
                   padding: EdgeInsets.only(top: 90.w),
                   child: child,
                 ),
                 appBar: BackdropAppBar(
-                    leading: ref.watch(userInfoProvider).when(
-                        data: (user) => CachedImage(imageUrl: user?.profile?.avatarUrl??'',width: 34.w,height: 34.w,borderRadius: 18.w,),
-                        error: (_, __) => SizedBox.shrink(),
-                        loading: () => SizedBox.shrink()),
+                    leading: Icon(
+                      HugeIcons.strokeRoundedInbox,
+                      size: 26.sp,
+                    ),
                     title: Text(
                       'Bujuan',
                       style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
@@ -96,15 +68,14 @@ class MainPage extends StatelessWidget {
                     actions: [
                       IconButton(
                           onPressed: () {},
-                          icon: HugeIcon(
-                            icon: HugeIcons.strokeRoundedSearch01,
-                            color: Colors.black,
+                          icon: Icon(
+                            HugeIcons.strokeRoundedSearch01,
                             size: 24.sp,
                           )),
                     ]),
               ),
               bodyBuilder: (s, _) => GestureDetector(
-                child: PlayPage(boxController: boxController),
+                child: PlayPage(),
                 onHorizontalDragUpdate: (e) {},
               ),
             );

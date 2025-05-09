@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
+import 'package:bujuan_music/common/values/app_theme.dart';
+import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/router.dart';
+import 'package:bujuan_music/widgets/slide.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,15 +27,15 @@ void main() async {
   final appDocDir = await getApplicationDocumentsDirectory();
   await BujuanMusicManager().init(cookiePath: '${appDocDir.path}/cookies', debug: false);
   GetIt getIt = GetIt.instance;
-  BujuanMusicHandler audioHandler = await AudioService.init(
+  await AudioService.init(
     builder: () => BujuanMusicHandler(),
     config: AudioServiceConfig(
       androidNotificationChannelId: 'com.sixbugs.bujuan.channel.audio',
       androidNotificationChannelName: 'Music playback',
     ),
   );
-  getIt.registerSingleton<BujuanMusicHandler>(audioHandler);
   getIt.registerSingleton<ZoomDrawerController>(ZoomDrawerController());
+  getIt.registerSingleton<BoxController>(BoxController());
   // 让布局真正覆盖状态栏和底部手势栏
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(ProviderScope(child: MyApp()));
@@ -67,18 +70,17 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      builder: (_, __) => MaterialApp.router(
-        title: 'Flutter Demo',
-        showPerformanceOverlay: false,
-        theme: ThemeData.light().copyWith(
-            scaffoldBackgroundColor: Colors.white,
-            useMaterial3: false,
-            appBarTheme: AppBarTheme(
-                backgroundColor: Colors.white,
-                elevation: 0,
-                titleTextStyle: TextStyle(color: Colors.black))),
-        routerConfig: router,
-      ),
+      builder: (_, __) => Consumer(builder: (_,ref,__) {
+        final themeMode = ref.watch(themeModeNotifierProvider);
+        return MaterialApp.router(
+          title: 'Flutter Demo',
+          themeMode: themeMode,
+          darkTheme: AppTheme.dark,
+          showPerformanceOverlay: false,
+          theme: AppTheme.light,
+          routerConfig: router,
+        );
+      }),
     );
   }
 }
