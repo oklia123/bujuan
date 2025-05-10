@@ -16,6 +16,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +36,7 @@ void main() async {
     ),
   );
   getIt.registerSingleton<ZoomDrawerController>(ZoomDrawerController());
-  getIt.registerSingleton<BoxController>(BoxController());
+  getIt.registerSingleton<SheetController>(SheetController());
   // 让布局真正覆盖状态栏和底部手势栏
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(ProviderScope(child: MyApp()));
@@ -76,7 +77,7 @@ class MyApp extends ConsumerWidget {
           title: 'Flutter Demo',
           themeMode: themeMode,
           darkTheme: AppTheme.dark,
-          showPerformanceOverlay: false,
+          showPerformanceOverlay: true,
           theme: AppTheme.light,
           routerConfig: router,
         );

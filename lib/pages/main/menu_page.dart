@@ -14,7 +14,7 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Consumer(builder: (context, ref, child) {
+    return Scaffold(body: Consumer(builder: (context, ref, child) {
       var currentPath = ref.watch(currentRouterPathProvider);
       var theme = ref.watch(themeModeNotifierProvider);
       return Column(
@@ -75,6 +75,6 @@ class MenuPage extends StatelessWidget {
           )
         ],
       );
-    }));
+    }),);
   }
 }

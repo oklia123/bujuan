@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 import '../../common/values/app_images.dart';
 import '../../utils/color_utils.dart';
 import '../../widgets/curved_progress_bar.dart';
@@ -15,53 +16,52 @@ import '../main/provider.dart';
 class PlayPage extends StatelessWidget {
   const PlayPage({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     // 缓存媒体查询结果
     final mediaQuery = MediaQuery.of(context);
     return SizedBox(
-      height: mediaQuery.size.height - mediaQuery.padding.top - 5.w,
+      width: mediaQuery.size.width,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
           Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0), // 控制模糊程度
-              child: Consumer(
-                builder: (context, ref, child) {
-                  final color = ref.watch(mediaColorProvider).maybeWhen(
-                        data: (c) => c.dominantColor?.color ?? Colors.green,
-                        orElse: () => Colors.transparent,
-                      );
-                  return TweenAnimationBuilder<Color?>(
-                    tween: ColorTween(
-                      begin: Colors.transparent,
-                      end: ColorUtils.lightenColor(color,.3).withAlpha(60),
-                    ),
-                    duration: Duration(milliseconds: 800),
-                    builder: (context, animatedColor, _) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [Colors.transparent, animatedColor ?? Colors.transparent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.topRight),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+            child: Consumer(
+              builder: (context, ref, child) {
+                final color = ref.watch(mediaColorProvider).maybeWhen(
+                      data: (c) => c.dominantColor?.color ?? Colors.green,
+                      orElse: () => Colors.transparent,
+                    );
+                return TweenAnimationBuilder<Color?>(
+                  tween: ColorTween(
+                    begin: Colors.transparent,
+                    end: ColorUtils.lightenColor(color, .3).withAlpha(60),
+                  ),
+                  duration: Duration(milliseconds: 800),
+                  builder: (context, animatedColor, _) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors: [Colors.transparent, animatedColor ?? Colors.transparent],
+                            begin: Alignment.topLeft,
+                            end: Alignment.topRight),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ),
-          InkWell(
-            onTap: GetIt.I<BoxController>().openBox,
-            child: Column(
-              children: [_SongInfoBar(), SizedBox(height: 80.w), _ProgressBarWithTime()],
-            ),
-          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [aa()],
+          )
+          // InkWell(
+          //   onTap: GetIt.I<BoxController>().openBox,
+          //   child: Column(
+          //     children: [SongInfoBar(), SizedBox(height: 80.w), _ProgressBarWithTime()],
+          //   ),
+          // ),
           // Container(
           //   margin: EdgeInsets.only(top: 6.w),
           //   decoration: BoxDecoration(
@@ -75,10 +75,35 @@ class PlayPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget aa() {
+    final result = Consumer(
+        builder: (context, ref, child) => CachedImage(
+              imageUrl: ref.watch(mediaItemProvider).value?.artUri.toString() ?? '',
+              width: 300.w,
+              height: 300.w,borderRadius: 150.w,
+            ));
+
+    final animation = SheetOffsetDrivenAnimation(
+      controller: GetIt.I<SheetController>(),
+      initialValue: 0,
+      startOffset: null,
+      endOffset: null,
+    ).drive(Tween<double>(begin: 1.0, end: 0.0));
+
+    // Hide the button when the sheet is dragged down.
+    return ScaleTransition(
+      scale: animation,
+      child: FadeTransition(
+        opacity: animation,
+        child: result,
+      ),
+    );
+  }
 }
 
-class _SongInfoBar extends StatelessWidget {
-  const _SongInfoBar();
+class SongInfoBar extends StatelessWidget {
+  const SongInfoBar();
 
   @override
   Widget build(BuildContext context) {
