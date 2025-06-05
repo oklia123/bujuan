@@ -19,7 +19,7 @@ GoRouter router(Ref ref) {
   final router = GoRouter(
     navigatorKey: routerKey,
     debugLogDiagnostics: true,
-    initialLocation: AppRouter.home,
+    initialLocation: AppRouter.splash,
     routes: [
       ShellRoute(
         routes: AppPages.shellRouter,

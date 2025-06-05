@@ -66,6 +66,6 @@ Future<UserInfoEntity?> userInfo(Ref ref) async {
 @riverpod
 Future<PaletteGenerator> mediaColor(Ref ref) async {
   var url = ref.watch(mediaItemProvider).value?.artUri.toString() ?? '';
-  CachedNetworkImageProvider imageProvider = CachedNetworkImageProvider('$url?param=300y300');
-  return await PaletteGenerator.fromImageProvider(imageProvider, size: Size(300, 300));
+  CachedNetworkImageProvider imageProvider = CachedNetworkImageProvider('$url?param=200y200');
+  return await PaletteGenerator.fromImageProvider(imageProvider, size: Size(200, 200));
 }

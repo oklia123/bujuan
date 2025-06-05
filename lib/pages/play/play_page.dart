@@ -1,16 +1,14 @@
-import 'dart:ui';
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/panel.dart';
+import 'package:bujuan_music/widgets/slide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:smooth_sheets/smooth_sheets.dart';
 import '../../common/values/app_images.dart';
 import '../../utils/color_utils.dart';
 import '../../widgets/curved_progress_bar.dart';
-import '../../widgets/slide.dart';
 import '../main/provider.dart';
 
 class PlayPage extends StatelessWidget {
@@ -19,9 +17,11 @@ class PlayPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 缓存媒体查询结果
-    final mediaQuery = MediaQuery.of(context);
+    var of = MediaQuery.of(context);
+    double minHeightBox = 45.w + (of.padding.bottom == 0 ? 20.w : of.padding.bottom);
     return SizedBox(
-      width: mediaQuery.size.width,
+      width: of.size.width,
+      height: of.size.height,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -35,14 +35,14 @@ class PlayPage extends StatelessWidget {
                 return TweenAnimationBuilder<Color?>(
                   tween: ColorTween(
                     begin: Colors.transparent,
-                    end: ColorUtils.lightenColor(color, .3).withAlpha(60),
+                    end: ColorUtils.lightenColor(color, .8).withAlpha(100),
                   ),
                   duration: Duration(milliseconds: 800),
                   builder: (context, animatedColor, _) {
                     return Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                            colors: [Colors.transparent, animatedColor ?? Colors.transparent],
+                            colors: [Theme.of(context).scaffoldBackgroundColor, animatedColor ?? Colors.transparent],
                             begin: Alignment.topLeft,
                             end: Alignment.topRight),
                       ),
@@ -52,132 +52,120 @@ class PlayPage extends StatelessWidget {
               },
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [aa()],
-          )
-          // InkWell(
-          //   onTap: GetIt.I<BoxController>().openBox,
-          //   child: Column(
-          //     children: [SongInfoBar(), SizedBox(height: 80.w), _ProgressBarWithTime()],
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(top: 6.w),
-          //   decoration: BoxDecoration(
-          //     color: Theme.of(context).iconTheme.color!.withAlpha(130),
-          //     borderRadius: BorderRadius.circular(3.w)
-          //   ),
-          //   width: 28.w,
-          //   height: 5.w,
-          // ),
+          _MusicControlsSection(),
+          Consumer(
+              builder: (context, ref, child) => Positioned(
+                    top: -minHeightBox * ref.watch(boxPanelDetailDataProvider),
+                    child: GestureDetector(
+                      child: SongInfoBar(),
+                      onTap: () => GetIt.I<BoxController>().openBox(),
+                    ),
+                  )),
         ],
-      ),
-    );
-  }
-
-  Widget aa() {
-    final result = Consumer(
-        builder: (context, ref, child) => CachedImage(
-              imageUrl: ref.watch(mediaItemProvider).value?.artUri.toString() ?? '',
-              width: 300.w,
-              height: 300.w,borderRadius: 150.w,
-            ));
-
-    final animation = SheetOffsetDrivenAnimation(
-      controller: GetIt.I<SheetController>(),
-      initialValue: 0,
-      startOffset: null,
-      endOffset: null,
-    ).drive(Tween<double>(begin: 1.0, end: 0.0));
-
-    // Hide the button when the sheet is dragged down.
-    return ScaleTransition(
-      scale: animation,
-      child: FadeTransition(
-        opacity: animation,
-        child: result,
       ),
     );
   }
 }
 
 class SongInfoBar extends StatelessWidget {
-  const SongInfoBar();
+  const SongInfoBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.centerRight,
-      children: [
-        Consumer(builder: (context, ref, child) {
-          var watch = ref.watch(mediaItemProvider);
-          return Padding(
-            padding: EdgeInsets.only(left: 20, right: 30.w),
-            child: SizedBox(
-              height: 60.w,
-              child: Row(
-                children: [
-                  CachedImage(
-                    imageUrl: watch.value?.artUri.toString() ?? '',
-                    width: 40.w,
-                    height: 40.w,
-                    borderRadius: 20.w,
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(watch.value?.title ?? 'Bujuan',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-                ],
+    return Container(
+      color: Colors.transparent,
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        children: [
+          Consumer(builder: (context, ref, child) {
+            var watch = ref.watch(mediaItemProvider);
+            return Padding(
+              padding: EdgeInsets.only(left: 20, right: 30.w),
+              child: SizedBox(
+                height: 60.w,
+                child: Row(
+                  children: [
+                    CachedImage(
+                      imageUrl: watch.value?.artUri.toString() ?? '',
+                      width: 40.w,
+                      height: 40.w,
+                      borderRadius: 20.w,
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(watch.value?.title ?? 'Bujuan',
+                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
-        Padding(
-            padding: EdgeInsets.only(right: 10.w),
-            child: Consumer(
-                builder: (context, ref, child) => IconButton(
-                    onPressed: () {
-                      BujuanMusicHandler().playOrPause();
-                    },
-                    icon: Icon(
-                      (ref.watch(playbackStateProvider).value?.playing ?? false)
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      size: 28.w,
-                    )))),
-      ],
+            );
+          }),
+          Spacer(),
+          Padding(
+              padding: EdgeInsets.only(right: 10.w),
+              child: Consumer(
+                  builder: (context, ref, child) => IconButton(
+                      onPressed: () {
+                        BujuanMusicHandler().playOrPause();
+                      },
+                      icon: Icon(
+                        (ref.watch(playbackStateProvider).value?.playing ?? false)
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        size: 28.w,
+                      )))),
+        ],
+      ),
     );
   }
 }
 
 class _MusicControlsSection extends StatelessWidget {
-  final double bottom;
-
-  const _MusicControlsSection({required this.bottom});
+  const _MusicControlsSection();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 30.w),
-      child: Column(
-        children: [
-          const Text('Lucky Strike', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 3),
-          const Text('Troy Sivan',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey)),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Expanded(child: _ProgressBarWithTime()),
-                const SizedBox(height: 4),
-                _PlaybackControls(),
-                SizedBox(height: 40.h + bottom),
-              ],
+    var of = MediaQuery.of(context);
+    double minHeightBox = 45.w + (of.padding.bottom == 0 ? 20.w : of.padding.bottom);
+    return Column(
+      children: [
+        Consumer(
+            builder: (context, ref, child) => AnimatedContainer(
+                  duration: Duration(milliseconds: 60),
+                  height: (minHeightBox + (of.padding.bottom == 0 ? 20.w : of.padding.bottom)) * (1 - ref.watch(boxPanelDetailDataProvider)),
+                )), SizedBox(
+          height: 35.w,
+          child: Transform(
+            transform: Matrix4.translationValues(0, -15, 0),
+            child: Icon(
+              Icons.remove_rounded,
+              color: Colors.grey.withAlpha(120),
+              size: 62.w,
             ),
           ),
-        ],
-      ),
+        ),
+        Consumer(builder: (context, ref, child) {
+          var watch = ref.watch(mediaItemProvider);
+          return Column(
+            children: [
+              CachedImage(
+                imageUrl: watch.value?.artUri.toString() ?? '',
+                width: 310.w,
+                height: 310.w,
+                borderRadius: 25.w,
+              ),
+              SizedBox(height: 30.w),
+              Text('${watch.value?.title}', style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600)),
+              SizedBox(height: 5.w),
+              Text('${watch.value?.artist}',
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: Colors.grey)),
+            ],
+          );
+        }),
+        SizedBox(height: 30.w),
+        _ProgressBarWithTime(),
+        SizedBox(height: 30.w),
+        _PlaybackControls(),
+      ],
     );
   }
 }
@@ -227,20 +215,22 @@ class _PlaybackControls extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        SizedBox(width: 30.w),
         _ControlButton(image: AppImages.shuffle),
         SizedBox(width: 15.w),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _ControlButton(image: AppImages.left),
+              _ControlButton(image: AppImages.left,onTap: () => BujuanMusicHandler().skipToPrevious(),),
               _PlayPauseButton(),
-              _ControlButton(image: AppImages.right),
+              _ControlButton(image: AppImages.right,onTap: () => BujuanMusicHandler().skipToNext(),),
             ],
           ),
         ),
         SizedBox(width: 15.w),
         _ControlButton(image: AppImages.cycle),
+        SizedBox(width: 30.w),
       ],
     );
   }
@@ -248,27 +238,33 @@ class _PlaybackControls extends StatelessWidget {
 
 class _ControlButton extends StatelessWidget {
   final String image;
+  final VoidCallback? onTap;
 
-  const _ControlButton({required this.image});
+  const _ControlButton({required this.image, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(image, width: 24.w, height: 24.w);
+    return GestureDetector(
+      child: Image.asset(image, width: 24.w, height: 24.w),
+      onTap: () => onTap?.call(),
+    );
   }
 }
 
 class _PlayPauseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 46.w,
-      height: 46.w,
-      decoration: BoxDecoration(
-        color: Colors.blueAccent.withOpacity(.5),
-        borderRadius: BorderRadius.circular(23.w),
-      ),
-      child: const Icon(Icons.play_arrow, color: Colors.white, size: 28),
-    );
+    return Consumer(
+        builder: (context, ref, child) => IconButton(
+            onPressed: () {
+              BujuanMusicHandler().playOrPause();
+            },
+            icon: Icon(
+              (ref.watch(playbackStateProvider).value?.playing ?? false)
+                  ? Icons.pause_rounded
+                  : Icons.play_arrow_rounded,
+              size: 36.sp,
+            )));
   }
 }
 

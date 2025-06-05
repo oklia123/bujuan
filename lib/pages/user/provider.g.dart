@@ -6,11 +6,11 @@ part of 'provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$newAlbumHash() => r'8e665bdc17a57e035c74b72176b3949d9e8e61da';
+String _$newAlbumHash() => r'72a0f9302b481a6f88389eb6085c9ddfd486544f';
 
 /// See also [newAlbum].
 @ProviderFor(newAlbum)
-final newAlbumProvider = AutoDisposeFutureProvider<HomeData>.internal(
+final newAlbumProvider = AutoDisposeFutureProvider<UserData>.internal(
   newAlbum,
   name: r'newAlbumProvider',
   debugGetCreateSourceHash:
@@ -21,6 +21,6 @@ final newAlbumProvider = AutoDisposeFutureProvider<HomeData>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef NewAlbumRef = AutoDisposeFutureProviderRef<HomeData>;
+typedef NewAlbumRef = AutoDisposeFutureProviderRef<UserData>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

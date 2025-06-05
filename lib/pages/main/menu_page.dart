@@ -28,7 +28,7 @@ class MenuPage extends StatelessWidget {
             ),
             title: Text(
               'Home',
-              style: TextStyle(color: currentPath == AppRouter.home ? Colors.red : null),
+              style: TextStyle(color: currentPath == AppRouter.home ? Colors.red : null,fontSize: 16.sp),
             ),
             onTap: () {
               context.replace(AppRouter.home);
@@ -41,7 +41,7 @@ class MenuPage extends StatelessWidget {
                 color: currentPath == AppRouter.user ? Colors.red : null),
             title: Text(
               'User',
-              style: TextStyle(color: currentPath == AppRouter.user ? Colors.red : null),
+              style: TextStyle(color: currentPath == AppRouter.user ? Colors.red : null,fontSize: 16.sp),
             ),
             onTap: () {
               context.replace(AppRouter.user);
@@ -56,7 +56,7 @@ class MenuPage extends StatelessWidget {
             minLeadingWidth: 20.w,
             title: Text(
               'Setting',
-              style: TextStyle(color: currentPath == AppRouter.setting ? Colors.red : null),
+              style: TextStyle(color: currentPath == AppRouter.setting ? Colors.red : null,fontSize: 16.sp),
             ),
             onTap: () {
               context.replace(AppRouter.setting);

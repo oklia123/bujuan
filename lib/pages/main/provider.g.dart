@@ -56,7 +56,7 @@ final userInfoProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserInfoRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
-String _$mediaColorHash() => r'81d7199deb2631076973550c2ba506907a6c97db';
+String _$mediaColorHash() => r'd64cde0affd97c6f92d8ac7a5a2d14fb0151f800';
 
 /// See also [mediaColor].
 @ProviderFor(mediaColor)

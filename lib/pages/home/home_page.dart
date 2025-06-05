@@ -6,6 +6,7 @@ import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/loading.dart';
+import 'package:bujuan_music/widgets/main_appbar.dart';
 import 'package:bujuan_music_api/api/recommend/entity/recommend_resource_entity.dart';
 import 'package:bujuan_music_api/api/recommend/entity/recommend_song_entity.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +19,14 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 0.w),
-      child: Consumer(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: mainAppBar(),
+      body: Consumer(
         builder: (context, ref, child) {
           final album = ref.watch(newAlbumProvider);
           return album.when(
-            data: (homeData) => _buildContent(homeData,context,ref),
+            data: (homeData) => _buildContent(homeData, context, ref),
             loading: () => const Center(child: LoadingIndicator()),
             error: (_, __) => const Center(child: Text('Oops, something unexpected happened')),
           );
@@ -33,7 +35,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(HomeData homeData,BuildContext context,WidgetRef ref) {
+  Widget _buildContent(HomeData homeData, BuildContext context, WidgetRef ref) {
     final albumList = homeData.recommendResourceEntity.recommend;
     final songList = homeData.recommendSongEntity.data?.dailySongs ?? [];
 
@@ -44,9 +46,9 @@ class HomePage extends StatelessWidget {
           SizedBox(height: 10.w),
           GestureDetector(
             child: Image.asset(AppImages.banner, width: 340.w, height: 148.w, fit: BoxFit.cover),
-            onTap: (){
-             var read = ref.read(themeModeNotifierProvider.notifier);
-             read.toggleTheme();
+            onTap: () {
+              var read = ref.read(themeModeNotifierProvider.notifier);
+              read.toggleTheme();
             },
           ),
           _buildTitle('Top Album', onTap: () {}),
@@ -91,8 +93,8 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            onTap: (){
-              context.push(AppRouter.playlist,extra: artists[index].id);
+            onTap: () {
+              context.push(AppRouter.playlist, extra: artists[index].id);
             },
           );
         },
@@ -103,7 +105,7 @@ class HomePage extends StatelessWidget {
   Widget _buildSongList(List<RecommendSongDataDailySongs> songs) {
     return ListView.separated(
       shrinkWrap: true,
-      physics: const PageScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       itemCount: songs.length,
       separatorBuilder: (_, __) => SizedBox(height: 20.w),
@@ -134,8 +136,7 @@ class HomePage extends StatelessWidget {
                       song.ar?.map((e) => e.name).join(' ') ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: 12.sp, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -145,15 +146,16 @@ class HomePage extends StatelessWidget {
             ],
           ),
           onTap: () {
-            BujuanMusicHandler().updateQueue(songs
-                .map((e) => MediaItem(
-                    id: '${e.id}',
-                    title: e.name ?? "",
-                    duration: Duration(milliseconds: e.dt ?? 0),
-                    artist: (e.ar ?? []).map((e) => e.name).toList().join(' '),
-                    artUri: Uri.parse(e.al?.picUrl ?? '')))
-                .toList(),index: index);
-
+            BujuanMusicHandler().updateQueue(
+                songs
+                    .map((e) => MediaItem(
+                        id: '${e.id}',
+                        title: e.name ?? "",
+                        duration: Duration(milliseconds: e.dt ?? 0),
+                        artist: (e.ar ?? []).map((e) => e.name).toList().join(' '),
+                        artUri: Uri.parse(e.al?.picUrl ?? '')))
+                    .toList(),
+                index: index);
           },
         );
       },

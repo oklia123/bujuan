@@ -6,7 +6,7 @@ part of 'provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$playlistDetailHash() => r'643d1fa3f65503bfc9b03f8719a4a2dd88ea0d54';
+String _$playlistDetailHash() => r'f54beebdba574681269d562b60d1f06b81f648a8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const playlistDetailProvider = PlaylistDetailFamily();
 
 /// See also [playlistDetail].
-class PlaylistDetailFamily extends Family<AsyncValue<PlaylistDetailEntity?>> {
+class PlaylistDetailFamily extends Family<AsyncValue<SongDetailEntity?>> {
   /// See also [playlistDetail].
   const PlaylistDetailFamily();
 
@@ -73,7 +73,7 @@ class PlaylistDetailFamily extends Family<AsyncValue<PlaylistDetailEntity?>> {
 
 /// See also [playlistDetail].
 class PlaylistDetailProvider
-    extends AutoDisposeFutureProvider<PlaylistDetailEntity?> {
+    extends AutoDisposeFutureProvider<SongDetailEntity?> {
   /// See also [playlistDetail].
   PlaylistDetailProvider(
     int id,
@@ -108,7 +108,7 @@ class PlaylistDetailProvider
 
   @override
   Override overrideWith(
-    FutureOr<PlaylistDetailEntity?> Function(PlaylistDetailRef provider) create,
+    FutureOr<SongDetailEntity?> Function(PlaylistDetailRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -125,7 +125,7 @@ class PlaylistDetailProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<PlaylistDetailEntity?> createElement() {
+  AutoDisposeFutureProviderElement<SongDetailEntity?> createElement() {
     return _PlaylistDetailProviderElement(this);
   }
 
@@ -145,13 +145,13 @@ class PlaylistDetailProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin PlaylistDetailRef on AutoDisposeFutureProviderRef<PlaylistDetailEntity?> {
+mixin PlaylistDetailRef on AutoDisposeFutureProviderRef<SongDetailEntity?> {
   /// The parameter `id` of this provider.
   int get id;
 }
 
 class _PlaylistDetailProviderElement
-    extends AutoDisposeFutureProviderElement<PlaylistDetailEntity?>
+    extends AutoDisposeFutureProviderElement<SongDetailEntity?>
     with PlaylistDetailRef {
   _PlaylistDetailProviderElement(super.provider);
 

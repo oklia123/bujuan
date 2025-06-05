@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 import '../pages/main/provider.dart';
 
@@ -230,7 +229,7 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
                                       ((widget.maxHeight! -
                                               MediaQuery.of(context).viewInsets.bottom) -
                                           widget.minHeight!)) *
-                                  0.2),
+                                  0.08),
                               0.0,
                             )
                           : null,
@@ -335,47 +334,46 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
         builder: (_, child) {
           return Stack(
             children: <Widget>[
-              // if (widget.style == BoxStyle.sheet)
-              //   Align(
-              //     alignment: Alignment.bottomCenter,
-              //     child: SizedBox(
-              //       width: _boxWidth,
-              //       height: _animationController.value *
-              //               ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
-              //                   widget.minHeight!) +
-              //           widget.minHeight! +
-              //           10,
-              //       child: Center(
-              //         child: Consumer(
-              //           builder: (context, ref, child) {
-              //             final color = ref.watch(mediaColorProvider).maybeWhen(
-              //                   data: (c) => c.dominantColor?.color ?? Colors.green,
-              //                   orElse: () => Theme.of(context).scaffoldBackgroundColor,
-              //                 );
-              //             return TweenAnimationBuilder<Color?>(
-              //               tween: ColorTween(
-              //                 begin: Theme.of(context).scaffoldBackgroundColor,
-              //                 end: ColorUtils.lightenColor(color,.8).withAlpha(200),
-              //               ),
-              //               duration: Duration(milliseconds: 800),
-              //               builder: (context, animatedColor, _) {
-              //                 return Container(
-              //                   width: _boxWidth - 15,
-              //                   decoration: BoxDecoration(
-              //                     borderRadius: widget.borderRadius,
-              //                     gradient: LinearGradient(colors: [
-              //                       Theme.of(context).scaffoldBackgroundColor,
-              //                       animatedColor ?? Colors.transparent
-              //                     ], begin: Alignment.topLeft, end: Alignment.bottomRight),
-              //                   ),
-              //                 );
-              //               },
-              //             );
-              //           },
-              //         ),
-              //       ),
-              //     ),
-              //   ),
+              if (widget.style == BoxStyle.sheet)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                    width: _boxWidth,
+                    height: _animationController.value *
+                            ((widget.maxHeight! - MediaQuery.of(context).viewInsets.bottom) -
+                                widget.minHeight!) +
+                        widget.minHeight! +
+                        12,
+                    child: Center(
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          var theme = ref.watch(themeModeNotifierProvider);
+                          return Container(
+                            width: _boxWidth - 15,
+                            decoration: BoxDecoration(
+                              borderRadius: widget.borderRadius,
+                              color: ColorUtils.lightenColor(
+                                  theme == ThemeMode.light ? Color(0xFFF3EEEE) : Colors.black,
+                                  theme == ThemeMode.light ? 0.6 : 0.25),
+                              // boxShadow: [
+                              //   BoxShadow(
+                              //     color: Colors.grey.withAlpha(
+                              //       widget.minHeight! > 0
+                              //           ? 60
+                              //           : (_animationController.value * 60).toInt(),
+                              //     ),
+                              //     spreadRadius: 6,
+                              //     blurRadius: 6,
+                              //     offset: const Offset(0, 8),
+                              //   ),
+                              // ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -396,20 +394,16 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
                         (1.0 - _animationController.value) * widget.borderRadius!.bottomLeft.y,
                       ),
                     ),
-                    boxShadow: (widget.style == BoxStyle.shadow)
-                        ? [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(
-                                widget.minHeight! > 0
-                                    ? 60
-                                    : (_animationController.value * 60).toInt(),
-                              ),
-                              spreadRadius: 7,
-                              blurRadius: 7,
-                              offset: const Offset(0, 8),
-                            ),
-                          ]
-                        : null,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(
+                          widget.minHeight! > 0 ? 40 : (_animationController.value * 60).toInt(),
+                        ),
+                        spreadRadius: 6,
+                        blurRadius: 6,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
                   child: Container(
                     color: widget.color,
@@ -478,8 +472,6 @@ class _SlidingBoxState extends State<SlidingBox> with SingleTickerProviderStateM
       child: child,
     );
   }
-
-
 
   /// handles when user dragging the sliding box.
   void _onGestureUpdate(double dy) {
