@@ -30,10 +30,24 @@ class CurvedProgressBarState extends State<CurvedProgressBar> {
   }
 
   void _updateProgress(Offset localPosition, Size size) {
+    final newProgress = (localPosition.dx / size.width).clamp(0.0, 1.0);
     setState(() {
-      _progress = (localPosition.dx / size.width).clamp(0.0, 1.0);
+      _progress = newProgress;
     });
+    widget.onProgressChange?.call(newProgress);
   }
+
+
+  @override
+  void didUpdateWidget(covariant CurvedProgressBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.progress != widget.progress) {
+      setState(() {
+        _progress = widget.progress.clamp(0.0, 1.0);
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

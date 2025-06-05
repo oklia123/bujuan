@@ -16,7 +16,7 @@ class PlaylistPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final album = ref.watch(playlistDetailProvider(id));
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('Playlist'),),
       body: album.when(
         data: (playlist) => ListView.separated(
           padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 20.w),
