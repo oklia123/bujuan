@@ -64,6 +64,11 @@ Future<UserInfoEntity?> userInfo(Ref ref) async {
 }
 
 @riverpod
+Future<UserInfoEntity?> lyric(Ref ref) async {
+  return await BujuanMusicManager().userInfo();
+}
+
+@riverpod
 Future<PaletteGenerator> mediaColor(Ref ref) async {
   var url = ref.watch(mediaItemProvider).value?.artUri.toString() ?? '';
   CachedNetworkImageProvider imageProvider = CachedNetworkImageProvider('$url?param=200y200');

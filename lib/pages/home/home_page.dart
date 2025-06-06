@@ -5,6 +5,7 @@ import 'package:bujuan_music/pages/home/provider.dart';
 import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
+import 'package:bujuan_music/widgets/items.dart';
 import 'package:bujuan_music/widgets/loading.dart';
 import 'package:bujuan_music/widgets/main_appbar.dart';
 import 'package:bujuan_music_api/api/recommend/entity/recommend_resource_entity.dart';
@@ -37,7 +38,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildContent(HomeData homeData, BuildContext context, WidgetRef ref) {
     final albumList = homeData.recommendResourceEntity.recommend;
-    final songList = homeData.recommendSongEntity.data?.dailySongs ?? [];
+    final songList = homeData.medias;
 
     return SingleChildScrollView(
       padding: EdgeInsets.only(bottom: 60.w),
@@ -80,6 +81,8 @@ class HomePage extends StatelessWidget {
                     imageUrl: album.picUrl ?? '',
                     width: 148.w,
                     height: 148.w,
+                    pHeight: 500,
+                    pWidth: 500,
                     fit: BoxFit.cover,
                     borderRadius: 16.w,
                   ),
@@ -102,63 +105,15 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSongList(List<RecommendSongDataDailySongs> songs) {
-    return ListView.separated(
+  Widget _buildSongList(List<MediaItem> songs) {
+    return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
       itemCount: songs.length,
-      separatorBuilder: (_, __) => SizedBox(height: 20.w),
-      itemBuilder: (context, index) {
-        final song = songs[index];
-        return GestureDetector(
-          child: Row(
-            children: [
-              CachedImage(
-                imageUrl: song.al?.picUrl ?? '',
-                width: 52.w,
-                height: 52.w,
-                borderRadius: 26.w,
-              ),
-              SizedBox(width: 15.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      song.name ?? '',
-                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 5.w),
-                    Text(
-                      song.ar?.map((e) => e.name).join(' ') ?? '',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 15.w),
-              const Icon(Icons.more_horiz, color: Colors.grey),
-            ],
-          ),
-          onTap: () {
-            BujuanMusicHandler().updateQueue(
-                songs
-                    .map((e) => MediaItem(
-                        id: '${e.id}',
-                        title: e.name ?? "",
-                        duration: Duration(milliseconds: e.dt ?? 0),
-                        artist: (e.ar ?? []).map((e) => e.name).toList().join(' '),
-                        artUri: Uri.parse(e.al?.picUrl ?? '')))
-                    .toList(),
-                index: index);
-          },
-        );
-      },
+      itemBuilder: (context, index) => MediaItemWidget(
+        mediaItem: songs[index],
+        onTap: () => BujuanMusicHandler().updateQueue(songs, index: index),
+      ),
     );
   }
 

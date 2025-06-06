@@ -6,7 +6,7 @@ part of 'provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$playlistDetailHash() => r'cf318e836f349c3f6d79acce408baea5811de48d';
+String _$mvUrlHash() => r'29f5fa63a4bc4defbd95bbf5ba0d1a831e65ade7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,27 @@ class _SystemHash {
   }
 }
 
-/// See also [playlistDetail].
-@ProviderFor(playlistDetail)
-const playlistDetailProvider = PlaylistDetailFamily();
+/// See also [mvUrl].
+@ProviderFor(mvUrl)
+const mvUrlProvider = MvUrlFamily();
 
-/// See also [playlistDetail].
-class PlaylistDetailFamily extends Family<AsyncValue<PlaylistData>> {
-  /// See also [playlistDetail].
-  const PlaylistDetailFamily();
+/// See also [mvUrl].
+class MvUrlFamily extends Family<AsyncValue<MvData>> {
+  /// See also [mvUrl].
+  const MvUrlFamily();
 
-  /// See also [playlistDetail].
-  PlaylistDetailProvider call(
+  /// See also [mvUrl].
+  MvUrlProvider call(
     int id,
   ) {
-    return PlaylistDetailProvider(
+    return MvUrlProvider(
       id,
     );
   }
 
   @override
-  PlaylistDetailProvider getProviderOverride(
-    covariant PlaylistDetailProvider provider,
+  MvUrlProvider getProviderOverride(
+    covariant MvUrlProvider provider,
   ) {
     return call(
       provider.id,
@@ -68,32 +68,31 @@ class PlaylistDetailFamily extends Family<AsyncValue<PlaylistData>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'playlistDetailProvider';
+  String? get name => r'mvUrlProvider';
 }
 
-/// See also [playlistDetail].
-class PlaylistDetailProvider extends AutoDisposeFutureProvider<PlaylistData> {
-  /// See also [playlistDetail].
-  PlaylistDetailProvider(
+/// See also [mvUrl].
+class MvUrlProvider extends AutoDisposeFutureProvider<MvData> {
+  /// See also [mvUrl].
+  MvUrlProvider(
     int id,
   ) : this._internal(
-          (ref) => playlistDetail(
-            ref as PlaylistDetailRef,
+          (ref) => mvUrl(
+            ref as MvUrlRef,
             id,
           ),
-          from: playlistDetailProvider,
-          name: r'playlistDetailProvider',
+          from: mvUrlProvider,
+          name: r'mvUrlProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$playlistDetailHash,
-          dependencies: PlaylistDetailFamily._dependencies,
-          allTransitiveDependencies:
-              PlaylistDetailFamily._allTransitiveDependencies,
+                  : _$mvUrlHash,
+          dependencies: MvUrlFamily._dependencies,
+          allTransitiveDependencies: MvUrlFamily._allTransitiveDependencies,
           id: id,
         );
 
-  PlaylistDetailProvider._internal(
+  MvUrlProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -107,12 +106,12 @@ class PlaylistDetailProvider extends AutoDisposeFutureProvider<PlaylistData> {
 
   @override
   Override overrideWith(
-    FutureOr<PlaylistData> Function(PlaylistDetailRef provider) create,
+    FutureOr<MvData> Function(MvUrlRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: PlaylistDetailProvider._internal(
-        (ref) => create(ref as PlaylistDetailRef),
+      override: MvUrlProvider._internal(
+        (ref) => create(ref as MvUrlRef),
         from: from,
         name: null,
         dependencies: null,
@@ -124,13 +123,13 @@ class PlaylistDetailProvider extends AutoDisposeFutureProvider<PlaylistData> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<PlaylistData> createElement() {
-    return _PlaylistDetailProviderElement(this);
+  AutoDisposeFutureProviderElement<MvData> createElement() {
+    return _MvUrlProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is PlaylistDetailProvider && other.id == id;
+    return other is MvUrlProvider && other.id == id;
   }
 
   @override
@@ -144,18 +143,17 @@ class PlaylistDetailProvider extends AutoDisposeFutureProvider<PlaylistData> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin PlaylistDetailRef on AutoDisposeFutureProviderRef<PlaylistData> {
+mixin MvUrlRef on AutoDisposeFutureProviderRef<MvData> {
   /// The parameter `id` of this provider.
   int get id;
 }
 
-class _PlaylistDetailProviderElement
-    extends AutoDisposeFutureProviderElement<PlaylistData>
-    with PlaylistDetailRef {
-  _PlaylistDetailProviderElement(super.provider);
+class _MvUrlProviderElement extends AutoDisposeFutureProviderElement<MvData>
+    with MvUrlRef {
+  _MvUrlProviderElement(super.provider);
 
   @override
-  int get id => (origin as PlaylistDetailProvider).id;
+  int get id => (origin as MvUrlProvider).id;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

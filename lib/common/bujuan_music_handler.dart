@@ -28,6 +28,8 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
     _init();
   }
 
+  Player get player => _player;
+
   bool _isAndroid() => !kIsWeb && Platform.isAndroid;
 
   void _init() {

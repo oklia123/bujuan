@@ -1,3 +1,4 @@
+import 'package:bujuan_music/pages/mv/mv_page.dart';
 import 'package:bujuan_music/pages/playlist/playlist_page.dart';
 import 'package:bujuan_music/pages/setting/setting_page.dart';
 import 'package:bujuan_music/pages/user/user_page.dart';
@@ -19,5 +20,6 @@ class AppPages {
   static final rootRouter = [
     GoRoute(path: AppRouter.login, builder: (c, s) => const LoginPage()),
     GoRoute(path: AppRouter.splash, builder: (c, s) => const SplashPage()),
+    GoRoute(path: AppRouter.mv, builder: (c, s) => MvPage(s.extra as int)),
   ];
 }

@@ -56,6 +56,22 @@ final userInfoProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserInfoRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
+String _$lyricHash() => r'fd840972a572a1ff5bbdc1fd0b0b280fa3cba369';
+
+/// See also [lyric].
+@ProviderFor(lyric)
+final lyricProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
+  lyric,
+  name: r'lyricProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$lyricHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LyricRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
 String _$mediaColorHash() => r'd64cde0affd97c6f92d8ac7a5a2d14fb0151f800';
 
 /// See also [mediaColor].
