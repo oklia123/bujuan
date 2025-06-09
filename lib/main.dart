@@ -25,7 +25,7 @@ void main() async {
       systemNavigationBarColor: Colors.transparent, // 底部手势栏透明
       statusBarColor: Colors.transparent));
   final appDocDir = await getApplicationDocumentsDirectory();
-  await BujuanMusicManager().init(cookiePath: '${appDocDir.path}/cookies', debug: true);
+  await BujuanMusicManager().init(cookiePath: '${appDocDir.path}/cookies', debug: false);
   GetIt getIt = GetIt.instance;
   await AudioService.init(
     builder: () => BujuanMusicHandler(),

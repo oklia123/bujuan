@@ -152,7 +152,6 @@ class _LoginPageState extends State<LoginPage> {
         .loginCellPhone(phone: phoneController.text, captcha: code);
     if (loginEntity != null && loginEntity.code == 200) {
       phoneController.text = '';
-      print('object--------$mounted');
       if (mounted) {
         context.replace(AppRouter.home);
       }
