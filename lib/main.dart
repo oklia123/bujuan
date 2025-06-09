@@ -74,7 +74,7 @@ class MyApp extends ConsumerWidget {
       builder: (_, __) => Consumer(builder: (_,ref,__) {
         final themeMode = ref.watch(themeModeNotifierProvider);
         return MaterialApp.router(
-          title: 'Flutter Demo',
+          title: 'Bujuan',
           themeMode: themeMode,
           darkTheme: AppTheme.dark,
           showPerformanceOverlay: false,
