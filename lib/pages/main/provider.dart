@@ -15,7 +15,7 @@ part 'provider.g.dart';
 @riverpod
 class ThemeModeNotifier extends _$ThemeModeNotifier {
   @override
-  ThemeMode build() => ThemeMode.light;
+  ThemeMode build() => ThemeMode.dark;
 
   void setTheme(ThemeMode mode) {
     state = mode;

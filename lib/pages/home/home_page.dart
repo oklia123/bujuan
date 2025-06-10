@@ -2,32 +2,34 @@ import 'package:audio_service/audio_service.dart';
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/pages/home/provider.dart';
-import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/items.dart';
 import 'package:bujuan_music/widgets/loading.dart';
 import 'package:bujuan_music/widgets/main_appbar.dart';
 import 'package:bujuan_music_api/api/recommend/entity/recommend_resource_entity.dart';
-import 'package:bujuan_music_api/api/recommend/entity/recommend_song_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../utils/adaptive_screen_utils.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    bool desktop = medium(context) || expanded(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: mainAppBar(),
+      appBar: desktop ? null : mainAppBar(),
       body: Consumer(
         builder: (context, ref, child) {
           final album = ref.watch(newAlbumProvider);
           return album.when(
-            data: (homeData) => _buildContent(homeData, context, ref),
+            data: (homeData) =>
+                desktop ? DesktopHome(homeData: homeData) : MobileHome(homeData: homeData),
             loading: () => const Center(child: LoadingIndicator()),
             error: (_, __) => const Center(child: Text('Oops, something unexpected happened')),
           );
@@ -35,8 +37,19 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildContent(HomeData homeData, BuildContext context, WidgetRef ref) {
+class MobileHome extends StatelessWidget {
+  final HomeData homeData;
+
+  const MobileHome({super.key, required this.homeData});
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildContent(homeData, context);
+  }
+
+  Widget _buildContent(HomeData homeData, BuildContext context) {
     final albumList = homeData.recommendResourceEntity.recommend;
     final songList = homeData.medias;
 
@@ -47,10 +60,7 @@ class HomePage extends StatelessWidget {
           SizedBox(height: 10.w),
           GestureDetector(
             child: Image.asset(AppImages.banner, width: 340.w, height: 148.w, fit: BoxFit.cover),
-            onTap: () {
-              var read = ref.read(themeModeNotifierProvider.notifier);
-              read.toggleTheme();
-            },
+            onTap: () {},
           ),
           _buildTitle('Top Album', onTap: () {}),
           _buildAlbumList(albumList),
@@ -132,12 +142,111 @@ class HomePage extends StatelessWidget {
                   Text(
                     'See all',
                     style: TextStyle(
-                        fontSize: 14.sp, color: Color(0xFFFF2C53), fontWeight: FontWeight.bold),
+                        fontSize: 14.sp, color: Color(0XFF1ED760), fontWeight: FontWeight.bold),
                   ),
-                  Icon(Icons.keyboard_arrow_right_outlined, size: 20.sp, color: Color(0xFFFF2C53)),
+                  Icon(Icons.keyboard_arrow_right_outlined, size: 20.sp, color: Color(0XFF1ED760)),
                 ],
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class DesktopHome extends StatelessWidget {
+  final HomeData homeData;
+
+  const DesktopHome({super.key, required this.homeData});
+
+  @override
+  Widget build(BuildContext context) {
+    var recommend = homeData.recommendResourceEntity.recommend;
+    var medias = homeData.medias;
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(15.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 5.w),
+          Text(
+            'Top Recommendation',
+            style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
+          ),
+          SizedBox(height: 20.w),
+          SizedBox(
+            height: 190.w,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => Container(
+                width: 155.w,
+                padding: EdgeInsets.all(5.w),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white.withAlpha(60)),
+                    borderRadius: BorderRadius.circular(20.w)),
+                child: Column(
+                  children: [
+                    CachedImage(
+                      imageUrl: recommend[index].picUrl ?? '',
+                      width: 150.w,
+                      height: 150.w,
+                      borderRadius: 20.w,
+                    ),
+                    SizedBox(height: 5.w),
+                    Text(
+                      '  ${recommend[index].name}',
+                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              itemCount: recommend.length,
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 10.w),
+            ),
+          ),
+          SizedBox(height: 20.w),
+          Text(
+            'Recommended daily',
+            style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
+          ),
+          SizedBox(height: 20.w),
+          SizedBox(
+            height: 130.w,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => SizedBox(
+                width: 85.w,
+                child: Column(
+                  children: [
+                    CachedImage(
+                      imageUrl: medias[index].artUri.toString() ?? '',
+                      width: 80.w,
+                      height: 80.w,
+                      borderRadius: 40.w,
+                    ),
+                    SizedBox(height: 5.w),
+                    Text(
+                      medias[index].title,
+                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 2.w),
+                    Text(
+                      medias[index].artist??'',
+                      style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w400),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              itemCount: medias.length,
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 10.w),
+            ),
+          ),
         ],
       ),
     );

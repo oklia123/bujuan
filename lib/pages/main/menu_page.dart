@@ -8,73 +8,127 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../router/app_router.dart';
+import '../../utils/adaptive_screen_utils.dart';
+import '../../widgets/backdrop.dart';
 
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Consumer(builder: (context, ref, child) {
-      var currentPath = ref.watch(currentRouterPathProvider);
-      var theme = ref.watch(themeModeNotifierProvider);
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    bool desktop = medium(context) || expanded(context);
+    return desktop ? DesktopMenu() : MobileMenu();
+  }
+}
+
+class MobileMenu extends ConsumerWidget {
+  const MobileMenu({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var currentPath = ref.watch(currentRouterPathProvider);
+    var theme = ref.watch(themeModeNotifierProvider);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ListTile(
+          minLeadingWidth: 20.w,
+          leading: Icon(
+            HugeIcons.strokeRoundedHome01,
+            color: currentPath == AppRouter.home ? Colors.red : null,
+          ),
+          title: Text(
+            'Home',
+            style: TextStyle(
+                color: currentPath == AppRouter.home ? Colors.red : null, fontSize: 16.sp),
+          ),
+          onTap: () {
+            context.replace(AppRouter.home);
+            GetIt.I<ZoomDrawerController>().toggle?.call();
+          },
+        ),
+        ListTile(
+          minLeadingWidth: 20.w,
+          leading: Icon(HugeIcons.strokeRoundedUser,
+              color: currentPath == AppRouter.user ? Colors.red : null),
+          title: Text(
+            'User',
+            style: TextStyle(
+                color: currentPath == AppRouter.user ? Colors.red : null, fontSize: 16.sp),
+          ),
+          onTap: () {
+            context.replace(AppRouter.user);
+            GetIt.I<ZoomDrawerController>().toggle?.call();
+          },
+        ),
+        ListTile(
+          leading: Icon(
+            HugeIcons.strokeRoundedSettings03,
+            color: currentPath == AppRouter.setting ? Colors.red : null,
+          ),
+          minLeadingWidth: 20.w,
+          title: Text(
+            'Setting',
+            style: TextStyle(
+                color: currentPath == AppRouter.setting ? Colors.red : null, fontSize: 16.sp),
+          ),
+          onTap: () {
+            context.replace(AppRouter.setting);
+            GetIt.I<ZoomDrawerController>().toggle?.call();
+          },
+        ),
+        ListTile(
+          minLeadingWidth: 20.w,
+          leading: Icon(
+            theme == ThemeMode.dark
+                ? HugeIcons.strokeRoundedSunCloud02
+                : HugeIcons.strokeRoundedMoon01,
+          ),
+          title: Text('Theme Mode'),
+          onTap: () => ref.read(themeModeNotifierProvider.notifier).toggleTheme(),
+        )
+      ],
+    );
+  }
+}
+
+class DesktopMenu extends ConsumerWidget {
+  const DesktopMenu({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var currentPath = ref.watch(currentRouterPathProvider);
+    return BackdropView(
+      width: 50.w,
+      padding: EdgeInsets.symmetric(vertical: 15.w),
+      child: Wrap(
+        alignment: WrapAlignment.center,
         children: [
-          ListTile(
-            minLeadingWidth: 20.w,
-            leading: Icon(
-              HugeIcons.strokeRoundedHome01,
-              color: currentPath == AppRouter.home ? Colors.red : null,
-            ),
-            title: Text(
-              'Home',
-              style: TextStyle(color: currentPath == AppRouter.home ? Colors.red : null,fontSize: 16.sp),
-            ),
-            onTap: () {
-              context.replace(AppRouter.home);
-              GetIt.I<ZoomDrawerController>().toggle?.call();
-            },
+          IconButton(
+            onPressed: () =>  context.replace(AppRouter.home),
+            icon: Icon(HugeIcons.strokeRoundedHome01,
+                color: currentPath == AppRouter.home ? Color(0XFF1ED760) : null),
           ),
-          ListTile(
-            minLeadingWidth: 20.w,
-            leading: Icon(HugeIcons.strokeRoundedUser,
-                color: currentPath == AppRouter.user ? Colors.red : null),
-            title: Text(
-              'User',
-              style: TextStyle(color: currentPath == AppRouter.user ? Colors.red : null,fontSize: 16.sp),
-            ),
-            onTap: () {
-              context.replace(AppRouter.user);
-              GetIt.I<ZoomDrawerController>().toggle?.call();
-            },
+          SizedBox(height: 60.w),
+          IconButton(
+            onPressed: () =>  context.replace(AppRouter.user),
+            icon: Icon(HugeIcons.strokeRoundedUser,
+                color: currentPath == AppRouter.user ? Color(0XFF1ED760) : null),
           ),
-          ListTile(
-            leading: Icon(
-              HugeIcons.strokeRoundedSettings03,
-              color: currentPath == AppRouter.setting ? Colors.red : null,
-            ),
-            minLeadingWidth: 20.w,
-            title: Text(
-              'Setting',
-              style: TextStyle(color: currentPath == AppRouter.setting ? Colors.red : null,fontSize: 16.sp),
-            ),
-            onTap: () {
-              context.replace(AppRouter.setting);
-              GetIt.I<ZoomDrawerController>().toggle?.call();
-            },
+          SizedBox(height: 60.w),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(HugeIcons.strokeRoundedNote,
+                color: currentPath == AppRouter.splash ? Color(0XFF1ED760) : null),
           ),
-          ListTile(
-            minLeadingWidth: 20.w,
-            leading: Icon(
-              theme == ThemeMode.dark
-                  ? HugeIcons.strokeRoundedSunCloud02
-                  : HugeIcons.strokeRoundedMoon01,
-            ),
-            title: Text('Theme Mode'),
-            onTap: () => ref.read(themeModeNotifierProvider.notifier).toggleTheme(),
-          )
+          SizedBox(height: 60.w),
+          IconButton(
+            onPressed: () =>  context.replace(AppRouter.setting),
+            icon: Icon(HugeIcons.strokeRoundedSettings02,
+                color: currentPath == AppRouter.setting ? Color(0XFF1ED760) : null),
+          ),
         ],
-      );
-    }),);
+      ),
+    );
   }
 }
