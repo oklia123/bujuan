@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   media_kit_libs_linux
+  rive_native
   screen_retriever_linux
   window_manager
 )

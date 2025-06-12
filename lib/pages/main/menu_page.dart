@@ -99,7 +99,7 @@ class DesktopMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var currentPath = ref.watch(currentRouterPathProvider);
     return BackdropView(
-      width: 50.w,
+      width: 52.w,
       padding: EdgeInsets.symmetric(vertical: 15.w),
       child: Wrap(
         alignment: WrapAlignment.center,

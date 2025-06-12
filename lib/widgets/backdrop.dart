@@ -26,16 +26,16 @@ class BackdropView extends StatelessWidget {
     return ClipRRect(
       borderRadius: borderRadius ?? BorderRadius.circular(30.w),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), //
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), //
         child: Container(
           width: width,
           height: height,
           padding: padding,
           decoration: decoration ??
               BoxDecoration(
-                color: Colors.black.withAlpha(10), // 半透明背景
+                color: Colors.white.withAlpha(20), // 半透明背景
                 borderRadius: BorderRadius.circular(30.w),
-                border: Border.all(color: Colors.white.withAlpha(60)),
+                border: Border.all(color: Colors.grey.withAlpha(40)),
               ),
           child: child,
         ),

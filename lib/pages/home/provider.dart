@@ -11,6 +11,7 @@ part 'provider.g.dart';
 Future<HomeData> newAlbum(Ref ref) async {
   var recommendResourceFuture = BujuanMusicManager().recommendResource();
   var recommendSongsFuture = BujuanMusicManager().recommendSongs();
+  BujuanMusicManager().topArtist();
   var list = await Future.wait([recommendResourceFuture, recommendSongsFuture]);
   var songEntity = list[1] as RecommendSongEntity;
   return HomeData(

@@ -15,21 +15,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:rive_native/rive_native.dart' as rive;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await startLocalRedirectServer();
   await initMedia();
   await initWindow();
+  await rive.RiveNative.init();
+  await Hive.initFlutter();
+  await Hive.openBox('bujuan');
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.transparent, // 底部手势栏透明
       statusBarColor: Colors.transparent));
   GetIt getIt = GetIt.instance;
   getIt.registerSingleton<ZoomDrawerController>(ZoomDrawerController());
   getIt.registerSingleton<BoxController>(BoxController());
+  getIt.registerSingleton<Box>(Hive.box('bujuan'));
   // 让布局真正覆盖状态栏和底部手势栏
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(ProviderScope(child: MyApp()));
@@ -40,7 +47,9 @@ Future<void> initWindow() async {
   await windowManager.ensureInitialized();
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
     WindowOptions windowOptions = WindowOptions(
-      size: Size(1024, 600),
+      size: Size(1024, 650),
+      minimumSize: Size(1024, 650),
+      maximumSize: Size(1024, 800),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
@@ -97,7 +106,7 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     Size size = Size(375, 812);
     if (medium(context) || expanded(context)) {
-      size = Size(1024, 600);
+      size = Size(1024, 700);
     }
 
     return ScreenUtilInit(

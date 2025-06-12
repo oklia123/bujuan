@@ -20,12 +20,12 @@ class MediaItemWidget extends StatelessWidget {
       contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 3.w),
       leading: CachedImage(
         imageUrl: mediaItem.artUri?.toString() ?? '',
-        width: 48.w,
-        height: 48.w,
+        width: 42.w,
+        height: 42.w,
         borderRadius: 24.w,
       ),
-      title: Text(mediaItem.title),
-      subtitle: Text(mediaItem.artist ?? ''),
+      title: Text(mediaItem.title,style: TextStyle(fontSize: 14.sp),),
+      subtitle: Text(mediaItem.artist ?? '',style: TextStyle(fontSize: 12.sp),),
       trailing: mediaItem.extras?['mv'] != 0
           ? IconButton(
               onPressed: () {

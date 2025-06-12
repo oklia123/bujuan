@@ -10,7 +10,7 @@ class AppTheme {
       appBarTheme: AppBarTheme(
           elevation: 0,
           backgroundColor: Color(0xFF2C2C2C),
-          titleTextStyle: TextStyle(color: Colors.white,fontSize: 20.sp,fontWeight: FontWeight.w600),
+          titleTextStyle: TextStyle(color: Colors.white,fontSize: 18.sp,fontWeight: FontWeight.w400),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
@@ -23,7 +23,7 @@ class AppTheme {
           elevation: 0,
           backgroundColor: Colors.white,
           centerTitle: false,
-          titleTextStyle: TextStyle(color: Colors.black,fontSize: 20.sp,fontWeight: FontWeight.w600),
+          titleTextStyle: TextStyle(color: Colors.black,fontSize: 18.sp,fontWeight: FontWeight.w400),
           iconTheme: IconThemeData().copyWith(color: Colors.black),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarBrightness: Brightness.light,

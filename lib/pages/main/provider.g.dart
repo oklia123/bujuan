@@ -104,6 +104,23 @@ final themeModeNotifierProvider =
 );
 
 typedef _$ThemeModeNotifier = AutoDisposeNotifier<ThemeMode>;
+String _$backgroundModeNotifierHash() =>
+    r'4539ee887354fafaddfeb829220293c23c161572';
+
+/// See also [BackgroundModeNotifier].
+@ProviderFor(BackgroundModeNotifier)
+final backgroundModeNotifierProvider =
+    AutoDisposeNotifierProvider<BackgroundModeNotifier, String>.internal(
+  BackgroundModeNotifier.new,
+  name: r'backgroundModeNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$backgroundModeNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$BackgroundModeNotifier = AutoDisposeNotifier<String>;
 String _$boxPanelDetailDataHash() =>
     r'156ad7326d0b0b9aea2a9eaa45e202639e0a32f6';
 

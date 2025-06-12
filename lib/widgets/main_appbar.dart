@@ -5,6 +5,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 AppBar mainAppBar() {
   return AppBar(
+    backgroundColor: Colors.transparent,
     leading: IconButton(
         onPressed: () => GetIt.I<ZoomDrawerController>().toggle?.call(),
         icon: Icon(HugeIcons.strokeRoundedInbox)),

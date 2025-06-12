@@ -1,12 +1,14 @@
-import 'dart:ui';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
+import 'package:bujuan_music/common/values/app_config.dart';
+import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music_api/api/user/entity/user_info_entity.dart';
 import 'package:bujuan_music_api/common/music_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,7 +17,8 @@ part 'provider.g.dart';
 @riverpod
 class ThemeModeNotifier extends _$ThemeModeNotifier {
   @override
-  ThemeMode build() => ThemeMode.dark;
+  ThemeMode build() =>
+      (GetIt.I<Box>().get(AppConfig.isDarkTheme) ?? false) ? ThemeMode.dark : ThemeMode.light;
 
   void setTheme(ThemeMode mode) {
     state = mode;
@@ -23,6 +26,16 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
 
   void toggleTheme() {
     state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+  }
+}
+
+@riverpod
+class BackgroundModeNotifier extends _$BackgroundModeNotifier {
+  @override
+  String build() => (GetIt.I<Box>().get(AppConfig.backgroundPath) ?? AppImages.happy);
+
+  void changeBackground(String background) {
+    state = background;
   }
 }
 

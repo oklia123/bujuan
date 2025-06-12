@@ -6,4 +6,5 @@ class AppRouter{
   static final String user = '/user';
   static final String setting = '/setting';
   static final String mv = '/mv';
+  static final String play = '/play';
 }

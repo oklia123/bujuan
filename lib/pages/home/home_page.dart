@@ -178,29 +178,34 @@ class DesktopHome extends StatelessWidget {
             height: 190.w,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => Container(
-                width: 155.w,
-                padding: EdgeInsets.all(5.w),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white.withAlpha(60)),
-                    borderRadius: BorderRadius.circular(20.w)),
-                child: Column(
-                  children: [
-                    CachedImage(
-                      imageUrl: recommend[index].picUrl ?? '',
-                      width: 150.w,
-                      height: 150.w,
-                      borderRadius: 20.w,
-                    ),
-                    SizedBox(height: 5.w),
-                    Text(
-                      '  ${recommend[index].name}',
-                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+              itemBuilder: (context, index) => GestureDetector(
+                child: Container(
+                  width: 155.w,
+                  padding: EdgeInsets.all(5.w),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white.withAlpha(60)),
+                      borderRadius: BorderRadius.circular(20.w)),
+                  child: Column(
+                    children: [
+                      CachedImage(
+                        imageUrl: recommend[index].picUrl ?? '',
+                        width: 150.w,
+                        height: 150.w,
+                        borderRadius: 20.w,
+                      ),
+                      SizedBox(height: 5.w),
+                      Text(
+                        '  ${recommend[index].name}',
+                        style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
+                onTap: (){
+                  context.push(AppRouter.playlist, extra: recommend[index].id);
+                },
               ),
               itemCount: recommend.length,
               separatorBuilder: (BuildContext context, int index) => SizedBox(width: 10.w),
@@ -216,32 +221,35 @@ class DesktopHome extends StatelessWidget {
             height: 130.w,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => SizedBox(
-                width: 85.w,
-                child: Column(
-                  children: [
-                    CachedImage(
-                      imageUrl: medias[index].artUri.toString() ?? '',
-                      width: 80.w,
-                      height: 80.w,
-                      borderRadius: 40.w,
-                    ),
-                    SizedBox(height: 5.w),
-                    Text(
-                      medias[index].title,
-                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 2.w),
-                    Text(
-                      medias[index].artist??'',
-                      style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w400),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+              itemBuilder: (context, index) => GestureDetector(
+                child: SizedBox(
+                  width: 85.w,
+                  child: Column(
+                    children: [
+                      CachedImage(
+                        imageUrl: medias[index].artUri.toString() ?? '',
+                        width: 80.w,
+                        height: 80.w,
+                        borderRadius: 40.w,
+                      ),
+                      SizedBox(height: 5.w),
+                      Text(
+                        medias[index].title,
+                        style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 2.w),
+                      Text(
+                        medias[index].artist??'',
+                        style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w400),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
+                onTap: () => BujuanMusicHandler().updateQueue(medias,index: index),
               ),
               itemCount: medias.length,
               separatorBuilder: (BuildContext context, int index) => SizedBox(width: 10.w),
