@@ -44,8 +44,8 @@ void main() async {
 
 /// 初始化窗口
 Future<void> initWindow() async {
-  await windowManager.ensureInitialized();
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+    await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       size: Size(1024, 650),
       minimumSize: Size(1024, 650),

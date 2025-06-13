@@ -1,16 +1,48 @@
-# bujuan_music
+<p align="center">
+<img src="macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png" alt="app_icon_256" style="zoom: 50%;"/>
+</p>
+<h1 align="center">bujuan</h1>
+<p align="center">一个支持Android、iOS、MacOS、Windows、Linux的三方网易云播放器。</p>
 
-A new Flutter project.
+#### MacOS 
 
-## Getting Started
+![](gif/desktop1.png)
+![](gif/desktop2.png)
+![](gif/desktop3.png)
+![](gif/home.gif)
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+#### Android & IOS
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| <img src="gif/phone1.jpg" alt="956" style="zoom:20%;" /> | <img src="gif/phone2.jpg" alt="954" style="zoom:20%;" /> | <img src="gif/phone3.jpg" alt="955" style="zoom:20%;" /> |
+|----------------------------------------------------------|----------------------------------------------------------|----------------------------------------------------------|
+
+
+
+
+
+
+
+## 功能介绍
+- 采用flutter开发，可打包编译为所有平台。
+
+- 播放页面模仿YouTube Music，动画流畅精美。
+
+- 网易云账号登录（邮箱、二维码）。
+
+- 每日推荐、私人Fm、电台、云盘。
+
+- 歌手、专辑、搜索
+
+- 去除无用功能，专注于用户音乐。
+
+
+
+
+
+### 代码部署编译
+- `flutter pub get`
+- `flutter build apk --release`
+- `flutter build ios`
+- `flutter build macos`
