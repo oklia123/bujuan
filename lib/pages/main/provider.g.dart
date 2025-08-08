@@ -72,7 +72,7 @@ final lyricProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LyricRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
-String _$mediaColorHash() => r'd64cde0affd97c6f92d8ac7a5a2d14fb0151f800';
+String _$mediaColorHash() => r'eee986b46cece04138fcd6dee538384440c9d037';
 
 /// See also [mediaColor].
 @ProviderFor(mediaColor)
@@ -88,7 +88,7 @@ final mediaColorProvider = AutoDisposeFutureProvider<PaletteGenerator>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MediaColorRef = AutoDisposeFutureProviderRef<PaletteGenerator>;
-String _$themeModeNotifierHash() => r'b8d15ea60c399a87f3d4892d461309e8c44e0d7e';
+String _$themeModeNotifierHash() => r'62b046d560cfe8308ca9511ea341a12533a2c262';
 
 /// See also [ThemeModeNotifier].
 @ProviderFor(ThemeModeNotifier)
@@ -105,7 +105,7 @@ final themeModeNotifierProvider =
 
 typedef _$ThemeModeNotifier = AutoDisposeNotifier<ThemeMode>;
 String _$backgroundModeNotifierHash() =>
-    r'4539ee887354fafaddfeb829220293c23c161572';
+    r'7809376e2bdbb9de244200e40b1359ee0ca28731';
 
 /// See also [BackgroundModeNotifier].
 @ProviderFor(BackgroundModeNotifier)
@@ -154,5 +154,23 @@ final currentRouterPathProvider =
 );
 
 typedef _$CurrentRouterPath = AutoDisposeNotifier<String>;
+String _$loopModeNotifierHash() => r'd6e22c4d2f3e534e551adbaa1a66a8a0c559f760';
+
+/// 播放模式
+///
+/// Copied from [LoopModeNotifier].
+@ProviderFor(LoopModeNotifier)
+final loopModeNotifierProvider =
+    AutoDisposeNotifierProvider<LoopModeNotifier, LoopMode>.internal(
+  LoopModeNotifier.new,
+  name: r'loopModeNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$loopModeNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LoopModeNotifier = AutoDisposeNotifier<LoopMode>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

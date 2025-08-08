@@ -84,6 +84,28 @@ Future<UserInfoEntity?> lyric(Ref ref) async {
 @riverpod
 Future<PaletteGenerator> mediaColor(Ref ref) async {
   var url = ref.watch(mediaItemProvider).value?.artUri.toString() ?? '';
-  CachedNetworkImageProvider imageProvider = CachedNetworkImageProvider('$url?param=200y200');
-  return await PaletteGenerator.fromImageProvider(imageProvider, size: Size(200, 200));
+  CachedNetworkImageProvider imageProvider = CachedNetworkImageProvider('$url?param=100y100');
+  return await PaletteGenerator.fromImageProvider(imageProvider, size: Size(300, 300));
+}
+
+/// 播放模式
+@riverpod
+class LoopModeNotifier extends _$LoopModeNotifier {
+  @override
+  LoopMode build() => LoopMode.playlist;
+
+  void changeMode() {
+    switch (BujuanMusicHandler().loopMode) {
+      case LoopMode.one:
+        state = LoopMode.playlist;
+        break;
+      case LoopMode.playlist:
+        state = LoopMode.shuffle;
+        break;
+      case LoopMode.shuffle:
+        state = LoopMode.one;
+        break;
+    }
+    BujuanMusicHandler().setLoopMode(state);
+  }
 }

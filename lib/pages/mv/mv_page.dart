@@ -1,7 +1,6 @@
 import 'package:bujuan_music/pages/mv/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
 // import 'package:media_kit_video/media_kit_video.dart';
 
 import '../../widgets/loading.dart';
@@ -16,9 +15,8 @@ class MvPage extends ConsumerStatefulWidget {
 }
 
 class _MvPageState extends ConsumerState<MvPage> {
-  late final player = Player();
 
-  // late final controller = VideoController(player);
+  // late final controller = VideoController(player); 重定向
 
   @override
   void initState() {
@@ -32,7 +30,7 @@ class _MvPageState extends ConsumerState<MvPage> {
       appBar: AppBar(title: Text('Mv Player')),
       body: mv.when(
         data: (details) {
-          player.open(Media(details.mvUrl.data?.url ?? ''));
+          // player.open(Media(details.mvUrl.data?.url ?? ''));
           return SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.width * 9.0 / 16.0,
@@ -48,6 +46,6 @@ class _MvPageState extends ConsumerState<MvPage> {
   @override
   void dispose() {
     super.dispose();
-    player.dispose();
+    // player.dispose();
   }
 }

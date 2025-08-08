@@ -14,9 +14,14 @@ class DesktopPlayPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => context.pop(), icon: Icon(HugeIcons.strokeRoundedCancel01)),
-        title: Text('Now Playing'),
+        leading: SizedBox.shrink(),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(onPressed: () => context.pop(), icon: Icon(HugeIcons.strokeRoundedCancel01)),
+            Text('Now Playing')
+          ],
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
       ),
@@ -43,12 +48,16 @@ class PlayInfoView extends ConsumerWidget {
       children: [
         CachedImage(
           imageUrl: media?.artUri.toString() ?? '',
-          width: 260.w,
-          height: 260.w,
+          width: 240.w,
+          height: 240.w,
           pWidth: 600,
           pHeight: 600,
-          borderRadius: 30.w,
-        ),
+          borderRadius: 120.w,
+        ),//唱片
+        SizedBox(height: 20.w),
+        Text(media?.title??'',style: TextStyle(fontSize: 20.sp),),
+        SizedBox(height: 10.w),
+        Text(media?.artist??'',style: TextStyle(fontSize: 14.sp),),
       ],
     );
   }

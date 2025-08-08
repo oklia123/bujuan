@@ -111,14 +111,14 @@ class DesktopView extends StatelessWidget {
               SizedBox(height: 10.w),
               Expanded(
                   child: Row(
-                children: [
-                  SizedBox(width: 10.w),
-                  MenuPage(),
-                  SizedBox(width: 10.w),
-                  Expanded(child: BackdropView(child: child)),
-                  SizedBox(width: 10.w),
-                ],
-              )),
+                    children: [
+                      SizedBox(width: 10.w),
+                      MenuPage(),
+                      SizedBox(width: 10.w),
+                      Expanded(child: BackdropView(child: child)),
+                      SizedBox(width: 10.w),
+                    ],
+                  )),
               SizedBox(height: 10.w),
               _buildBottomBar(context),
               SizedBox(height: 10.w),

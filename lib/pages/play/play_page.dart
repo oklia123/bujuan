@@ -15,19 +15,14 @@ import '../../utils/color_utils.dart';
 import '../../widgets/curved_progress_bar.dart';
 import '../main/provider.dart';
 
-class PlayPage extends ConsumerWidget {
+class PlayPage extends StatelessWidget {
   const PlayPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final minHeightBox = 45.w + (mediaQuery.padding.bottom == 0 ? 20.w : mediaQuery.padding.bottom);
     final maxHeightBox = mediaQuery.size.height - mediaQuery.padding.top - 5.w;
-
-    final color = ref.watch(mediaColorProvider).maybeWhen(
-          data: (c) => c.dominantColor?.color ?? Colors.transparent,
-          orElse: () => Colors.transparent,
-        );
 
     return SizedBox(
       width: mediaQuery.size.width,
@@ -36,19 +31,27 @@ class PlayPage extends ConsumerWidget {
         alignment: Alignment.topCenter,
         children: [
           Positioned.fill(
-            child: AnimatedGradientBackground(
-              startColor: Theme.of(context).scaffoldBackgroundColor,
-              endColor: ColorUtils.lightenColor(color, .6).withAlpha(100),
-            ),
+            child: Consumer(builder: (context, ref, child) {
+              final color = ref.watch(mediaColorProvider).maybeWhen(
+                    data: (c) => c.dominantColor?.color ?? Colors.transparent,
+                    orElse: () => Colors.transparent,
+                  );
+
+              return AnimatedGradientBackground(
+                startColor: Theme.of(context).scaffoldBackgroundColor,
+                endColor: ColorUtils.lightenColor(color, .5).withAlpha(100),
+              );
+            }),
           ),
           const _MusicControlsSection(),
-          Positioned(
-            top: -minHeightBox * ref.watch(boxPanelDetailDataProvider),
-            child: GestureDetector(
-              child: const SongInfoBar(),
-              onTap: () => GetIt.I<BoxController>().openBox(),
-            ),
-          ),
+          Consumer(
+              builder: (context, ref, child) => Positioned(
+                    top: -minHeightBox * ref.watch(boxPanelDetailDataProvider),
+                    child: GestureDetector(
+                      child: const SongInfoBar(),
+                      onTap: () => GetIt.I<BoxController>().openBox(),
+                    ),
+                  )),
         ],
       ),
     );
@@ -217,7 +220,9 @@ class Sleep extends ConsumerWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.w),
       padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 25.w),
-      decoration: BoxDecoration(color: ColorUtils.lightenColor(color.color, 0.7),borderRadius: BorderRadius.circular(30.w)),
+      decoration: BoxDecoration(
+          color: ColorUtils.lightenColor(color.color, 0.7),
+          borderRadius: BorderRadius.circular(30.w)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -296,7 +301,7 @@ class _PlaybackControls extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(width: 15.w),
-        const _ControlButton(image: HugeIcons.strokeRoundedShuffle),
+        const _ControlButton(image: HugeIcons.strokeRoundedFavourite),
         SizedBox(width: 15.w),
         Expanded(
           child: Row(
@@ -315,7 +320,19 @@ class _PlaybackControls extends StatelessWidget {
           ),
         ),
         SizedBox(width: 15.w),
-        const _ControlButton(image: HugeIcons.strokeRoundedRepeatOne02),
+        Consumer(builder: (context, ref, child) {
+          var loopMode = ref.watch(loopModeNotifierProvider);
+          return _ControlButton(
+            image: loopMode == LoopMode.one
+                ? HugeIcons.strokeRoundedRepeatOne02
+                : loopMode == LoopMode.playlist
+                    ? HugeIcons.strokeRoundedRepeat
+                    : HugeIcons.strokeRoundedShuffle,
+            onTap: () {
+              ref.read(loopModeNotifierProvider.notifier).changeMode();
+            },
+          );
+        }),
         SizedBox(width: 15.w),
       ],
     );
