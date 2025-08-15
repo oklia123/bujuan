@@ -1,4 +1,5 @@
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
+import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/pages/main/menu_page.dart';
 import 'package:bujuan_music/pages/main/provider.dart';
@@ -10,13 +11,14 @@ import 'package:bujuan_music/widgets/rive_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../../utils/adaptive_screen_utils.dart';
-import '../../widgets/slide.dart';
 import 'package:rive_native/rive_native.dart' as rive;
+
+import '../../widgets/we_slider/weslide.dart';
+import '../../widgets/we_slider/weslide_controller.dart';
 
 class MainPage extends StatelessWidget {
   final Widget child;
@@ -42,45 +44,116 @@ class MobileView extends StatelessWidget {
     var of = MediaQuery.of(context);
     double minHeightBox = 45.w + (of.padding.bottom == 0 ? 20.w : of.padding.bottom);
     double maxHeightBox = of.size.height - of.padding.top - 5.w;
-    return ZoomDrawer(
-        controller: GetIt.I<ZoomDrawerController>(),
-        reverseDuration: Duration(milliseconds: 1000),
-        menuScreen: MenuPage(),
-        menuScreenWidth: MediaQuery.of(context).size.width,
-        mainScreenScale: .18,
-        angle: -8,
-        slideWidth: 200.w,
-        dragOffset: 200.w,
-        shadowLayer1Color: Colors.grey.withAlpha(20),
-        shadowLayer2Color: Colors.grey.withAlpha(30),
-        showShadow: true,
-        mainScreenTapClose: true,
-        menuScreenTapClose: true,
-        mainScreen: Consumer(builder: (context, ref, c) {
-          return SlidingBox(
-            controller: GetIt.I<BoxController>(),
-            collapsed: true,
-            minHeight: minHeightBox,
-            maxHeight: maxHeightBox,
-            color: Theme.of(context).scaffoldBackgroundColor,
-            style: BoxStyle.sheet,
-            draggableIconVisible: false,
-            draggableIconBackColor: Colors.white,
-            onBoxOpen: () {},
-            onBoxSlide: (value) =>
-                ref.read(boxPanelDetailDataProvider.notifier).updatePanelDetail(value),
-            backdrop: Backdrop(
-              moving: false,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              body: child,
-            ),
-            bodyBuilder: (s, _) => GestureDetector(
-              child: PlayPage(),
-              onHorizontalDragUpdate: (e) {},
-            ),
+    // return ZoomDrawer(
+    //     controller: GetIt.I<ZoomDrawerController>(),
+    //     reverseDuration: Duration(milliseconds: 1000),
+    //     menuScreen: MenuPage(),
+    //     menuScreenWidth: MediaQuery.of(context).size.width,
+    //     mainScreenScale: .18,
+    //     angle: -8,
+    //     slideWidth: 200.w,
+    //     dragOffset: 200.w,
+    //     shadowLayer1Color: Colors.grey.withAlpha(20),
+    //     shadowLayer2Color: Colors.grey.withAlpha(30),
+    //     showShadow: true,
+    //     mainScreenTapClose: true,
+    //     menuScreenTapClose: true,
+    //     mainScreen: Consumer(builder: (context, ref, c) {
+    //       return SlidingBox(
+    //         controller: GetIt.I<BoxController>(),
+    //         collapsed: true,
+    //         minHeight: minHeightBox,
+    //         maxHeight: maxHeightBox,
+    //         color: Theme.of(context).scaffoldBackgroundColor,
+    //         style: BoxStyle.sheet,
+    //         draggableIconVisible: false,
+    //         draggableIconBackColor: Colors.white,
+    //         onBoxOpen: () {},
+    //         onBoxSlide: (value) =>
+    //             ref.read(boxPanelDetailDataProvider.notifier).updatePanelDetail(value),
+    //         backdrop: Backdrop(
+    //           moving: false,
+    //           color: Theme.of(context).scaffoldBackgroundColor,
+    //           body: child,
+    //         ),
+    //         bodyBuilder: (s, _) => GestureDetector(
+    //           child: PlayPage(),
+    //           onHorizontalDragUpdate: (e) {},
+    //         ),
+    //       );
+    //     }));
+    // return Consumer(builder: (context, ref, c) {
+    //   return SlidingBox(
+    //     controller: GetIt.I<BoxController>(),
+    //     collapsed: true,
+    //     minHeight: minHeightBox,
+    //     maxHeight: maxHeightBox,
+    //     color: Theme.of(context).scaffoldBackgroundColor,
+    //     style: BoxStyle.sheet,
+    //     draggableIconVisible: false,
+    //     draggableIconBackColor: Colors.white,
+    //     onBoxOpen: () {},
+    //     onBoxSlide: (value) =>
+    //         ref.read(boxPanelDetailDataProvider.notifier).updatePanelDetail(value),
+    //     backdrop: Backdrop(
+    //       moving: false,
+    //       color: Theme.of(context).scaffoldBackgroundColor,
+    //       body: child,
+    //     ),
+    //     bodyBuilder: (s, _) => GestureDetector(
+    //       child: PlayPage(),
+    //       onHorizontalDragUpdate: (e) {},
+    //     ),
+    //   );
+    // });
+    var of2 = MediaQuery.of(context);
+    final double panelMinSize = 80.w + 56 + of2.padding.bottom;
+    final double panelMaxSize = of2.size.height;
+    var panelController = GetIt.I<WeSlideController>(instanceName: 'panel');
+    var theme = Theme.of(context);
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: WeSlide(
+        backgroundColor: Colors.transparent,
+        panelMinSize: panelMinSize,
+        panelMaxSize: panelMaxSize,
+        hideFooter: true,
+        footerController: GetIt.I<WeSlideController>(instanceName: 'footer'),
+        controller: panelController,
+        body: child,
+        panel: PlayPage(),
+        panelHeader: GestureDetector(
+          child: SongInfoBar(),
+          onTap: () {
+            panelController.show();
+          },
+        ),
+        footerHeight: 65 + of2.padding.bottom,
+        footer: Consumer(builder: (context, ref, child) {
+          return BottomNavigationBar(
+            currentIndex: ref.watch(currentIndexProvider),
+            items: AppConfig.bottomItems.map((e) {
+              return BottomNavigationBarItem(
+                  icon: Icon(e.iconData),
+                  label: '•',
+                  backgroundColor: theme.scaffoldBackgroundColor);
+            }).toList(),
+            onTap: (index) {
+              ref.read(currentIndexProvider.notifier).setIndex(index);
+              context.replace(AppConfig.bottomItems[index].path);
+            },
           );
-        }));
+        }),
+      ),
+    );
   }
+}
+
+class BottomData {
+  IconData iconData;
+  String path;
+
+  BottomData(this.iconData, this.path);
 }
 
 class DesktopView extends StatelessWidget {
@@ -111,14 +184,14 @@ class DesktopView extends StatelessWidget {
               SizedBox(height: 10.w),
               Expanded(
                   child: Row(
-                    children: [
-                      SizedBox(width: 10.w),
-                      MenuPage(),
-                      SizedBox(width: 10.w),
-                      Expanded(child: BackdropView(child: child)),
-                      SizedBox(width: 10.w),
-                    ],
-                  )),
+                children: [
+                  SizedBox(width: 10.w),
+                  MenuPage(),
+                  SizedBox(width: 10.w),
+                  Expanded(child: BackdropView(child: child)),
+                  SizedBox(width: 10.w),
+                ],
+              )),
               SizedBox(height: 10.w),
               _buildBottomBar(context),
               SizedBox(height: 10.w),

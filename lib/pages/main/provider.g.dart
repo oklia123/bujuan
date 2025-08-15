@@ -6,6 +6,24 @@ part of 'provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$weSlideControllerHash() => r'2a39b97effbcc5bacfd7439a0ece4b480357b239';
+
+/// See also [weSlideController].
+@ProviderFor(weSlideController)
+final weSlideControllerProvider =
+    AutoDisposeProvider<WeSlideController>.internal(
+  weSlideController,
+  name: r'weSlideControllerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$weSlideControllerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef WeSlideControllerRef = AutoDisposeProviderRef<WeSlideController>;
 String _$mediaItemHash() => r'30408799ae381fd95c17187749573c341a79b898';
 
 /// See also [mediaItem].
@@ -121,6 +139,21 @@ final backgroundModeNotifierProvider =
 );
 
 typedef _$BackgroundModeNotifier = AutoDisposeNotifier<String>;
+String _$currentIndexHash() => r'51e75b301eb79ee8f5bc2fd781463dbd404ea42f';
+
+/// See also [CurrentIndex].
+@ProviderFor(CurrentIndex)
+final currentIndexProvider =
+    AutoDisposeNotifierProvider<CurrentIndex, int>.internal(
+  CurrentIndex.new,
+  name: r'currentIndexProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$currentIndexHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CurrentIndex = AutoDisposeNotifier<int>;
 String _$boxPanelDetailDataHash() =>
     r'156ad7326d0b0b9aea2a9eaa45e202639e0a32f6';
 

@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/common/values/app_images.dart';
+import 'package:bujuan_music/widgets/we_slider/weslide_controller.dart';
 import 'package:bujuan_music_api/api/user/entity/user_info_entity.dart';
 import 'package:bujuan_music_api/common/music_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -30,12 +31,27 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
 }
 
 @riverpod
+WeSlideController weSlideController(Ref ref) {
+  return WeSlideController();
+}
+
+@riverpod
 class BackgroundModeNotifier extends _$BackgroundModeNotifier {
   @override
   String build() => (GetIt.I<Box>().get(AppConfig.backgroundPath) ?? AppImages.happy);
 
   void changeBackground(String background) {
     state = background;
+  }
+}
+
+@riverpod
+class CurrentIndex extends _$CurrentIndex {
+  @override
+  int build() => 0; // 初始值
+
+  void setIndex(int index) {
+    state = index; // 修改值
   }
 }
 

@@ -24,36 +24,37 @@ class PlayPage extends StatelessWidget {
     final minHeightBox = 45.w + (mediaQuery.padding.bottom == 0 ? 20.w : mediaQuery.padding.bottom);
     final maxHeightBox = mediaQuery.size.height - mediaQuery.padding.top - 5.w;
 
-    return SizedBox(
-      width: mediaQuery.size.width,
-      height: maxHeightBox,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Positioned.fill(
-            child: Consumer(builder: (context, ref, child) {
-              final color = ref.watch(mediaColorProvider).maybeWhen(
-                    data: (c) => c.dominantColor?.color ?? Colors.transparent,
-                    orElse: () => Colors.transparent,
-                  );
-
-              return AnimatedGradientBackground(
-                startColor: Theme.of(context).scaffoldBackgroundColor,
-                endColor: ColorUtils.lightenColor(color, .5).withAlpha(100),
-              );
-            }),
-          ),
-          const _MusicControlsSection(),
-          Consumer(
-              builder: (context, ref, child) => Positioned(
-                    top: -minHeightBox * ref.watch(boxPanelDetailDataProvider),
-                    child: GestureDetector(
-                      child: const SongInfoBar(),
-                      onTap: () => GetIt.I<BoxController>().openBox(),
-                    ),
-                  )),
-        ],
-      ),
+    return Scaffold(
+      body: const _MusicControlsSection(),
+      // width: mediaQuery.size.width,
+      // height: maxHeightBox,
+      // child: Stack(
+      //   alignment: Alignment.topCenter,
+      //   children: [
+      //     // Positioned.fill(
+      //     //   child: Consumer(builder: (context, ref, child) {
+      //     //     final color = ref.watch(mediaColorProvider).maybeWhen(
+      //     //           data: (c) => c.dominantColor?.color ?? Colors.transparent,
+      //     //           orElse: () => Colors.transparent,
+      //     //         );
+      //     //
+      //     //     return AnimatedGradientBackground(
+      //     //       startColor: Theme.of(context).scaffoldBackgroundColor,
+      //     //       endColor: ColorUtils.lightenColor(color, .5).withAlpha(100),
+      //     //     );
+      //     //   }),
+      //     // ),
+      //     ,
+      //     // Consumer(
+      //     //     builder: (context, ref, child) => Positioned(
+      //     //           top: -minHeightBox * ref.watch(boxPanelDetailDataProvider),
+      //     //           child: GestureDetector(
+      //     //             child: const SongInfoBar(),
+      //     //             onTap: () => GetIt.I<BoxController>().openBox(),
+      //     //           ),
+      //     //         )),
+      //   ],
+      // ),
     );
   }
 }
@@ -114,14 +115,23 @@ class SongInfoBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mediaItem = ref.watch(mediaItemProvider).value;
-
+    final color = ref.watch(mediaColorProvider).maybeWhen(
+          data: (c) => c.dominantColor?.color ?? Colors.transparent,
+          orElse: () => Colors.transparent,
+        );
     return Container(
-      color: Colors.transparent,
-      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      width: MediaQuery.of(context).size.width - 16.w,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.w),
+          gradient: LinearGradient(
+              colors: [ColorUtils.lightenColor(color,0.8),Colors.white],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight)),
       child: Row(
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 20, right: 30.w),
+            padding: EdgeInsets.only(left: 10.w, right: 30.w),
             child: SizedBox(
               height: 60.w,
               child: Row(
@@ -134,7 +144,7 @@ class SongInfoBar extends ConsumerWidget {
                   ),
                   SizedBox(width: 10.w),
                   Text(mediaItem?.title ?? 'Bujuan',
-                      style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),

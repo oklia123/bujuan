@@ -54,7 +54,6 @@ class MobileHome extends StatelessWidget {
     final songList = homeData.medias;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: 60.w),
       child: Column(
         children: [
           SizedBox(height: 10.w),

@@ -14,25 +14,17 @@ import '../pages/login/login_page.dart';
 class AppPages {
   static final shellRouter = [
     GoRoute(
-        path: AppRouter.home,
-        pageBuilder: (context, state) =>
-            buildPageWithSlideUpTransition(state: state, child: HomePage())),
+      path: AppRouter.home,
+      builder: (context, state) => HomePage(),
+    ),
     GoRoute(
         path: AppRouter.play,
         pageBuilder: (context, state) =>
             buildPageWithSlideUpTransition(state: state, child: DesktopPlayPage())),
     GoRoute(
-        path: AppRouter.playlist,
-        pageBuilder: (context, state) =>
-            buildPageWithSlideUpTransition(state: state, child: PlaylistPage(state.extra as int))),
-    GoRoute(
-        path: AppRouter.user,
-        pageBuilder: (context, state) =>
-            buildPageWithSlideUpTransition(state: state, child: UserPage())),
-    GoRoute(
-        path: AppRouter.setting,
-        pageBuilder: (context, state) =>
-            buildPageWithSlideUpTransition(state: state, child: SettingPage())),
+        path: AppRouter.playlist, builder: (context, state) => PlaylistPage(state.extra as int)),
+    GoRoute(path: AppRouter.user, builder: (context, state) => UserPage()),
+    GoRoute(path: AppRouter.setting, builder: (context, state) => SettingPage()),
   ];
 
   static final rootRouter = [

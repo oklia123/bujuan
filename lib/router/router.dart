@@ -4,10 +4,12 @@ import 'package:bujuan_music/router/app_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../pages/main/main_page.dart';
+import '../widgets/we_slider/weslide_controller.dart';
 
 part 'router.g.dart';
 
@@ -35,6 +37,11 @@ GoRouter router(Ref ref) {
     final currentPath = router.state.path ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(currentRouterPathProvider.notifier).updatePanelDetail(currentPath);
+      if (currentPath != AppRouter.home && currentPath != AppRouter.user && currentPath != AppRouter.setting) {
+        GetIt.I<WeSlideController>(instanceName: 'footer').hide();
+      } else {
+        GetIt.I<WeSlideController>(instanceName: 'footer').show();
+      }
     });
   });
   ref.onDispose(router.dispose);

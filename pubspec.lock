@@ -851,10 +851,10 @@ packages:
     dependency: "direct main"
     description:
       name: rive_native
-      sha256: "27882b9c5939e3d8e5b1f290386eb8bf3919696b4fd40ae55de20d596529e776"
+      sha256: "31683c29468d13677e7a23fdb58401bf45e52c9a7ba050f05c07587537c5c47e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.9"
   riverpod:
     dependency: transitive
     description:

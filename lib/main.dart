@@ -7,6 +7,7 @@ import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/router.dart';
 import 'package:bujuan_music/utils/adaptive_screen_utils.dart';
 import 'package:bujuan_music/widgets/slide.dart';
+import 'package:bujuan_music/widgets/we_slider/weslide_controller.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +25,6 @@ void main() async {
   // await startLocalRedirectServer();
   await initMedia();
   await initWindow();
-  await rive.RiveNative.init();
   await Hive.initFlutter();
   await Hive.openBox('bujuan');
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -33,6 +33,8 @@ void main() async {
   GetIt getIt = GetIt.instance;
   getIt.registerSingleton<ZoomDrawerController>(ZoomDrawerController());
   getIt.registerSingleton<BoxController>(BoxController());
+  getIt.registerSingleton<WeSlideController>(WeSlideController(initial: true),instanceName: 'footer');
+  getIt.registerSingleton<WeSlideController>(WeSlideController(),instanceName: 'panel');
   getIt.registerSingleton<Box>(Hive.box('bujuan'));
   // 让布局真正覆盖状态栏和底部手势栏
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -42,6 +44,7 @@ void main() async {
 /// 初始化窗口
 Future<void> initWindow() async {
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+    await rive.RiveNative.init();
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       size: Size(1024, 650),
