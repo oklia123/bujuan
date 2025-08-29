@@ -3,6 +3,7 @@ import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/widgets/we_slider/weslide_controller.dart';
+import 'package:bujuan_music_api/api/mv/entity/mv_url_entity.dart';
 import 'package:bujuan_music_api/api/user/entity/user_info_entity.dart';
 import 'package:bujuan_music_api/common/music_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -88,8 +89,20 @@ Stream<PlaybackState?> playbackState(Ref ref) {
 }
 
 @riverpod
+Stream<Duration> playbackPosition(Ref ref) {
+  return BujuanMusicHandler().currentPosition;
+}
+// _player.onPositionChanged
+
+@riverpod
 Future<UserInfoEntity?> userInfo(Ref ref) async {
   return await BujuanMusicManager().userInfo();
+}
+
+@riverpod
+Future<MvUrlEntity?> mvUrl(Ref ref) async {
+  // var url = ref.watch(mediaItemProvider).value.extras?['mvId'];
+  // return await BujuanMusicManager().mvUrl(id: id);
 }
 
 @riverpod

@@ -21,12 +21,13 @@ class AppTheme {
       listTileTheme: ListTileThemeData().copyWith(iconColor: Colors.black),
       brightness: Brightness.light,
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          selectedIconTheme: IconThemeData(color: Colors.green),
-          unselectedIconTheme: IconThemeData(color: Colors.black),
+          selectedLabelStyle: TextStyle(fontSize: 16),
+          selectedIconTheme: IconThemeData(color: Colors.black),
+          unselectedIconTheme: IconThemeData(color: Colors.grey),
           unselectedItemColor: Colors.white,
-          selectedItemColor: Colors.green),
+          selectedItemColor: Colors.black),
       appBarTheme: AppBarTheme(
           elevation: 0,
           backgroundColor: Colors.white,

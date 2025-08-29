@@ -4,15 +4,14 @@ import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music/utils/time_utils.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/panel.dart';
-import 'package:bujuan_music/widgets/slide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:palette_generator/palette_generator.dart';
 import '../../utils/color_utils.dart';
 import '../../widgets/curved_progress_bar.dart';
+import '../../widgets/wave.dart';
 import '../main/provider.dart';
 
 class PlayPage extends StatelessWidget {
@@ -20,91 +19,12 @@ class PlayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final minHeightBox = 45.w + (mediaQuery.padding.bottom == 0 ? 20.w : mediaQuery.padding.bottom);
-    final maxHeightBox = mediaQuery.size.height - mediaQuery.padding.top - 5.w;
-
     return Scaffold(
-      body: const _MusicControlsSection(),
-      // width: mediaQuery.size.width,
-      // height: maxHeightBox,
-      // child: Stack(
-      //   alignment: Alignment.topCenter,
-      //   children: [
-      //     // Positioned.fill(
-      //     //   child: Consumer(builder: (context, ref, child) {
-      //     //     final color = ref.watch(mediaColorProvider).maybeWhen(
-      //     //           data: (c) => c.dominantColor?.color ?? Colors.transparent,
-      //     //           orElse: () => Colors.transparent,
-      //     //         );
-      //     //
-      //     //     return AnimatedGradientBackground(
-      //     //       startColor: Theme.of(context).scaffoldBackgroundColor,
-      //     //       endColor: ColorUtils.lightenColor(color, .5).withAlpha(100),
-      //     //     );
-      //     //   }),
-      //     // ),
-      //     ,
-      //     // Consumer(
-      //     //     builder: (context, ref, child) => Positioned(
-      //     //           top: -minHeightBox * ref.watch(boxPanelDetailDataProvider),
-      //     //           child: GestureDetector(
-      //     //             child: const SongInfoBar(),
-      //     //             onTap: () => GetIt.I<BoxController>().openBox(),
-      //     //           ),
-      //     //         )),
-      //   ],
-      // ),
-    );
-  }
-}
-
-class AnimatedGradientBackground extends StatelessWidget {
-  final Color startColor;
-  final Color endColor;
-
-  const AnimatedGradientBackground({super.key, required this.startColor, required this.endColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<Color?>(
-      tween: ColorTween(begin: startColor, end: endColor),
-      duration: const Duration(milliseconds: 500),
-      builder: (context, color, _) => Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [startColor, color ?? Colors.transparent],
-            begin: Alignment.topLeft,
-            end: Alignment.topRight,
-          ),
-        ),
+      backgroundColor: Colors.white.withAlpha(200),
+      body: BackdropFilter(
+        filter: ImageFilter.blur(sigmaY: 8, sigmaX: 8),
+        child: const _MusicControlsSection(),
       ),
-    );
-  }
-}
-
-class CoverBackground extends ConsumerWidget {
-  const CoverBackground({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var watch = ref.watch(mediaItemProvider);
-    return Stack(
-      children: [
-        CachedImage(
-          imageUrl: watch.value?.artUri.toString() ?? '',
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-        ),
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // sigma 越大模糊越强
-          child: SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -114,18 +34,19 @@ class SongInfoBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Color scaffoldColor = Theme.of(context).scaffoldBackgroundColor;
     final mediaItem = ref.watch(mediaItemProvider).value;
     final color = ref.watch(mediaColorProvider).maybeWhen(
-          data: (c) => c.dominantColor?.color ?? Colors.transparent,
-          orElse: () => Colors.transparent,
+          data: (c) => c.dominantColor?.color ?? scaffoldColor,
+          orElse: () => scaffoldColor,
         );
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8.w),
       width: MediaQuery.of(context).size.width - 16.w,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.w),
+          borderRadius: BorderRadius.circular(10.w),
           gradient: LinearGradient(
-              colors: [ColorUtils.lightenColor(color,0.8),Colors.white],
+              colors: [ColorUtils.lightenColor(color, .6), scaffoldColor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight)),
       child: Row(
@@ -158,7 +79,7 @@ class SongInfoBar extends ConsumerWidget {
                 ref.watch(playbackStateProvider).value?.playing == true
                     ? HugeIcons.strokeRoundedPause
                     : HugeIcons.strokeRoundedPlay,
-                size: 24.w,
+                size: 22.w,
               ),
             ),
           ),
@@ -168,22 +89,13 @@ class SongInfoBar extends ConsumerWidget {
   }
 }
 
-class _MusicControlsSection extends ConsumerWidget {
+class _MusicControlsSection extends StatelessWidget {
   const _MusicControlsSection();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final mediaQuery = MediaQuery.of(context);
-    final minHeightBox =
-        45.w + (mediaQuery.padding.bottom == 0 ? 20.w : mediaQuery.padding.bottom) * 2;
-    final mediaItem = ref.watch(mediaItemProvider).value;
-
+  Widget build(BuildContext context) {
     return Column(
       children: [
-        AnimatedContainer(
-          duration: Duration.zero,
-          height: minHeightBox * (1 - ref.watch(boxPanelDetailDataProvider)),
-        ),
         SizedBox(
           height: 35.w,
           child: Transform(
@@ -192,28 +104,68 @@ class _MusicControlsSection extends ConsumerWidget {
           ),
         ),
         SizedBox(height: 10.w),
-        Column(
-          children: [
-            CachedImage(
-              imageUrl: mediaItem?.artUri.toString() ?? '',
-              width: 290.w,
-              height: 290.w,
-              borderRadius: 25.w,
-              pWidth: 600,
-              pHeight: 600,
-            ),
-            SizedBox(height: 20.w),
-            Text(mediaItem?.title ?? '',
-                style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w500)),
-            SizedBox(height: 3.w),
-            Text(mediaItem?.artist ?? '',
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey)),
-          ],
-        ),
-        Expanded(child: _ProgressBarWithTime()),
+        Consumer(builder: (context, ref, child) {
+          final mediaItem = ref.watch(mediaItemProvider).value;
+          return Column(
+            children: [
+              CachedImage(
+                imageUrl: mediaItem?.artUri.toString() ?? '',
+                width: 300.w,
+                height: 300.w,
+                borderRadius: 25.w,
+                pWidth: 600,
+                pHeight: 600,
+              ),
+              SizedBox(height: 20.w),
+              Text(mediaItem?.title ?? '',
+                  style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w500)),
+              SizedBox(height: 3.w),
+              Text(mediaItem?.artist ?? '',
+                  style:
+                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey)),
+            ],
+          );
+        }),
+        Expanded(
+            child: Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            height: 40.w,
+            child: MusicProgressBar(),
+          ),
+        )),
         const _PlaybackControls(),
         SizedBox(height: 80.w),
       ],
+    );
+  }
+}
+
+class MusicProgressBar extends ConsumerWidget {
+  const MusicProgressBar({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final playbackState = ref.watch(playbackPositionProvider).value;
+    final mediaItem = ref.watch(mediaItemProvider).value;
+
+    final position = playbackState?.inMilliseconds ?? 0;
+    final duration = mediaItem?.duration?.inMilliseconds ?? 0;
+    final progress = (duration > 0) ? position / duration : 0.0;
+
+    return RepaintBoundary(
+      child: WaveformWidget(
+        progress: progress,
+        min: 0,
+        max: 1,
+        playedColor: Colors.black.withAlpha(100),
+        unplayedColor: Colors.grey.withAlpha(100),
+        // thumbColor: Colors.transparent,
+        onChangeEnd: (value) {
+          final seekTo = Duration(milliseconds: (duration * value).toInt());
+          BujuanMusicHandler().seek(seekTo);
+        },
+      ),
     );
   }
 }

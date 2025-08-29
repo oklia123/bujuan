@@ -18,11 +18,11 @@ import '../../utils/adaptive_screen_utils.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  //粒子
   @override
   Widget build(BuildContext context) {
     bool desktop = medium(context) || expanded(context);
     return Scaffold(
-      backgroundColor: Colors.transparent,
       appBar: desktop ? null : mainAppBar(),
       body: Consumer(
         builder: (context, ref, child) {

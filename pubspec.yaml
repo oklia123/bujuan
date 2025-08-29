@@ -54,7 +54,7 @@ dependencies:
   rive_native: ^0.0.9
   hive_ce: ^2.11.3
   hive_ce_flutter: ^2.3.1
-  spotify: ^0.13.7
+  crystal_navigation_bar: ^1.0.4
 
 dev_dependencies:
   flutter_test:

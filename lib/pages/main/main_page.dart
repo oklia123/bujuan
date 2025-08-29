@@ -8,6 +8,7 @@ import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music/widgets/backdrop.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/rive_player.dart';
+import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -107,44 +108,45 @@ class MobileView extends StatelessWidget {
     //   );
     // });
     var of2 = MediaQuery.of(context);
-    final double panelMinSize = 80.w + 56 + of2.padding.bottom;
-    final double panelMaxSize = of2.size.height;
+    final double panelMinSize = 72.w + 56 + of2.padding.bottom;
+    final double panelMaxSize = of2.size.height - of2.padding.top;
     var panelController = GetIt.I<WeSlideController>(instanceName: 'panel');
     var theme = Theme.of(context);
-    return Scaffold(
+    return WeSlide(
+      panelBorderRadiusBegin: 0,
+      panelBorderRadiusEnd: 20.w,
       backgroundColor: Colors.transparent,
-      body: WeSlide(
-        backgroundColor: Colors.transparent,
-        panelMinSize: panelMinSize,
-        panelMaxSize: panelMaxSize,
-        hideFooter: true,
-        footerController: GetIt.I<WeSlideController>(instanceName: 'footer'),
-        controller: panelController,
-        body: child,
-        panel: PlayPage(),
-        panelHeader: GestureDetector(
-          child: SongInfoBar(),
-          onTap: () {
-            panelController.show();
-          },
-        ),
-        footerHeight: 65 + of2.padding.bottom,
-        footer: Consumer(builder: (context, ref, child) {
-          return BottomNavigationBar(
-            currentIndex: ref.watch(currentIndexProvider),
-            items: AppConfig.bottomItems.map((e) {
-              return BottomNavigationBarItem(
-                  icon: Icon(e.iconData),
-                  label: '•',
-                  backgroundColor: theme.scaffoldBackgroundColor);
-            }).toList(),
-            onTap: (index) {
-              ref.read(currentIndexProvider.notifier).setIndex(index);
-              context.replace(AppConfig.bottomItems[index].path);
-            },
-          );
-        }),
+      panelMinSize: panelMinSize,
+      panelMaxSize: panelMaxSize,
+      panelWidth: of2.size.width,
+      hideFooter: true,
+      footerController: GetIt.I<WeSlideController>(instanceName: 'footer'),
+      controller: panelController,
+      body: child,
+      panel: PlayPage(),
+      panelHeader: GestureDetector(
+        child: SongInfoBar(),
+        onTap: () {
+          panelController.show();
+        },
       ),
+      footerHeight: 65 + of2.padding.bottom,
+      footer: Consumer(builder: (context, ref, child) {
+        return BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          currentIndex: ref.watch(currentIndexProvider),
+          items: AppConfig.bottomItems.map((e) {
+            return BottomNavigationBarItem(
+                icon: Icon(e.iconData),
+                label: '•',
+                backgroundColor: theme.scaffoldBackgroundColor);
+          }).toList(),
+          onTap: (index) {
+            ref.read(currentIndexProvider.notifier).setIndex(index);
+            context.replace(AppConfig.bottomItems[index].path);
+          },
+        );
+      }),
     );
   }
 }

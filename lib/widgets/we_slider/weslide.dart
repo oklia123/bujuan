@@ -1,6 +1,10 @@
 import 'dart:ui';
 
+import 'package:bujuan_music/router/app_pages.dart';
+import 'package:bujuan_music/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'weslide_controller.dart';
 
 /// A backdrop widget that displaying contextual and actionable content. =]
@@ -162,7 +166,7 @@ class WeSlide extends StatefulWidget {
 
   /// WeSlide Constructor
   WeSlide({
-    Key? key,
+    super.key,
     this.footer,
     this.appBar,
     required this.body,
@@ -196,7 +200,7 @@ class WeSlide extends StatefulWidget {
     this.isDismissible = true,
     this.isUpSlide = true,
     List<TweenSequenceItem<double>>? fadeSequence,
-    this.animateDuration = const Duration(milliseconds: 300),
+    this.animateDuration = const Duration(milliseconds: 350),
     this.controller,
     this.footerController,
   })  : /*assert(body != null, 'body could not be null'),*/
@@ -209,8 +213,7 @@ class WeSlide extends StatefulWidget {
             [
               TweenSequenceItem<double>(weight: 1.0, tween: Tween(begin: 1, end: 0)),
               TweenSequenceItem<double>(weight: 8.0, tween: Tween(begin: 0, end: 0)),
-            ],
-        super(key: key) {
+            ] {
     if (controller == null) {
       // ignore: unnecessary_this
       this.controller = WeSlideController();
@@ -222,10 +225,10 @@ class WeSlide extends StatefulWidget {
   }
 
   @override
-  _WeSlideState createState() => _WeSlideState();
+  WeSlideState createState() => WeSlideState();
 }
 
-class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
+class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
   // Main Animation Controller
   late AnimationController _ac;
 
@@ -240,6 +243,7 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
 
   // PanelHeader animation Effect [Tween]
   late Animation<double> _fadeAnimation;
+  late Animation<double> _fadeAnimation1;
 
   // Footer Animation Controller
   late AnimationController _acFooter;
@@ -255,6 +259,10 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
 
   bool get _isFooterVisible =>
       _acFooter.status == AnimationStatus.completed || _acFooter.status == AnimationStatus.forward;
+  List<TweenSequenceItem<double>> panelFadeSequence = [
+    TweenSequenceItem<double>(weight: 1.0, tween: Tween(begin: 0, end: 0)),
+    TweenSequenceItem<double>(weight: 9.0, tween: Tween(begin: 1, end: 1)),
+  ];
 
   @override
   void initState() {
@@ -287,6 +295,7 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
             .animate(_ac);
     // Fade Animation sequence
     _fadeAnimation = TweenSequence(widget.fadeSequence).animate(_ac);
+    _fadeAnimation1 = TweenSequence(panelFadeSequence).animate(_ac);
 
     // Super Init State
     super.initState();
@@ -363,11 +372,11 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
 
   // Get Body Animation [Paralax]
   Animation<Offset> _getAnimationOffSet({required double minSize, required double maxSize}) {
-    final _closedPercentage = (widget.panelMaxSize - minSize) / widget.panelMaxSize;
+    final closedPercentage = (widget.panelMaxSize - minSize) / widget.panelMaxSize;
 
-    final _openPercentage = (widget.panelMaxSize - maxSize) / widget.panelMaxSize;
+    final openPercentage = (widget.panelMaxSize - maxSize) / widget.panelMaxSize;
 
-    return Tween<Offset>(begin: Offset(0.0, _closedPercentage), end: Offset(0.0, _openPercentage))
+    return Tween<Offset>(begin: Offset(0.0, closedPercentage), end: Offset(0.0, openPercentage))
         .animate(_ac);
   }
 
@@ -388,15 +397,15 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
 
   /* Get panel maxsize location*/
   double _getPanelLocation() {
-    var _location = widget.panelMaxSize;
+    var location = widget.panelMaxSize;
     if (widget.appBar != null && !widget.hideAppBar) {
-      _location += -widget.appBarHeight;
+      location += -widget.appBarHeight;
     }
-    return _location;
+    return location;
   }
 
   double _getFooterOffset() {
-    var height = widget.footerHeight - MediaQuery.of(context).padding.bottom / 2;
+    var height = widget.footerHeight;
     final offset = widget.hideFooter ? (_ac.value * -height + (1 - _acFooter.value) * -height) : .0;
     if (offset < -height) {
       return -height;
@@ -439,11 +448,14 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     //Get MediaQuery Sizes
-    final _height = MediaQuery.of(context).size.height;
-    final _width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final bottom = MediaQuery.of(context).padding.bottom <= 0
+        ? 20
+        : MediaQuery.of(context).padding.bottom / 1.3;
 
     return Container(
-      height: _height,
+      height: height,
       color: widget.backgroundColor, // Same as body,
       child: Stack(
         alignment: Alignment.bottomCenter,
@@ -457,17 +469,11 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
                 child: Transform.scale(
                   scale: widget.transformScale ? _scaleAnimation.value : 1.0,
                   alignment: Alignment.bottomCenter,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(_bodyBorderRadius.value),
-                      topRight: Radius.circular(_bodyBorderRadius.value),
-                    ),
-                    child: SizedBox(
-                      // height: _height - _getBodyHeight() - _getFooterOffset(),
-                      height: _height - _getBodyHeight() - _getFooterOffset(),
-                      width: widget.bodyWidth ?? _width,
-                      child: child,
-                    ),
+                  child: SizedBox(
+                    height: height - _getBodyHeight() - _getFooterOffset(),
+                    // height: height,
+                    width: widget.bodyWidth ?? width,
+                    child: child,
                   ),
                 ),
               );
@@ -485,7 +491,7 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
                   filter: ImageFilter.blur(
                       sigmaX: widget.blurSigma * _ac.value, sigmaY: widget.blurSigma * _ac.value),
                   child: Container(
-                    color: widget.blurColor.withOpacity(0.1),
+                    color: widget.blurColor.withAlpha(100),
                   ),
                 );
               },
@@ -524,13 +530,14 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
               return SlideTransition(
                 position: _getAnimationOffSet(
                     maxSize: _getPanelLocation(),
-                    minSize: widget.panelMinSize + _getFooterOffset()),
+                    minSize:
+                        widget.panelMinSize + _getFooterOffset() + (1 - _acFooter.value) * bottom),
                 child: GestureDetector(
                   onVerticalDragUpdate: _handleVerticalUpdate,
                   onVerticalDragEnd: _handleVerticalEnd,
                   child: AnimatedContainer(
                     height: widget.panelMaxSize,
-                    width: widget.panelWidth ?? _width,
+                    width: widget.panelWidth ?? width,
                     duration: const Duration(milliseconds: 200),
                     child: ClipRRect(
                       borderRadius: BorderRadius.only(
@@ -547,22 +554,35 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
               children: <Widget>[
                 /** Panel widget **/
                 SizedBox(
-                  height: _height - _getPanelSize(),
-                  child: widget.panel!,
+                  height: height - _getPanelSize(),
+                  child: AnimatedBuilder(
+                    animation: Listenable.merge([_ac, _acFooter]),
+                    builder: (context, child) => Padding(
+                      padding: EdgeInsets.only(
+                          top: (60.w + (1 - _acFooter.value) * bottom) * (1 - _ac.value)),
+                      child: child,
+                    ),
+                    child: FadeTransition(
+                      opacity: _fadeAnimation1,
+                      child: widget.panel!,
+                    ),
+                  ),
                 ),
                 /** Panel Header widget **/
                 widget.panelHeader != null && widget.hidePanelHeader
                     ? FadeTransition(
                         opacity: _fadeAnimation,
-                        child: RepaintBoundary(child: ValueListenableBuilder(
-                          valueListenable: _effectiveController,
-                          builder: (_, __, ___) {
-                            return IgnorePointer(
-                              ignoring: _effectiveController.value && widget.hidePanelHeader,
-                              child: widget.panelHeader,
-                            );
-                          },
-                        ),),
+                        child: RepaintBoundary(
+                          child: ValueListenableBuilder(
+                            valueListenable: _effectiveController,
+                            builder: (_, __, ___) {
+                              return IgnorePointer(
+                                ignoring: _effectiveController.value && widget.hidePanelHeader,
+                                child: widget.panelHeader,
+                              );
+                            },
+                          ),
+                        ),
                       )
                     : const SizedBox.shrink(),
                 /** panelHeader widget is null ?**/
@@ -581,9 +601,8 @@ class _WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
                       height: widget.footerHeight,
                       bottom: _getFooterOffset(),
                       width: MediaQuery.of(context).size.width,
-                      child: FadeTransition(
-                        opacity: _acFooter,
-                        child: RepaintBoundary(child: widget.footer!,),
+                      child: RepaintBoundary(
+                        child: widget.footer!,
                       ),
                     );
                   },

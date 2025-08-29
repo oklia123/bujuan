@@ -120,7 +120,7 @@ class MyApp extends ConsumerWidget {
           themeMode: themeMode,
           darkTheme: AppTheme.dark,
           showPerformanceOverlay: false,
-          debugShowCheckedModeBanner: false,
+          // debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           routerConfig: router,
         );
