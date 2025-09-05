@@ -1,17 +1,28 @@
+import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 AppBar mainAppBar() {
   return AppBar(
     backgroundColor: Colors.transparent,
     leading: IconButton(
         onPressed: () => GetIt.I<ZoomDrawerController>().toggle?.call(),
-        icon: Icon(HugeIcons.strokeRoundedInbox)),
+        icon: Icon(HugeIconsSolid.inbox)),
     title: Text('BuJuan'),
     actions: [
-      IconButton(onPressed: (){}, icon: Icon(HugeIcons.strokeRoundedSearch01))
+      Consumer(builder: (context, ref, child) {
+        return IconButton(
+            onPressed: () {
+              bool isDark = ref.read(themeModeNotifierProvider) == ThemeMode.dark;
+              ref
+                  .read(themeModeNotifierProvider.notifier)
+                  .setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+            },
+            icon: Icon(HugeIconsSolid.search01));
+      })
     ],
   );
 }

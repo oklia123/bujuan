@@ -88,10 +88,6 @@ Stream<PlaybackState?> playbackState(Ref ref) {
   return BujuanMusicHandler().playbackState.stream;
 }
 
-@riverpod
-Stream<Duration> playbackPosition(Ref ref) {
-  return BujuanMusicHandler().currentPosition;
-}
 // _player.onPositionChanged
 
 @riverpod
@@ -112,9 +108,17 @@ Future<UserInfoEntity?> lyric(Ref ref) async {
 
 @riverpod
 Future<PaletteGenerator> mediaColor(Ref ref) async {
-  var url = ref.watch(mediaItemProvider).value?.artUri.toString() ?? '';
-  CachedNetworkImageProvider imageProvider = CachedNetworkImageProvider('$url?param=100y100');
-  return await PaletteGenerator.fromImageProvider(imageProvider, size: Size(300, 300));
+  final artUri = ref.watch(
+    mediaItemProvider.select((m) => m.value?.artUri.toString()),
+  );
+  if (artUri == null || artUri.isEmpty) {
+    return PaletteGenerator.fromColors([PaletteColor(Colors.grey, 1)]);
+  }
+  final imageProvider = CachedNetworkImageProvider('$artUri?param=100y100');
+  return PaletteGenerator.fromImageProvider(
+    imageProvider,
+    size: const Size(100, 100),
+  );
 }
 
 /// 播放模式

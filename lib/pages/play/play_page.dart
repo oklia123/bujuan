@@ -1,16 +1,12 @@
-import 'dart:ui';
-
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
-import 'package:bujuan_music/utils/time_utils.dart';
+import 'package:bujuan_music/widgets/backdrop.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
-import 'package:bujuan_music/widgets/panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:palette_generator/palette_generator.dart';
 import '../../utils/color_utils.dart';
-import '../../widgets/curved_progress_bar.dart';
 import '../../widgets/wave.dart';
 import '../main/provider.dart';
 
@@ -19,12 +15,13 @@ class PlayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white.withAlpha(200),
-      body: BackdropFilter(
-        filter: ImageFilter.blur(sigmaY: 8, sigmaX: 8),
-        child: const _MusicControlsSection(),
+    return BackdropView(
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor.withAlpha(190), // 半透明背景
+        borderRadius: BorderRadius.circular(30.w),
+        border: Border.all(color: Colors.grey.withAlpha(30)),
       ),
+      child: const _MusicControlsSection(),
     );
   }
 }
@@ -34,56 +31,78 @@ class SongInfoBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Color scaffoldColor = Theme.of(context).scaffoldBackgroundColor;
     final mediaItem = ref.watch(mediaItemProvider).value;
+    bool isDark = ref.read(themeModeNotifierProvider) == ThemeMode.dark;
+    Color scaffoldColor = Theme.of(context).scaffoldBackgroundColor;
     final color = ref.watch(mediaColorProvider).maybeWhen(
-          data: (c) => c.dominantColor?.color ?? scaffoldColor,
-          orElse: () => scaffoldColor,
-        );
+        data: (c) => (isDark ? c.darkMutedColor?.color : c.dominantColor?.color) ?? scaffoldColor,
+        orElse: () => scaffoldColor);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8.w),
-      width: MediaQuery.of(context).size.width - 16.w,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.w),
-          gradient: LinearGradient(
-              colors: [ColorUtils.lightenColor(color, .6), scaffoldColor],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight)),
-      child: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 10.w, right: 30.w),
-            child: SizedBox(
-              height: 60.w,
-              child: Row(
-                children: [
-                  CachedImage(
-                    imageUrl: mediaItem?.artUri.toString() ?? '',
-                    width: 40.w,
-                    height: 40.w,
-                    borderRadius: 20.w,
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(mediaItem?.title ?? 'Bujuan',
-                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500)),
-                ],
+      child: BackdropView(
+        gradient: LinearGradient(colors: [
+          ColorUtils.lightenColor(color, isDark ? 0.2 : 0.8).withAlpha(200),
+          scaffoldColor.withAlpha(120)
+        ]),
+        width: MediaQuery.of(context).size.width - 16.w,
+        borderRadius: BorderRadius.circular(20.w),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 10.w, right: 10.w),
+              child: SizedBox(
+                height: 60.w,
+                child: Row(
+                  children: [
+                    CachedImage(
+                      imageUrl: mediaItem?.artUri.toString() ?? '',
+                      width: 40.w,
+                      height: 40.w,
+                      borderRadius: 20.w,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: EdgeInsets.only(right: 10.w),
-            child: IconButton(
-              onPressed: () => BujuanMusicHandler().playOrPause(),
-              icon: Icon(
-                ref.watch(playbackStateProvider).value?.playing == true
-                    ? HugeIcons.strokeRoundedPause
-                    : HugeIcons.strokeRoundedPlay,
-                size: 22.w,
+            Expanded(
+                child: Text(
+              mediaItem?.title ?? 'Bujuan',
+              style: TextStyle(
+                  fontSize: 16.sp, fontWeight: FontWeight.w500, overflow: TextOverflow.ellipsis),
+              maxLines: 1,
+            )),
+            TogglePlayButton(22.w),
+            Padding(
+              padding: EdgeInsets.only(right: 10.w),
+              child: IconButton(
+                onPressed: () => BujuanMusicHandler().skipToNext(),
+                icon: Icon(
+                  HugeIconsStroke.next,
+                  size: 22.w,
+                ),
               ),
-            ),
-          ),
-        ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 控制播放暂停的按钮 指根据playing刷新ui
+class TogglePlayButton extends ConsumerWidget {
+  final double size;
+
+  const TogglePlayButton(this.size, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var playing = ref.watch(playbackStateProvider.select((state) => state.value?.playing ?? false));
+    return IconButton(
+      onPressed: () => BujuanMusicHandler().playOrPause(),
+      icon: Icon(
+        playing ? HugeIconsStroke.pause : HugeIconsStroke.play,
+        size: size,
       ),
     );
   }
@@ -112,25 +131,37 @@ class _MusicControlsSection extends StatelessWidget {
                 imageUrl: mediaItem?.artUri.toString() ?? '',
                 width: 300.w,
                 height: 300.w,
-                borderRadius: 25.w,
+                borderRadius: 150.w,
                 pWidth: 600,
                 pHeight: 600,
               ),
               SizedBox(height: 20.w),
-              Text(mediaItem?.title ?? '',
-                  style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w500)),
-              SizedBox(height: 3.w),
-              Text(mediaItem?.artist ?? '',
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40.w),
+                child: Text(
+                  mediaItem?.title ?? '',
+                  style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w500),
+                  maxLines: 1,
+                ),
+              ),
+              SizedBox(height: 5.w),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40.w),
+                child: Text(
+                  mediaItem?.artist ?? '',
                   style:
-                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey)),
+                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                  maxLines: 1,
+                ),
+              ),
             ],
           );
         }),
         Expanded(
             child: Center(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            height: 40.w,
+            padding: EdgeInsets.symmetric(horizontal: 25.w),
+            height: 35.w,
             child: MusicProgressBar(),
           ),
         )),
@@ -141,113 +172,31 @@ class _MusicControlsSection extends StatelessWidget {
   }
 }
 
+/// 音乐进度条
 class MusicProgressBar extends ConsumerWidget {
   const MusicProgressBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playbackState = ref.watch(playbackPositionProvider).value;
+    final playbackState = ref.watch(
+        playbackStateProvider.select((state) => state.value?.updatePosition ?? Duration.zero));
     final mediaItem = ref.watch(mediaItemProvider).value;
-
-    final position = playbackState?.inMilliseconds ?? 0;
+    final position = playbackState.inMilliseconds;
     final duration = mediaItem?.duration?.inMilliseconds ?? 0;
     final progress = (duration > 0) ? position / duration : 0.0;
-
+    var color = Theme.of(context).iconTheme.color ?? Colors.white;
     return RepaintBoundary(
-      child: WaveformWidget(
+      child: WaveformProgressWidget(
         progress: progress,
         min: 0,
         max: 1,
-        playedColor: Colors.black.withAlpha(100),
-        unplayedColor: Colors.grey.withAlpha(100),
+        playedColor: color.withAlpha(150),
+        unplayedColor: color.withAlpha(100),
         // thumbColor: Colors.transparent,
         onChangeEnd: (value) {
           final seekTo = Duration(milliseconds: (duration * value).toInt());
           BujuanMusicHandler().seek(seekTo);
         },
-      ),
-    );
-  }
-}
-
-class Sleep extends ConsumerWidget {
-  const Sleep({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final color = ref.watch(mediaColorProvider).maybeWhen(
-          data: (c) => c.dominantColor!,
-          orElse: () => PaletteColor(Colors.white, 1),
-        );
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.w),
-      padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 25.w),
-      decoration: BoxDecoration(
-          color: ColorUtils.lightenColor(color.color, 0.7),
-          borderRadius: BorderRadius.circular(30.w)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(
-                HugeIcons.strokeRoundedAlarmClock,
-                size: 16.sp,
-              ),
-              Text('21:36')
-            ],
-          ),
-          Text('1.2x'),
-          Icon(
-            HugeIcons.strokeRoundedMenu04,
-            size: 16.sp,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProgressBarWithTime extends ConsumerWidget {
-  const _ProgressBarWithTime();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final color = ref.watch(mediaColorProvider).maybeWhen(
-          data: (c) => c.dominantColor!,
-          orElse: () => PaletteColor(Colors.green, 1),
-        );
-    final position = ref.watch(playbackStateProvider).value?.updatePosition.inSeconds ?? 0;
-    final duration = ref.watch(mediaItemProvider).value?.duration?.inSeconds ?? 0;
-    final progress = duration > 0 ? position / duration : 0.0;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IgnoreDraggableWidget(
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: progress),
-              duration: const Duration(milliseconds: 80),
-              builder: (context, value, _) => CurvedProgressBar(
-                progress: value,
-                progressColor: ColorUtils.lightenColor(color.color, 0.6),
-                activeProgressColor: ColorUtils.lightenColor(color.color, 0.2),
-                onProgressChange: (value) =>
-                    BujuanMusicHandler().seek(Duration(seconds: (duration * value).toInt())),
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(TimeUtils.formatDuration(position), style: _timeTextStyle),
-              Text(TimeUtils.formatDuration(duration), style: _timeTextStyle),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -263,19 +212,22 @@ class _PlaybackControls extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(width: 15.w),
-        const _ControlButton(image: HugeIcons.strokeRoundedFavourite),
+        const _ControlButton(
+          image: HugeIconsSolid.favourite,
+          color: Colors.red,
+        ),
         SizedBox(width: 15.w),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _ControlButton(
-                image: HugeIcons.strokeRoundedPrevious,
+                image: HugeIconsStroke.previous,
                 onTap: () => BujuanMusicHandler().skipToPrevious(),
               ),
               const _PlayPauseButton(),
               _ControlButton(
-                image: HugeIcons.strokeRoundedNext,
+                image: HugeIconsStroke.next,
                 onTap: () => BujuanMusicHandler().skipToNext(),
               ),
             ],
@@ -286,10 +238,10 @@ class _PlaybackControls extends StatelessWidget {
           var loopMode = ref.watch(loopModeNotifierProvider);
           return _ControlButton(
             image: loopMode == LoopMode.one
-                ? HugeIcons.strokeRoundedRepeatOne02
+                ? HugeIconsStroke.repeatOne02
                 : loopMode == LoopMode.playlist
-                    ? HugeIcons.strokeRoundedRepeat
-                    : HugeIcons.strokeRoundedShuffle,
+                    ? HugeIconsStroke.repeat
+                    : HugeIconsStroke.shuffle,
             onTap: () {
               ref.read(loopModeNotifierProvider.notifier).changeMode();
             },
@@ -304,8 +256,9 @@ class _PlaybackControls extends StatelessWidget {
 class _ControlButton extends StatelessWidget {
   final IconData image;
   final VoidCallback? onTap;
+  final Color? color;
 
-  const _ControlButton({required this.image, this.onTap});
+  const _ControlButton({required this.image, this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -313,7 +266,7 @@ class _ControlButton extends StatelessWidget {
       icon: Icon(
         image,
         size: 24.sp,
-        color: Colors.black,
+        color: color,
       ),
       onPressed: onTap,
     );
@@ -329,19 +282,20 @@ class _PlayPauseButton extends ConsumerWidget {
           data: (c) => c.dominantColor!,
           orElse: () => PaletteColor(Colors.white, 1),
         );
-
     return Container(
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-        color: color.color,
+        color: color.color.withAlpha(160),
         borderRadius: BorderRadius.circular(50.w),
       ),
       child: IconButton(
-        onPressed: () => BujuanMusicHandler().playOrPause(),
+        onPressed: () {
+          BujuanMusicHandler().playOrPause();
+        },
         icon: Icon(
           ref.watch(playbackStateProvider).value?.playing == true
-              ? HugeIcons.strokeRoundedPause
-              : HugeIcons.strokeRoundedPlay,
+              ? HugeIconsStroke.pause
+              : HugeIconsStroke.play,
           color: color.titleTextColor,
           size: 24.sp,
         ),
@@ -355,3 +309,5 @@ const _timeTextStyle = TextStyle(
   color: Colors.grey,
   fontWeight: FontWeight.w600,
 );
+
+///液体

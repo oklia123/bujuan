@@ -451,7 +451,7 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final bottom = MediaQuery.of(context).padding.bottom <= 0
-        ? 20
+        ? 30
         : MediaQuery.of(context).padding.bottom / 1.3;
 
     return Container(
@@ -470,7 +470,7 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
                   scale: widget.transformScale ? _scaleAnimation.value : 1.0,
                   alignment: Alignment.bottomCenter,
                   child: SizedBox(
-                    height: height - _getBodyHeight() - _getFooterOffset(),
+                    height: height ,
                     // height: height,
                     width: widget.bodyWidth ?? width,
                     child: child,

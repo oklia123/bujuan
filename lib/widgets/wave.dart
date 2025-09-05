@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-class WaveformWidget extends StatefulWidget {
+class WaveformProgressWidget extends StatefulWidget {
   final double progress;          // 0..1
   final double min;               // 建议 0
   final double max;               // 建议 1
@@ -10,7 +10,7 @@ class WaveformWidget extends StatefulWidget {
   final Color? thumbColor;
   final ValueChanged<double> onChangeEnd; // 仅松手回调
 
-  const WaveformWidget({
+  const WaveformProgressWidget({
     super.key,
     required this.progress,
     required this.min,
@@ -22,10 +22,10 @@ class WaveformWidget extends StatefulWidget {
   });
 
   @override
-  State<WaveformWidget> createState() => _WaveformWidgetState();
+  State<WaveformProgressWidget> createState() => _WaveformProgressWidgetState();
 }
 
-class _WaveformWidgetState extends State<WaveformWidget> {
+class _WaveformProgressWidgetState extends State<WaveformProgressWidget> {
   late final List<double> _audioSamples;
   bool _isDragging = false;
   double _localProgress = 0; // 拖动时使用
@@ -41,7 +41,7 @@ class _WaveformWidgetState extends State<WaveformWidget> {
 
   // 外部 progress 变化时（播放器推进），若未拖动就同步进来
   @override
-  void didUpdateWidget(covariant WaveformWidget oldWidget) {
+  void didUpdateWidget(covariant WaveformProgressWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!_isDragging && oldWidget.progress != widget.progress) {
       setState(() {
@@ -137,7 +137,7 @@ class WaveformPainter extends CustomPainter {
     final double height = size.height;
     final int sampleCount = audioSamples.length;
 
-    const double barWidth = 3;
+    const double barWidth = 2;
     const double spacing = 4;
     const double totalBarWidth = barWidth + spacing;
 
@@ -169,7 +169,7 @@ class WaveformPainter extends CustomPainter {
     // thumb indicator
     if (clampedProgress > 0 && clampedProgress < 1) {
       final double progressX = (displaySampleCount * clampedProgress) * totalBarWidth;
-      const double progressBarWidth = 4;
+      const double progressBarWidth = 3;
 
       final Paint progressPaint = Paint()
         ..color = thumbColor ?? playedColor

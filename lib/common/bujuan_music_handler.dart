@@ -23,16 +23,20 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
           MediaControl.skipToPrevious,
           if (state == PlayerState.playing) MediaControl.pause else MediaControl.play,
           MediaControl.skipToNext,
+          MediaControl.stop,
         ],
+        systemActions: const {
+          MediaAction.seek,
+        },
+        androidCompactActionIndices: const [1, 2, 3],
       ));
     });
-
-
+    _player.onPositionChanged.listen((position) {
+      playbackState.add(playbackState.value.copyWith(updatePosition: position));
+    });
     // 播放完成自动下一首
     _player.onPlayerComplete.listen((_) => _handlePlaybackCompleted());
   }
-
-
 
   static final BujuanMusicHandler _instance = BujuanMusicHandler._internal();
 
@@ -48,7 +52,7 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
 
   LoopMode get loopMode => _loopMode;
 
-  Stream<Duration> get currentPosition  => _player.onPositionChanged;
+  Stream<Duration> get currentPosition => _player.onPositionChanged;
 
   /// 更新播放列表
   @override

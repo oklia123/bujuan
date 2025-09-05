@@ -1,4 +1,4 @@
-import 'package:hugeicons/hugeicons.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 import '../../pages/main/main_page.dart';
 import '../../router/app_router.dart';
@@ -11,9 +11,9 @@ class AppConfig {
   static const String backgroundPath = 'backgroundPath';
 
   static final List<BottomData> bottomItems = [
-    BottomData(HugeIcons.strokeRoundedHome01, AppRouter.home),
-    BottomData(HugeIcons.strokeRoundedLookTop, AppRouter.user),
-    BottomData(HugeIcons.strokeRoundedFileMusic, AppRouter.setting),
-    BottomData(HugeIcons.strokeRoundedSettings02, AppRouter.setting),
+    BottomData(HugeIconsStroke.home01, HugeIconsSolid.home01, AppRouter.home,'Home'),
+    BottomData(HugeIconsStroke.lookTop,HugeIconsSolid.lookTop, AppRouter.user,'Me'),
+    BottomData(HugeIconsStroke.fileMusic,HugeIconsSolid.fileMusic, AppRouter.setting,'File'),
+    BottomData(HugeIconsStroke.settings02,HugeIconsSolid.settings02, AppRouter.setting,'Setting'),
   ];
 }

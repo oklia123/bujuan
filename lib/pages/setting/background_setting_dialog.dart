@@ -8,8 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:hugeicons/hugeicons.dart';
-import 'package:rive_native/rive_native.dart' as rive;
+import 'package:hugeicons_pro/hugeicons.dart';
+// import 'package:rive_native/rive_native.dart' as rive;
 
 class BackgroundSettingDialog extends StatefulWidget {
   const BackgroundSettingDialog({super.key});
@@ -64,7 +64,7 @@ class _BackgroundSettingDialogState extends State<BackgroundSettingDialog> {
                                         duration: Duration(milliseconds: 300),
                                         curve: Curves.decelerate),
                                     icon: Icon(
-                                      HugeIcons.strokeRoundedArrowLeft01,
+                                      HugeIconsSolid.arrowLeft01,
                                       size: 32.sp,
                                     )),
                                 SizedBox(width: 30.w),
@@ -74,10 +74,10 @@ class _BackgroundSettingDialogState extends State<BackgroundSettingDialog> {
                                     decoration: BoxDecoration(),
                                     width: 300.w,
                                     height: 300.w,
-                                    child: RivePlayer(
-                                      asset: background.background,
-                                      fit: rive.Fit.cover,
-                                    ),
+                                    // child: RivePlayer(
+                                    //   asset: background.background,
+                                    //   fit: rive.Fit.cover,
+                                    // ),
                                   ),
                                 ),
                                 SizedBox(width: 30.w),
@@ -86,7 +86,7 @@ class _BackgroundSettingDialogState extends State<BackgroundSettingDialog> {
                                         duration: Duration(milliseconds: 300),
                                         curve: Curves.decelerate),
                                     icon: Icon(
-                                      HugeIcons.strokeRoundedArrowRight01,
+                                      HugeIconsSolid.arrowRight01,
                                       size: 32.sp,
                                     )),
                               ],
@@ -124,12 +124,12 @@ class _BackgroundSettingDialogState extends State<BackgroundSettingDialog> {
                     .toList(),
               ),
             ),
-            IconButton(
-                onPressed: () => context.pop(),
-                icon: Icon(
-                  HugeIcons.strokeRoundedCancelCircleHalfDot,
-                  size: 30.sp,
-                )),
+            // IconButton(
+            //     onPressed: () => context.pop(),
+            //     icon: Icon(
+            //       HugeIcons.strokeRoundedCancelCircleHalfDot,
+            //       size: 30.sp,
+            //     )),
           ],
         ),
       ),

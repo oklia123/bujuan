@@ -58,23 +58,6 @@ final playbackStateProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PlaybackStateRef = AutoDisposeStreamProviderRef<PlaybackState?>;
-String _$playbackPositionHash() => r'fa9c4e566bd1f5d81aa873396ce213f189821c3d';
-
-/// See also [playbackPosition].
-@ProviderFor(playbackPosition)
-final playbackPositionProvider = AutoDisposeStreamProvider<Duration>.internal(
-  playbackPosition,
-  name: r'playbackPositionProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$playbackPositionHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef PlaybackPositionRef = AutoDisposeStreamProviderRef<Duration>;
 String _$userInfoHash() => r'685d7e3dbd996c2d9b02c72b3be45af2bc290f76';
 
 /// See also [userInfo].
@@ -123,7 +106,7 @@ final lyricProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LyricRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
-String _$mediaColorHash() => r'eee986b46cece04138fcd6dee538384440c9d037';
+String _$mediaColorHash() => r'60494bb9fc6da8775d2bc7142d44c7ff8bf4dbb6';
 
 /// See also [mediaColor].
 @ProviderFor(mediaColor)

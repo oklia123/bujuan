@@ -1,7 +1,5 @@
-import 'package:bujuan_music/pages/setting/background_setting_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -21,17 +19,17 @@ class DesktopSetting extends StatelessWidget {
       padding: EdgeInsets.all(10.w),
       child: Column(
         children: [
-          ListTile(
-            leading: Icon(HugeIcons.strokeRoundedAlbum01),
-            title: Text('Switch the page background'),
-            trailing: Icon(HugeIcons.strokeRoundedArrowRight01),
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (c) => BackgroundSettingDialog(),
-                  barrierColor: Theme.of(context).scaffoldBackgroundColor.withAlpha(100));
-            },
-          )
+          // ListTile(
+          //   leading: Icon(HugeIcons.strokeRoundedAlbum01),
+          //   title: Text('Switch the page background'),
+          //   trailing: Icon(HugeIcons.strokeRoundedArrowRight01),
+          //   onTap: () {
+          //     showDialog(
+          //         context: context,
+          //         builder: (c) => BackgroundSettingDialog(),
+          //         barrierColor: Theme.of(context).scaffoldBackgroundColor.withAlpha(100));
+          //   },
+          // )
         ],
       ),
     );

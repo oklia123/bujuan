@@ -7,16 +7,13 @@ import 'package:bujuan_music/pages/play/play_page.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music/widgets/backdrop.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
-import 'package:bujuan_music/widgets/rive_player.dart';
-import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 import '../../utils/adaptive_screen_utils.dart';
-import 'package:rive_native/rive_native.dart' as rive;
 
 import '../../widgets/we_slider/weslide.dart';
 import '../../widgets/we_slider/weslide_controller.dart';
@@ -42,71 +39,6 @@ class MobileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var of = MediaQuery.of(context);
-    double minHeightBox = 45.w + (of.padding.bottom == 0 ? 20.w : of.padding.bottom);
-    double maxHeightBox = of.size.height - of.padding.top - 5.w;
-    // return ZoomDrawer(
-    //     controller: GetIt.I<ZoomDrawerController>(),
-    //     reverseDuration: Duration(milliseconds: 1000),
-    //     menuScreen: MenuPage(),
-    //     menuScreenWidth: MediaQuery.of(context).size.width,
-    //     mainScreenScale: .18,
-    //     angle: -8,
-    //     slideWidth: 200.w,
-    //     dragOffset: 200.w,
-    //     shadowLayer1Color: Colors.grey.withAlpha(20),
-    //     shadowLayer2Color: Colors.grey.withAlpha(30),
-    //     showShadow: true,
-    //     mainScreenTapClose: true,
-    //     menuScreenTapClose: true,
-    //     mainScreen: Consumer(builder: (context, ref, c) {
-    //       return SlidingBox(
-    //         controller: GetIt.I<BoxController>(),
-    //         collapsed: true,
-    //         minHeight: minHeightBox,
-    //         maxHeight: maxHeightBox,
-    //         color: Theme.of(context).scaffoldBackgroundColor,
-    //         style: BoxStyle.sheet,
-    //         draggableIconVisible: false,
-    //         draggableIconBackColor: Colors.white,
-    //         onBoxOpen: () {},
-    //         onBoxSlide: (value) =>
-    //             ref.read(boxPanelDetailDataProvider.notifier).updatePanelDetail(value),
-    //         backdrop: Backdrop(
-    //           moving: false,
-    //           color: Theme.of(context).scaffoldBackgroundColor,
-    //           body: child,
-    //         ),
-    //         bodyBuilder: (s, _) => GestureDetector(
-    //           child: PlayPage(),
-    //           onHorizontalDragUpdate: (e) {},
-    //         ),
-    //       );
-    //     }));
-    // return Consumer(builder: (context, ref, c) {
-    //   return SlidingBox(
-    //     controller: GetIt.I<BoxController>(),
-    //     collapsed: true,
-    //     minHeight: minHeightBox,
-    //     maxHeight: maxHeightBox,
-    //     color: Theme.of(context).scaffoldBackgroundColor,
-    //     style: BoxStyle.sheet,
-    //     draggableIconVisible: false,
-    //     draggableIconBackColor: Colors.white,
-    //     onBoxOpen: () {},
-    //     onBoxSlide: (value) =>
-    //         ref.read(boxPanelDetailDataProvider.notifier).updatePanelDetail(value),
-    //     backdrop: Backdrop(
-    //       moving: false,
-    //       color: Theme.of(context).scaffoldBackgroundColor,
-    //       body: child,
-    //     ),
-    //     bodyBuilder: (s, _) => GestureDetector(
-    //       child: PlayPage(),
-    //       onHorizontalDragUpdate: (e) {},
-    //     ),
-    //   );
-    // });
     var of2 = MediaQuery.of(context);
     final double panelMinSize = 72.w + 56 + of2.padding.bottom;
     final double panelMaxSize = of2.size.height - of2.padding.top;
@@ -126,36 +58,46 @@ class MobileView extends StatelessWidget {
       panel: PlayPage(),
       panelHeader: GestureDetector(
         child: SongInfoBar(),
-        onTap: () {
-          panelController.show();
-        },
+        onTap: () => panelController.show(),
       ),
       footerHeight: 65 + of2.padding.bottom,
-      footer: Consumer(builder: (context, ref, child) {
-        return BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          currentIndex: ref.watch(currentIndexProvider),
-          items: AppConfig.bottomItems.map((e) {
-            return BottomNavigationBarItem(
-                icon: Icon(e.iconData),
-                label: '•',
-                backgroundColor: theme.scaffoldBackgroundColor);
-          }).toList(),
-          onTap: (index) {
-            ref.read(currentIndexProvider.notifier).setIndex(index);
-            context.replace(AppConfig.bottomItems[index].path);
-          },
-        );
-      }),
+      footer: BackdropView(
+          decoration: BoxDecoration(color: theme.scaffoldBackgroundColor.withAlpha(220)),
+          child: Consumer(builder: (context, ref, child) {
+            var currentIndex = ref.watch(currentIndexProvider);
+            return BottomNavigationBar(
+              backgroundColor: Colors.transparent,
+              type: BottomNavigationBarType.fixed,
+              currentIndex: currentIndex,
+              items: AppConfig.bottomItems.map((e) {
+                return BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: EdgeInsets.only(bottom: 5.w),
+                      child: Icon(e.iconData),
+                    ),
+                    activeIcon: Padding(
+                      padding: EdgeInsets.only(bottom: 5.w),
+                      child: Icon(e.activeIconData),
+                    ),
+                    label: e.title);
+              }).toList(),
+              onTap: (index) {
+                ref.read(currentIndexProvider.notifier).setIndex(index);
+                context.replace(AppConfig.bottomItems[index].path);
+              },
+            );
+          })),
     );
   }
 }
 
 class BottomData {
   IconData iconData;
+  IconData activeIconData;
   String path;
+  String title;
 
-  BottomData(this.iconData, this.path);
+  BottomData(this.iconData, this.activeIconData, this.path, this.title);
 }
 
 class DesktopView extends StatelessWidget {
@@ -171,14 +113,14 @@ class DesktopView extends StatelessWidget {
       height: of.size.height,
       child: Stack(
         children: [
-          Consumer(builder: (context, ref, child) {
-            var watch = ref.watch(backgroundModeNotifierProvider);
-            return RivePlayer(
-              asset: watch,
-              fit: rive.Fit.cover,
-              autoBind: true,
-            );
-          }),
+          // Consumer(builder: (context, ref, child) {
+          //   var watch = ref.watch(backgroundModeNotifierProvider);
+          //   return RivePlayer(
+          //     asset: watch,
+          //     fit: rive.Fit.cover,
+          //     autoBind: true,
+          //   );
+          // }),
           Column(
             children: [
               SizedBox(height: 10.w),
@@ -215,7 +157,7 @@ class DesktopView extends StatelessWidget {
             IconButton(
                 onPressed: () => BujuanMusicHandler().skipToPrevious(),
                 icon: Icon(
-                  HugeIcons.strokeRoundedPrevious,
+                  HugeIconsSolid.previous,
                   size: 22.sp,
                 )),
             SizedBox(width: 10.w),
@@ -224,9 +166,7 @@ class DesktopView extends StatelessWidget {
               return IconButton(
                   onPressed: () => BujuanMusicHandler().playOrPause(),
                   icon: Icon(
-                    (playbackState?.playing ?? false)
-                        ? HugeIcons.strokeRoundedPause
-                        : HugeIcons.strokeRoundedPlay,
+                    (playbackState?.playing ?? false) ? HugeIconsSolid.pause : HugeIconsSolid.play,
                     size: 22.sp,
                   ));
             }),
@@ -234,7 +174,7 @@ class DesktopView extends StatelessWidget {
             IconButton(
                 onPressed: () => BujuanMusicHandler().skipToNext(),
                 icon: Icon(
-                  HugeIcons.strokeRoundedNext,
+                  HugeIconsSolid.next,
                   size: 22.sp,
                 )),
             SizedBox(width: 15.w),
@@ -261,13 +201,13 @@ class DesktopView extends StatelessWidget {
                       style: TextStyle(fontSize: 14.sp),
                     ),
                     SizedBox(width: 15.w),
-                    IconButton(onPressed: () {}, icon: Icon(HugeIcons.strokeRoundedFavourite)),
+                    IconButton(onPressed: () {}, icon: Icon(HugeIconsSolid.favourite)),
                   ],
                 );
               }),
             ),
             SizedBox(width: 10.w),
-            IconButton(onPressed: () {}, icon: Icon(HugeIcons.strokeRoundedVolumeHigh))
+            IconButton(onPressed: () {}, icon: Icon(HugeIconsSolid.volumeHigh))
           ],
         ),
       ),
@@ -293,11 +233,7 @@ class DesktopView extends StatelessWidget {
           height: 46.w,
           width: 460.w,
           child: Row(
-            children: [
-              Icon(HugeIcons.strokeRoundedAiSearch02),
-              SizedBox(width: 15.w),
-              Text('Search Any...')
-            ],
+            children: [Icon(HugeIconsSolid.search02), SizedBox(width: 15.w), Text('Search Any...')],
           ),
         )
       ],

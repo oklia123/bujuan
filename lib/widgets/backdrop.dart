@@ -10,10 +10,18 @@ class BackdropView extends StatelessWidget {
   final double? height;
   final Widget child;
   final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final BoxBorder? border;
+  final Color? color;
+  final Gradient? gradient;
 
   const BackdropView({
     super.key,
     this.padding,
+    this.margin,
+    this.border,
+    this.color,
+    this.gradient,
     this.borderRadius,
     this.decoration,
     this.width,
@@ -23,20 +31,24 @@ class BackdropView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return ClipRRect(
-      borderRadius: borderRadius ?? BorderRadius.circular(30.w),
+      borderRadius: borderRadius ?? BorderRadius.circular(0.w),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), //
-        child: Container(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), //
+        child: AnimatedContainer(
           width: width,
           height: height,
           padding: padding,
+          margin: margin,
           decoration: decoration ??
               BoxDecoration(
-                color: Colors.white.withAlpha(20), // 半透明背景
-                borderRadius: BorderRadius.circular(30.w),
-                border: Border.all(color: Colors.grey.withAlpha(40)),
+                gradient: gradient,
+                color: color ?? theme.scaffoldBackgroundColor.withAlpha(220), // 半透明背景
+                borderRadius: borderRadius ?? BorderRadius.circular(30.w),
+                border: border ?? Border.all(color: Colors.grey.withAlpha(20)),
               ),
+          duration: Duration(milliseconds: 300),
           child: child,
         ),
       ),

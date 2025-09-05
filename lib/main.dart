@@ -18,11 +18,9 @@ import 'package:get_it/get_it.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:rive_native/rive_native.dart' as rive;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await startLocalRedirectServer();
   await initMedia();
   await initWindow();
   await Hive.initFlutter();
@@ -44,7 +42,7 @@ void main() async {
 /// 初始化窗口
 Future<void> initWindow() async {
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-    await rive.RiveNative.init();
+    // await rive.RiveNative.init();
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       size: Size(1024, 650),
