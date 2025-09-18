@@ -57,6 +57,18 @@ class CurrentIndex extends _$CurrentIndex {
 }
 
 @riverpod
+class HomeStyle extends _$HomeStyle {
+  @override
+  HomeStyleType build() => HomeStyleType.bottomBar; // 初始值
+
+  void setIndex(HomeStyleType type) {
+    state = type; // 修改值
+  }
+}
+
+enum HomeStyleType { draw, bottomBar }
+
+@riverpod
 class BoxPanelDetailData extends _$BoxPanelDetailData {
   @override
   double build() => 0;
@@ -114,10 +126,10 @@ Future<PaletteGenerator> mediaColor(Ref ref) async {
   if (artUri == null || artUri.isEmpty) {
     return PaletteGenerator.fromColors([PaletteColor(Colors.grey, 1)]);
   }
-  final imageProvider = CachedNetworkImageProvider('$artUri?param=100y100');
+  final imageProvider = CachedNetworkImageProvider('$artUri?param=200y200');
   return PaletteGenerator.fromImageProvider(
     imageProvider,
-    size: const Size(100, 100),
+    size: const Size(200, 200),
   );
 }
 

@@ -105,7 +105,12 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
   Future<void> _playCurrent() async {
     final item = _playlist[_currentIndex];
     mediaItem.add(item);
-    final url = await _fetchPlayUrl(item.id);
+    var url = await _fetchPlayUrl(item.id);
+    // print('object----$url');
+    var split = url.split('?');
+    if (split.length > 1) {
+      url = split[0];
+    }
     await _player.play(UrlSource(url));
   }
 

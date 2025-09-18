@@ -11,15 +11,15 @@ class AppTheme {
           backgroundColor: Colors.transparent,
           elevation: 0,
           selectedLabelStyle: TextStyle(fontSize: 14),
-          selectedIconTheme: IconThemeData(color: Colors.white,size: 24.sp),
+          selectedIconTheme: IconThemeData(color: Color(0XFF1ED760),size: 24.sp),
           unselectedIconTheme: IconThemeData(color: Colors.grey,size: 24.sp),
           unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.white),
+          selectedItemColor: Color(0XFF1ED760)),
       appBarTheme: AppBarTheme(
           elevation: 0,
           backgroundColor: Color(0xFF2C2C2C),
           titleTextStyle:
-              TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.w400),
+              TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.w500),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
@@ -33,10 +33,10 @@ class AppTheme {
           backgroundColor: Colors.transparent,
           elevation: 0,
           selectedLabelStyle: TextStyle(fontSize: 14),
-          selectedIconTheme: IconThemeData(color: Color(0xFF2C2C2C),size: 24.sp),
+          selectedIconTheme: IconThemeData(color: Color(0XFF1ED760),size: 24.sp),
           unselectedIconTheme: IconThemeData(color: Colors.grey,size: 24.sp),
           unselectedItemColor: Colors.grey,
-          selectedItemColor: Color(0xFF2C2C2C)),
+          selectedItemColor: Color(0XFF1ED760)),
       appBarTheme: AppBarTheme(
           elevation: 0,
           backgroundColor: Colors.white,

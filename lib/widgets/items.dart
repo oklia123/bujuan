@@ -23,6 +23,8 @@ class MediaItemWidget extends StatelessWidget {
         width: 42.w,
         height: 42.w,
         borderRadius: 24.w,
+        pWidth: 100,
+        pHeight: 100,
       ),
       title: Text(mediaItem.title,style: TextStyle(fontSize: 14.sp),),
       subtitle: Text(mediaItem.artist ?? '',style: TextStyle(fontSize: 12.sp),),

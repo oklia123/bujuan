@@ -1,22 +1,18 @@
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
-import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/pages/main/menu_page.dart';
+import 'package:bujuan_music/pages/main/phone/widgets.dart';
 import 'package:bujuan_music/pages/main/provider.dart';
-import 'package:bujuan_music/pages/play/play_page.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music/widgets/backdrop.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import '../../utils/adaptive_screen_utils.dart';
 
-import '../../widgets/we_slider/weslide.dart';
-import '../../widgets/we_slider/weslide_controller.dart';
 
 class MainPage extends StatelessWidget {
   final Widget child;
@@ -32,62 +28,19 @@ class MainPage extends StatelessWidget {
   }
 }
 
-class MobileView extends StatelessWidget {
+class MobileView extends ConsumerWidget {
   final Widget child;
 
   const MobileView({super.key, required this.child});
 
   @override
-  Widget build(BuildContext context) {
-    var of2 = MediaQuery.of(context);
-    final double panelMinSize = 72.w + 56 + of2.padding.bottom;
-    final double panelMaxSize = of2.size.height - of2.padding.top;
-    var panelController = GetIt.I<WeSlideController>(instanceName: 'panel');
-    var theme = Theme.of(context);
-    return WeSlide(
-      panelBorderRadiusBegin: 0,
-      panelBorderRadiusEnd: 20.w,
-      backgroundColor: Colors.transparent,
-      panelMinSize: panelMinSize,
-      panelMaxSize: panelMaxSize,
-      panelWidth: of2.size.width,
-      hideFooter: true,
-      footerController: GetIt.I<WeSlideController>(instanceName: 'footer'),
-      controller: panelController,
-      body: child,
-      panel: PlayPage(),
-      panelHeader: GestureDetector(
-        child: SongInfoBar(),
-        onTap: () => panelController.show(),
-      ),
-      footerHeight: 65 + of2.padding.bottom,
-      footer: BackdropView(
-          decoration: BoxDecoration(color: theme.scaffoldBackgroundColor.withAlpha(220)),
-          child: Consumer(builder: (context, ref, child) {
-            var currentIndex = ref.watch(currentIndexProvider);
-            return BottomNavigationBar(
-              backgroundColor: Colors.transparent,
-              type: BottomNavigationBarType.fixed,
-              currentIndex: currentIndex,
-              items: AppConfig.bottomItems.map((e) {
-                return BottomNavigationBarItem(
-                    icon: Padding(
-                      padding: EdgeInsets.only(bottom: 5.w),
-                      child: Icon(e.iconData),
-                    ),
-                    activeIcon: Padding(
-                      padding: EdgeInsets.only(bottom: 5.w),
-                      child: Icon(e.activeIconData),
-                    ),
-                    label: e.title);
-              }).toList(),
-              onTap: (index) {
-                ref.read(currentIndexProvider.notifier).setIndex(index);
-                context.replace(AppConfig.bottomItems[index].path);
-              },
-            );
-          })),
-    );
+  Widget build(BuildContext context,WidgetRef ref) {
+    // return SliderWidget(showBottomBar: true, child: child);
+   var homeStyle = ref.watch(homeStyleProvider);
+    return switch(homeStyle){
+      HomeStyleType.draw => DrawerWidget(child: child),
+      HomeStyleType.bottomBar => SliderWidget(showBottomBar: true, child: child),
+    };
   }
 }
 

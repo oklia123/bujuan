@@ -1,6 +1,7 @@
 import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
@@ -10,7 +11,7 @@ AppBar mainAppBar() {
     backgroundColor: Colors.transparent,
     leading: IconButton(
         onPressed: () => GetIt.I<ZoomDrawerController>().toggle?.call(),
-        icon: Icon(HugeIconsSolid.inbox)),
+        icon: Image.asset('assets/images/logo.png',width: 35.w,height: 35.w,)),
     title: Text('BuJuan'),
     actions: [
       Consumer(builder: (context, ref, child) {

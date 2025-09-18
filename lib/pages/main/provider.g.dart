@@ -106,7 +106,7 @@ final lyricProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LyricRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
-String _$mediaColorHash() => r'60494bb9fc6da8775d2bc7142d44c7ff8bf4dbb6';
+String _$mediaColorHash() => r'3860228a1db7639806da3d37ea784fde8b5c99fb';
 
 /// See also [mediaColor].
 @ProviderFor(mediaColor)
@@ -170,6 +170,21 @@ final currentIndexProvider =
 );
 
 typedef _$CurrentIndex = AutoDisposeNotifier<int>;
+String _$homeStyleHash() => r'c6b5888f097d189eb19895e8754d4f6027fc20b3';
+
+/// See also [HomeStyle].
+@ProviderFor(HomeStyle)
+final homeStyleProvider =
+    AutoDisposeNotifierProvider<HomeStyle, HomeStyleType>.internal(
+  HomeStyle.new,
+  name: r'homeStyleProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$homeStyleHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$HomeStyle = AutoDisposeNotifier<HomeStyleType>;
 String _$boxPanelDetailDataHash() =>
     r'156ad7326d0b0b9aea2a9eaa45e202639e0a32f6';
 

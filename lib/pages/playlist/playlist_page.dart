@@ -1,4 +1,5 @@
 import 'package:bujuan_music/common/bujuan_music_handler.dart';
+import 'package:bujuan_music/pages/main/phone/widgets.dart';
 import 'package:bujuan_music/pages/playlist/provider.dart';
 import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/items.dart';
@@ -20,11 +21,13 @@ class PlaylistPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     bool desktop = medium(context) || expanded(context);
     final album = ref.watch(playlistDetailProvider(id));
-    return album.when(
-      data: (details) =>
-          desktop ? DesktopPlayList(details: details) : MobilePlayList(details: details),
-      loading: () => const Center(child: LoadingIndicator()),
-      error: (_, __) => const Center(child: Text('Oops, something unexpected happened')),
+    return Scaffold(
+      body: album.when(
+        data: (details) =>
+        desktop ? DesktopPlayList(details: details) : MobilePlayList(details: details),
+        loading: () => const Center(child: LoadingIndicator()),
+        error: (_, __) => const Center(child: Text('Oops, something unexpected happened')),
+      ),
     );
   }
 }
@@ -37,14 +40,20 @@ class MobilePlayList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: ListView.builder(
-        padding: EdgeInsets.only(top: 0, bottom: 45.w),
-        itemCount: details.medias.length,
-        itemBuilder: (context, index) => MediaItemWidget(
-          mediaItem: details.medias[index],
-          onTap: () => BujuanMusicHandler().updateQueue(details.medias, index: index),
-        ),
+      appBar: AppBar(title: Text(details.detail.playlist?.name??''),),
+      body: CustomScrollView(
+        slivers: [
+          SliverList.builder(
+            itemCount: details.medias.length,
+            itemBuilder: (context, index) => MediaItemWidget(
+              mediaItem: details.medias[index],
+              onTap: () => BujuanMusicHandler().updateQueue(details.medias, index: index),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: DynamicPadding(hasBottom: false,),
+          )
+        ],
       ),
     );
   }
@@ -58,7 +67,6 @@ class DesktopPlayList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       appBar: AppBar(
         leading: IconButton(
             onPressed: () => context.pop(), icon: Icon(HugeIconsSolid.cancel01)),

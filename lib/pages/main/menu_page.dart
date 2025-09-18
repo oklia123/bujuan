@@ -34,7 +34,7 @@ class MobileMenu extends ConsumerWidget {
         ListTile(
           minLeadingWidth: 20.w,
           leading: Icon(
-            HugeIconsSolid.home01,
+            HugeIconsStroke.home01,
             color: currentPath == AppRouter.home ? Colors.red : null,
           ),
           title: Text(
@@ -49,7 +49,7 @@ class MobileMenu extends ConsumerWidget {
         ),
         ListTile(
           minLeadingWidth: 20.w,
-          leading: Icon(HugeIconsSolid.user,
+          leading: Icon(HugeIconsStroke.lookTop,
               color: currentPath == AppRouter.user ? Colors.red : null),
           title: Text(
             'User',
@@ -63,7 +63,7 @@ class MobileMenu extends ConsumerWidget {
         ),
         ListTile(
           leading: Icon(
-            HugeIconsSolid.settings03,
+            HugeIconsStroke.settings03,
             color: currentPath == AppRouter.setting ? Colors.red : null,
           ),
           minLeadingWidth: 20.w,
@@ -81,8 +81,8 @@ class MobileMenu extends ConsumerWidget {
           minLeadingWidth: 20.w,
           leading: Icon(
             theme == ThemeMode.dark
-                ? HugeIconsSolid.sunCloud02
-                : HugeIconsSolid.moon01,
+                ? HugeIconsStroke.sunCloud02
+                : HugeIconsStroke.moon01,
           ),
           title: Text('Theme Mode'),
           onTap: () => ref.read(themeModeNotifierProvider.notifier).toggleTheme(),

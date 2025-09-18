@@ -22,8 +22,8 @@ class CachedImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.placeholder,
     this.errorWidget,
-    this.pWidth = 300,
-    this.pHeight = 300,
+    this.pWidth = 500,
+    this.pHeight = 500,
   });
 
   @override

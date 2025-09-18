@@ -37,7 +37,11 @@ GoRouter router(Ref ref) {
     final currentPath = router.state.path ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(currentRouterPathProvider.notifier).updatePanelDetail(currentPath);
-      if (currentPath != AppRouter.home && currentPath != AppRouter.user && currentPath != AppRouter.setting) {
+      var homeStyle = ref.read(homeStyleProvider);
+      if (homeStyle == HomeStyleType.draw) return;
+      if (currentPath != AppRouter.home &&
+          currentPath != AppRouter.user &&
+          currentPath != AppRouter.setting) {
         GetIt.I<WeSlideController>(instanceName: 'footer').hide();
       } else {
         GetIt.I<WeSlideController>(instanceName: 'footer').show();

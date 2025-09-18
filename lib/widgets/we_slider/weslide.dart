@@ -1,10 +1,7 @@
 import 'dart:ui';
 
-import 'package:bujuan_music/router/app_pages.dart';
-import 'package:bujuan_music/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'weslide_controller.dart';
 
 /// A backdrop widget that displaying contextual and actionable content. =]
@@ -28,7 +25,7 @@ class WeSlide extends StatefulWidget {
 
   /// This is the header that will be over the [Panel].
   /// You can fit any widget.
-  final Widget? panelHeader;
+  final Widget ? panelHeader;
 
   /// This is the initial value that set the panel min height.
   /// If the value is greater than 0, panel will be this size over [body]
@@ -130,13 +127,7 @@ class WeSlide extends StatefulWidget {
   /// to enable transform scale effect. By default is false
   final bool transformScale;
 
-  /// This is the value that defines if you want
-  /// to enable overlay effect. By default is false
-  final bool overlay;
 
-  /// This is the value that defines if you want
-  /// to enable Gaussian blur effect. By default is false
-  final bool blur;
 
   /// This is the value that defines if you want
   /// to enable Gaussian blur effect. By default is false
@@ -194,13 +185,11 @@ class WeSlide extends StatefulWidget {
     this.hidePanelHeader = true,
     this.parallax = false,
     this.transformScale = false,
-    this.overlay = false,
-    this.blur = false,
     this.hideAppBar = true,
     this.isDismissible = true,
     this.isUpSlide = true,
     List<TweenSequenceItem<double>>? fadeSequence,
-    this.animateDuration = const Duration(milliseconds: 350),
+    this.animateDuration = const Duration(milliseconds: 300),
     this.controller,
     this.footerController,
   })  : /*assert(body != null, 'body could not be null'),*/
@@ -331,7 +320,8 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
     _acFooter.dispose();
 
     /// ValueNotifier
-    _effectiveController.dispose();
+    // _effectiveController.dispose();
+    // _effectiveFooterController.dispose();
     super.dispose();
   }
 
@@ -470,7 +460,7 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
                   scale: widget.transformScale ? _scaleAnimation.value : 1.0,
                   alignment: Alignment.bottomCenter,
                   child: SizedBox(
-                    height: height ,
+                    height: height,
                     // height: height,
                     width: widget.bodyWidth ?? width,
                     child: child,
@@ -480,34 +470,6 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
             },
             child: widget.body,
           ),
-          /** Enable Blur Effect **/
-          if (widget.blur)
-            AnimatedBuilder(
-              animation: _ac,
-              builder: (context, _) {
-                /** Fix problem with body scroll */
-                if (_ac.value <= 0) return const SizedBox.shrink();
-                return BackdropFilter(
-                  filter: ImageFilter.blur(
-                      sigmaX: widget.blurSigma * _ac.value, sigmaY: widget.blurSigma * _ac.value),
-                  child: Container(
-                    color: widget.blurColor.withAlpha(100),
-                  ),
-                );
-              },
-            ),
-          /** Enable Overlay Effect **/
-          if (widget.overlay)
-            AnimatedBuilder(
-              animation: _ac,
-              builder: (context, _) {
-                return Container(
-                  color: _ac.value == 0.0
-                      ? null
-                      : widget.overlayColor.withOpacity(widget.overlayOpacity * _ac.value),
-                );
-              },
-            ),
           /** Dismiss Panel **/
           ValueListenableBuilder(
             valueListenable: _effectiveController,
@@ -562,10 +524,7 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
                           top: (60.w + (1 - _acFooter.value) * bottom) * (1 - _ac.value)),
                       child: child,
                     ),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation1,
-                      child: widget.panel!,
-                    ),
+                    child: FadeTransition(opacity: _fadeAnimation1,child: widget.panel!,),
                   ),
                 ),
                 /** Panel Header widget **/
@@ -589,6 +548,7 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
                 widget.panelHeader != null && !widget.hidePanelHeader
                     ? widget.panelHeader!
                     : const SizedBox.shrink(),
+                // PanelHeader
               ],
             ),
           ),

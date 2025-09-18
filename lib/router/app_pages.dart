@@ -1,3 +1,4 @@
+import 'package:bujuan_music/pages/home/today/today_page.dart';
 import 'package:bujuan_music/pages/mv/mv_page.dart';
 import 'package:bujuan_music/pages/play/desktop_play_page.dart';
 import 'package:bujuan_music/pages/playlist/playlist_page.dart';
@@ -15,16 +16,23 @@ class AppPages {
   static final shellRouter = [
     GoRoute(
       path: AppRouter.home,
-      builder: (context, state) => HomePage(),
+      pageBuilder: (context, state) => NoTransitionPage(child: HomePage()),
     ),
+    GoRoute(path: AppRouter.today, builder: (context, state) => TodayPage()),
     GoRoute(
         path: AppRouter.play,
         pageBuilder: (context, state) =>
             buildPageWithSlideUpTransition(state: state, child: DesktopPlayPage())),
     GoRoute(
         path: AppRouter.playlist, builder: (context, state) => PlaylistPage(state.extra as int)),
-    GoRoute(path: AppRouter.user, builder: (context, state) => UserPage()),
-    GoRoute(path: AppRouter.setting, builder: (context, state) => SettingPage()),
+    GoRoute(
+      path: AppRouter.user,
+      pageBuilder: (context, state) => NoTransitionPage(child: UserPage()),
+    ),
+    GoRoute(
+      path: AppRouter.setting,
+      pageBuilder: (context, state)=>  NoTransitionPage(child: SettingPage()),
+    ),
   ];
 
   static final rootRouter = [

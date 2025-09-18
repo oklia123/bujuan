@@ -6,7 +6,6 @@ import 'package:bujuan_music/common/values/app_theme.dart';
 import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/router.dart';
 import 'package:bujuan_music/utils/adaptive_screen_utils.dart';
-import 'package:bujuan_music/widgets/slide.dart';
 import 'package:bujuan_music/widgets/we_slider/weslide_controller.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,6 @@ void main() async {
       statusBarColor: Colors.transparent));
   GetIt getIt = GetIt.instance;
   getIt.registerSingleton<ZoomDrawerController>(ZoomDrawerController());
-  getIt.registerSingleton<BoxController>(BoxController());
   getIt.registerSingleton<WeSlideController>(WeSlideController(initial: true),instanceName: 'footer');
   getIt.registerSingleton<WeSlideController>(WeSlideController(),instanceName: 'panel');
   getIt.registerSingleton<Box>(Hive.box('bujuan'));
@@ -111,18 +109,22 @@ class MyApp extends ConsumerWidget {
 
     return ScreenUtilInit(
       designSize: size,
-      builder: (_, __) => Consumer(builder: (_, ref, __) {
+      builder: (_, __) => AnnotatedRegion(value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+        systemStatusBarContrastEnforced: true
+      ), child: Consumer(builder: (_, ref, __) {
         final themeMode = ref.watch(themeModeNotifierProvider);
         return MaterialApp.router(
           title: 'Bujuan',
           themeMode: themeMode,
           darkTheme: AppTheme.dark,
-          showPerformanceOverlay: false,
-          // debugShowCheckedModeBanner: false,
+          showPerformanceOverlay: true,
+          debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           routerConfig: router,
         );
-      }),
+      })),
     );
   }
 }
