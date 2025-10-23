@@ -2,9 +2,6 @@ workflows:
   ios-build:
     name: Build iOS (unsigned, clones sibling API)
     max_build_duration: 120
-    triggers:
-      - push
-      - pull_request
     environment:
       flutter: stable
       xcode: latest
