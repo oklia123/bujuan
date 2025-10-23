@@ -12,19 +12,38 @@ workflows:
     scripts:
       - name: Clone API repo into plugin/bujuan_music_api
         script: |
-          set -e
+          #!/bin/bash
+          set -euo pipefail
           echo "Cloning API repo into ${API_REPO_DIR} ..."
-          GIT_URL="${API_REPO}"
           TARGET_DIR="${API_REPO_DIR}"
+          GIT_URL="${API_REPO}"
 
           # Ensure plugin directory exists
           mkdir -p "$(dirname "${TARGET_DIR}")"
 
+          # Disable interactive prompts from git
+          export GIT_TERMINAL_PROMPT=0
+
+          # If API repo is private, you can provide API_TOKEN in Codemagic Environment variables (secure)
+          # and it will be injected as $API_TOKEN. If set, convert https://github.com/... to https://$API_TOKEN@github.com/...
+          if [ -n "${API_TOKEN:-}" ]; then
+            # Avoid printing token
+            echo "Using API token to clone private repo"
+            GIT_URL="${GIT_URL/https:\/\//https:\/\/${API_TOKEN}@}"
+          fi
+
+          # If repo already exists, attempt a shallow pull; otherwise shallow clone
           if [ -d "${TARGET_DIR}/.git" ]; then
-            echo "${TARGET_DIR} exists — pulling latest"
-            git -C "${TARGET_DIR}" pull || true
+            echo "${TARGET_DIR} exists — fetching latest (shallow)"
+            git -C "${TARGET_DIR}" fetch --depth=1 origin || true
+            git -C "${TARGET_DIR}" reset --hard origin/HEAD || true
           else
-            git clone "${GIT_URL}" "${TARGET_DIR}"
+            # shallow clone; quiet to reduce log size; fail fast if unreachable
+            git clone --depth 1 --quiet "${GIT_URL}" "${TARGET_DIR}" || {
+              echo "Warning: failed to clone ${GIT_URL} into ${TARGET_DIR}"
+              echo "Please check API_REPO URL and credentials (API_TOKEN if needed)."
+              exit 1
+            }
           fi
 
       - name: Flutter pub get
