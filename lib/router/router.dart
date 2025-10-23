@@ -39,8 +39,8 @@ GoRouter router(Ref ref) {
       ref.read(currentRouterPathProvider.notifier).updatePanelDetail(currentPath);
       var homeStyle = ref.read(homeStyleProvider);
       if (homeStyle == HomeStyleType.draw) return;
-      if (currentPath != AppRouter.home &&
-          currentPath != AppRouter.user &&
+      // ↓ 修改点：移除了 AppRouter.home（如果移除了 tab，则不要再把 home 当作 footer 可见的路径）
+      if (currentPath != AppRouter.user &&
           currentPath != AppRouter.setting) {
         GetIt.I<WeSlideController>(instanceName: 'footer').hide();
       } else {
