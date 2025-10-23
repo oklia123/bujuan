@@ -19,6 +19,7 @@ import '../../../widgets/we_slider/weslide_controller.dart';
 import '../../play/play_page.dart';
 import '../menu_page.dart';
 import '../provider.dart';
+import '../../../router/app_router.dart';
 
 class SliderWidget extends StatelessWidget {
   final bool showBottomBar;
@@ -36,6 +37,11 @@ class SliderWidget extends StatelessWidget {
     var panelController = GetIt.I<WeSlideController>(instanceName: 'panel');
     var footerController = GetIt.I<WeSlideController>(instanceName: 'footer');
     var theme = Theme.of(context);
+
+    // 构造用于展示的底部导航项，过滤掉 path == AppRouter.home 的项（隐藏 Home）
+    final displayBottomItems =
+        AppConfig.bottomItems.where((e) => e.path != AppRouter.home).toList();
+
     return WeSlide(
       panelBorderRadiusBegin: 0,
       panelBorderRadiusEnd: 20.w,
@@ -61,12 +67,31 @@ class SliderWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(30.w)),
               child: Consumer(builder: (context, ref, child) {
-                var currentIndex = ref.watch(currentIndexProvider);
+                // 计算当前显示的 index：通过当前路由路径在 displayBottomItems 中查找
+                final currentPath = GoRouter.of(context).location;
+                int displayIndex =
+                    displayBottomItems.indexWhere((e) => e.path == currentPath);
+                if (displayIndex < 0) {
+                  // 如果当前路径不是底部任一项，尝试使用 provider 保存的 index（兼容），
+                  // 并将其映射到 display 列表（若 provider index 指向被删除的 home，我们需要降一位或找到对应 path）
+                  final providerIndex = ref.watch(currentIndexProvider);
+                  if (providerIndex >= 0 && providerIndex < AppConfig.bottomItems.length) {
+                    final providerPath = AppConfig.bottomItems[providerIndex].path;
+                    displayIndex = displayBottomItems.indexWhere((e) => e.path == providerPath);
+                    if (displayIndex < 0) {
+                      // fallback to first display item
+                      displayIndex = 0;
+                    }
+                  } else {
+                    displayIndex = 0;
+                  }
+                }
+
                 return BottomNavigationBar(
                   backgroundColor: Colors.transparent,
                   type: BottomNavigationBarType.fixed,
-                  currentIndex: currentIndex,
-                  items: AppConfig.bottomItems.map((e) {
+                  currentIndex: displayIndex,
+                  items: displayBottomItems.map((e) {
                     return BottomNavigationBarItem(
                         icon:
                             Padding(padding: EdgeInsets.only(bottom: 5.w), child: Icon(e.iconData)),
@@ -74,9 +99,16 @@ class SliderWidget extends StatelessWidget {
                             padding: EdgeInsets.only(bottom: 5.w), child: Icon(e.activeIconData)),
                         label: e.title);
                   }).toList(),
-                  onTap: (index) {
-                    ref.read(currentIndexProvider.notifier).setIndex(index);
-                    context.replace(AppConfig.bottomItems[index].path);
+                  onTap: (tappedDisplayIndex) {
+                    // tappedDisplayIndex 是在 displayBottomItems 中的索引，
+                    // 需要找到该项在原始 AppConfig.bottomItems 中对应的索引并更新 provider（保持全局索引一致）
+                    final tappedPath = displayBottomItems[tappedDisplayIndex].path;
+                    final originalIndex =
+                        AppConfig.bottomItems.indexWhere((e) => e.path == tappedPath);
+                    if (originalIndex >= 0) {
+                      ref.read(currentIndexProvider.notifier).setIndex(originalIndex);
+                    }
+                    context.replace(tappedPath);
                   },
                 );
               }))
