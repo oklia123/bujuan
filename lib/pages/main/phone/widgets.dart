@@ -67,10 +67,16 @@ class SliderWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(30.w)),
               child: Consumer(builder: (context, ref, child) {
+                // 尝试通过 routeInformationProvider 获取当前 path（兼容 go_router 版本）
+                String currentPath = '';
+                try {
+                  currentPath = GoRouter.of(context).routeInformationProvider.value.location ?? '';
+                } catch (_) {
+                  currentPath = '';
+                }
+
                 // 计算当前显示的 index：通过当前路由路径在 displayBottomItems 中查找
-                final currentPath = GoRouter.of(context).location;
-                int displayIndex =
-                    displayBottomItems.indexWhere((e) => e.path == currentPath);
+                int displayIndex = displayBottomItems.indexWhere((e) => e.path == currentPath);
                 if (displayIndex < 0) {
                   // 如果当前路径不是底部任一项，尝试使用 provider 保存的 index（兼容），
                   // 并将其映射到 display 列表（若 provider index 指向被删除的 home，我们需要降一位或找到对应 path）
