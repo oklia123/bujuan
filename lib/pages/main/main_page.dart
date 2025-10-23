@@ -23,10 +23,16 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool desktop = medium(context) || expanded(context);
 
-    // 如果当前路由仍为 '/'（AppRouter.home），该路由已移除于 shellRouter，
-    // 我们在这里透明地把它重定向到 /user（Me），以防止出现空白或 404 情况。
+    // 如果当前路由仍为 '/'（AppRouter.home），该路由已从 shellRouter 中移除
+    // 使用 routeInformationProvider.value.location 来获取当前 path（兼容性更好）
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final loc = GoRouter.of(context).location;
+      String? loc;
+      try {
+        loc = GoRouter.of(context).routeInformationProvider.value.location;
+      } catch (_) {
+        loc = null;
+      }
+      loc ??= '';
       if (loc == AppRouter.home) {
         // 使用 replace，避免历史堆栈中残留无用的 '/' 条目
         context.replace(AppRouter.user);
@@ -176,7 +182,12 @@ class DesktopView extends StatelessWidget {
         ),
       ),
       onTap: () {
-        var path = GoRouter.of(context).state.path;
+        var path = '';
+        try {
+          path = GoRouter.of(context).routeInformationProvider.value.location ?? '';
+        } catch (_) {
+          path = '';
+        }
         if (path == AppRouter.play) {
           context.pop();
           return;
