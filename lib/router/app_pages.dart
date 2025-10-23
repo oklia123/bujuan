@@ -9,15 +9,11 @@ import 'package:bujuan_music/splash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
-import '../pages/home/home_page.dart';
 import '../pages/login/login_page.dart';
 
 class AppPages {
   static final shellRouter = [
-    GoRoute(
-      path: AppRouter.home,
-      pageBuilder: (context, state) => NoTransitionPage(child: HomePage()),
-    ),
+    // Home 路由已从 shellRouter 中移除（不再作为底部导航默认页）
     GoRoute(path: AppRouter.today, builder: (context, state) => TodayPage()),
     GoRoute(
         path: AppRouter.play,
