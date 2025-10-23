@@ -27,9 +27,10 @@ class _SplashPageState extends State<SplashPage> {
   void getUserInfo() async {
     var userInfo = await BujuanMusicManager().userInfo();
     var bool = (userInfo != null && userInfo.account != null);
-    if(bool) GetIt.I<Box>().put(AppConfig.userInfoKey, jsonEncode(userInfo.profile?.toJson()));
+    if (bool) GetIt.I<Box>().put(AppConfig.userInfoKey, jsonEncode(userInfo.profile?.toJson()));
     if (mounted) {
-      context.replace(bool ? AppRouter.home : AppRouter.login);
+      // 修改点：登录成功后跳转到 /user（Me 页面），未登录仍然跳转到 /login
+      context.replace(bool ? AppRouter.user : AppRouter.login);
     }
   }
 
