@@ -1,9 +1,69 @@
 workflows:
-  test:
-    name: Minimal test workflow
+  ios-build:
+    name: Build iOS (unsigned, clone plugin/bujuan_music_api)
+    max_build_duration: 120
     environment:
       flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        API_REPO: "https://github.com/oklia123/bujuan_music_api.git"
+        API_REPO_DIR: "plugin/bujuan_music_api"
     scripts:
-      - name: Echo test
+      - name: Clone API repo into plugin/bujuan_music_api
         script: |
-          echo "codemagic.yaml read successfully"
+          set -e
+          echo "Cloning API repo into ${API_REPO_DIR} ..."
+          GIT_URL="${API_REPO}"
+          TARGET_DIR="${API_REPO_DIR}"
+
+          # Ensure plugin directory exists
+          mkdir -p "$(dirname "${TARGET_DIR}")"
+
+          if [ -d "${TARGET_DIR}/.git" ]; then
+            echo "${TARGET_DIR} exists — pulling latest"
+            git -C "${TARGET_DIR}" pull || true
+          else
+            git clone "${GIT_URL}" "${TARGET_DIR}"
+          fi
+
+      - name: Flutter pub get
+        script: |
+          set -e
+          flutter --version
+          flutter pub get
+
+      - name: iOS prepare (CocoaPods)
+        script: |
+          set -e
+          cd ios
+          pod repo update || true
+          pod install --repo-update
+          cd -
+
+      - name: Build iOS (no code signing)
+        script: |
+          set -e
+          flutter build ios --release --no-codesign
+
+      - name: Package unsigned IPA
+        script: |
+          set -e
+          APP_DIR="build/ios/iphoneos/Runner.app"
+          IPA_DIR="build/ios/ipa"
+          if [ -d "$APP_DIR" ]; then
+            rm -rf Payload
+            mkdir -p Payload
+            cp -R "$APP_DIR" Payload/
+            mkdir -p "$IPA_DIR"
+            zip -r "$IPA_DIR/Runner-unsigned.ipa" Payload > /dev/null
+            rm -rf Payload
+            echo "Unsigned IPA created at $IPA_DIR/Runner-unsigned.ipa"
+          else
+            echo "Warning: $APP_DIR not found. Skipping IPA packaging."
+            exit 0
+          fi
+
+    artifacts:
+      - build/ios/iphoneos/**/*
+      - build/ios/ipa/*.ipa
