@@ -22,6 +22,17 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool desktop = medium(context) || expanded(context);
+
+    // 如果当前路由仍为 '/'（AppRouter.home），该路由已移除于 shellRouter，
+    // 我们在这里透明地把它重定向到 /user（Me），以防止出现空白或 404 情况。
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final loc = GoRouter.of(context).location;
+      if (loc == AppRouter.home) {
+        // 使用 replace，避免历史堆栈中残留无用的 '/' 条目
+        context.replace(AppRouter.user);
+      }
+    });
+
     return Scaffold(
       body: desktop ? DesktopView(child: child) : MobileView(child: child),
     );
