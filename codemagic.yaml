@@ -1,0 +1,64 @@
+workflows:
+  ios-build:
+    name: Build iOS (unsigned, clones sibling API)
+    max_build_duration: 120
+    triggers:
+      - push
+      - pull_request
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        API_REPO: "https://github.com/oklia123/bujuan_music_api.git"
+        API_REPO_DIR: "../bujuan_music_api"
+    scripts:
+      - name: Clone API repo into parent directory
+        script: |
+          set -e
+          echo "Cloning API repo into parent directory..."
+          GIT_URL="${API_REPO}"
+          cd ..
+          if [ -d "bujuan_music_api" ]; then
+            echo "bujuan_music_api exists — pulling latest"
+            (cd bujuan_music_api && git pull) || true
+          else
+            git clone "$GIT_URL"
+          fi
+          cd -
+      - name: Flutter pub get
+        script: |
+          set -e
+          flutter --version
+          flutter pub get
+      - name: iOS prepare (CocoaPods)
+        script: |
+          set -e
+          cd ios
+          pod repo update || true
+          pod install --repo-update
+          cd -
+      - name: Build iOS (no code signing)
+        script: |
+          set -e
+          flutter build ios --release --no-codesign
+      - name: Package unsigned IPA
+        script: |
+          set -e
+          APP_DIR="build/ios/iphoneos/Runner.app"
+          IPA_DIR="build/ios/ipa"
+          if [ -d "$APP_DIR" ]; then
+            rm -rf Payload
+            mkdir -p Payload
+            cp -R "$APP_DIR" Payload/
+            mkdir -p "$IPA_DIR"
+            zip -r "$IPA_DIR/Runner-unsigned.ipa" Payload > /dev/null
+            rm -rf Payload
+            echo "Unsigned IPA created at $IPA_DIR/Runner-unsigned.ipa"
+          else
+            echo "Warning: $APP_DIR not found. Skipping IPA packaging."
+          fi
+
+    artifacts:
+      - build/ios/iphoneos/**/*
+      - build/ios/ipa/*.ipa
